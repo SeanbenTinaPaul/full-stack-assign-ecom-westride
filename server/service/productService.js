@@ -1,9 +1,10 @@
 const prisma = require("../config/prisma");
+const cloudinary = require("cloudinary").v2;
 
 exports.create = async (req, res) => {
    try {
       const { title, description, price, quantity, categoryId, images } = req.body;
-
+      // console.log('req.body.images->', images)
       //verify res.body data if they are not null or undefined
       if (!title || !price || !quantity || !categoryId || Number(categoryId) === 0) {
          return res.status(400).json({ message: "All fields are required" });
@@ -21,11 +22,11 @@ exports.create = async (req, res) => {
             // 1 product มีหลาย images
             // ถ้าเพิ่มรูปใน table 'Product' จะเพิ่มใน table 'Image' ด้วย
             images: {
-               create: images.map((item) => ({
-                  asset_id: item.asset_id,
-                  public_id: item.public_id,
-                  url: item.url,
-                  secure_url: item.secure_url
+               create: images.map((obj) => ({
+                  asset_id: obj.asset_id,
+                  public_id: obj.public_id,
+                  url: obj.url,
+                  secure_url: obj.secure_url
                }))
             }
          }
@@ -92,14 +93,16 @@ exports.read = async (req, res) => {
                 */
          }
       });
-
-      res.send(products);
+      res.status(200).json({
+         success: true,
+         data: products
+      });
+      // res.send(products);
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });
    }
 };
-
 
 /* แบบย่อ
 const product = await prisma.product.update({
@@ -132,7 +135,6 @@ exports.update = async (req, res) => {
             productId: parseInt(req.params.id)
          }
       });
-
       const product = await prisma.product.update({
          where: {
             id: parseInt(req.params.id)
@@ -151,18 +153,22 @@ exports.update = async (req, res) => {
             // ถ้าเพิ่มรูปใน table 'Product' จะเพิ่มใน table 'Image' ด้วย
             images: images
                ? {
-                    create: images.map((item) => ({
-                       asset_id: item.asset_id,
-                       public_id: item.public_id,
-                       url: item.url,
-                       secure_url: item.secure_url
+                    create: images.map((img) => ({
+                       asset_id: img.asset_id,
+                       public_id: img.public_id,
+                       url: img.url,
+                       secure_url: img.secure_url
                     }))
                  }
                : undefined // ถ้าไม่มีการส่ง images จะไม่อัปเดต images
          }
       });
 
-      res.send(product);
+      res.status(200).json({
+         success: true,
+         data: product
+      })
+      // res.send(product);
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });
@@ -318,6 +324,50 @@ exports.searchFilters = async (req, res) => {
       }
 
       // res.send("searchFilters");
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Server Error" });
+   }
+};
+
+// mange image file on cloudinary ONLY !!!
+cloudinary.config({
+   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+   api_key: process.env.CLOUDINARY_API_KEY,
+   api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+//accroding to Frontend, uploadImages() is called before create()
+exports.uploadImages = async (req, res) => {
+   try {
+      // console.log('req.body ->',req.body);
+      // console.log('req.body img ->',req.body.image);
+      const result = await cloudinary.uploader.upload(req.body.image, {
+         public_id: `product-${Date.now()}`,
+         resource_type: "auto",
+         folder: "Ecom_fullstack_app_msc_products" // create this folder in cloudinary automatically
+      });
+      res.status(200).json({
+         success: true,
+         message: "Upload success",
+         data: result
+      });
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Server Error" });
+   }
+};
+
+exports.removeImage = async (req, res) => {
+   try {
+      // console.log("public_id-->", req.body.public_id);
+      await cloudinary.uploader.destroy(req.body.public_id, (resolve, reject) => {
+         res.status(200).json({
+            success: true,
+            message: "Remove success",
+            data: resolve
+         });
+      });
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });

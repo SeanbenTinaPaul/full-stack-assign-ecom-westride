@@ -7,7 +7,7 @@ https://code.visualstudio.com/download
 -----------Server---------------
 >npm init -y
 >npm install express morgan cors nodemon bcryptjs jsonwebtoken
-
+>npm install dotenv
 
 MySQL
 prisma
@@ -32,12 +32,17 @@ npx prisma migrate dev --name ecom
 
 //
 อัพเดต Prisma schema
-npx prisma migrate dev
+>npx prisma migrate dev --name WhateverYourUpdateName
 
+**If you encounter an error, it might be due to an invalid schema or a conflict with existing data. To troubleshoot:
+>npx prisma validate
+
+ดูตารางความสัมพันธ์แบบละเอียด
+>npx prisma studio
 
 
 ------------Client--------------
-npm create vite@latest .
+npm create vite@latest
 - client
 - javascript
 
@@ -52,23 +57,99 @@ npm install axios
 MySQL
 prisma
 Tam123456
-
-
-
-
-
-
-
-
-
-
-
-
 -----------Server---------------
 npm init -y
 npm install express mongoose morgan body-parser cors nodemon socket.io
 npm i cloudinary
 npm install google-auth-library
+
+****
+------------Client(ตาม tutorial)--------------
+npm create vite@latest
+or
+npm create vite@latest
+- client
+- javascript
+
+>cd client
+>npm install
+>npm run dev
+
+สำหรับลิงค์หน้าหากันโดยการเปลี่ยน path
+>npm i react-router-dom
+
+ลองเข้าไปเช็คไฟล์ใน vs code ดูก่อน
+>code .
+>npm run dev
+
+จัดการสร้าง folders + files components สำหรับ webpage โดยรวมทั้งหมดก่อน
+ไฟล์ที่ลบเนื้อหาออกได้ : index.css + App.jsx
+
+break มาลง tailwind ก่อน
+>npm install -D tailwindcss postcss autoprefixer
+>npx tailwindcss init -p
+
+วาง replaced ใน tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+วาง replaced ใน index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ลง Flowbite เพื่อใช้ component tailwaind (additional) 
+>npm install flowbite-react
+- Import Flowbite React and add the plugin and the content path inside your tailwind.config.js file:
+--------------------------------------------------------
+import flowbite from "flowbite-react/tailwind";
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    // ...
+    flowbite.content(),
+  ],
+  plugins: [
+    // ...
+    flowbite.plugin(),
+  ],
+};
+--------------------------------------------------------
+
+ส่งข้อมูลไปยัง backend (เข้าไปเปิดไฟล์ของ backend แล้ว >npm start ก่อน)
+>npm i axios
+
+>npm i react-toastify
+วางใน App.jsx
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+ใช้แทน Redux
+>npm i zustand axios
+
+ใช้ลง icon ร่วมกับ <NavLink>
+>npm install lucide-react
+
+npm i react-image-file-resizer
+npm i react-toastify
+npm i react-icons
+npm i lucide-react
+npm i lodash
+npm i rc-slider
+npm i numeral
+npm install moment
+--------------------------
+
 
 
 ------------Client--------------

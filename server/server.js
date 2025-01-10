@@ -7,19 +7,25 @@ const cors = require('cors');//อนุญาตให้ server และ clie
 // const authRouter = require('./routes/auth.js');
 
 //middleware
-app.use(morgan('dev'));
-app.use(express.json({limit: '100kb'}));
+app.use(morgan('common'));
+app.use(express.json({limit: '20mb'}));
 app.use(cors());
 
 //Routers
-//เข้าไป map ทุกๆไฟล์ในโฟลเดอร์ routes
+//เอา app.use('/api',...) เข้าไป map ทุกๆไฟล์ในโฟลเดอร์ routes
+// r === 'auth.js', 'product.js',...
 readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
-// app.use('/api', authRouter);
-/* app.post(`/api/register`, (req, res)=>{
-     const { email, password } = req.body;
-     console.log(email, password);
-     res.send('Hello World');
-});*/
+/* 
+เขียนแบบกระจายออก (manual routing) → app.use('/api',..) mount '/api' เสร็จก็หายไป
+
+r==='product.js' ▼
+app.post("/api/product", productService.create); // POST /api/product
+app.delete("/api/product/:id", authCheck, productService.remove); // DELETE /api/product/:id
+...
+r==='auth.js' ▼
+app.post("/api/login", authService.logIn); // POST /api/login
+...
+*/
 
 // 2. start server
 app.listen(5000, () => {
