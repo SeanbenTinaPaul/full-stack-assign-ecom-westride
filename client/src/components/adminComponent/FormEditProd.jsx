@@ -20,9 +20,10 @@ const inputProd = {
 
 function FormEditProd() {
    const { id } = useParams();
+   const navigate = useNavigate();
    const { token, getCategory, categories } = useEcomStore((state) => state);
    const [inputForm, setInputForm] = useState(inputProd);
-    console.log('inputForm bf edit->', inputForm);
+   //  console.log('inputForm bf edit->', inputForm);
 
    useEffect(() => {
       const fetchProduct = async (token, id, inputForm) => {
@@ -30,7 +31,7 @@ function FormEditProd() {
             const res = await readProduct(token, id, inputForm);
             console.log("res edit prod->", res.data);
             // res.data = { data: res.data.data };//remove 'success: true' key from {}
-            setInputForm(res.data.data);//ทำให้เติม value ในช่อง form by default เมื่อเข้ามาในหน้านี้
+            setInputForm(res.data.data); //ทำให้เติม value ในช่อง form by default เมื่อเข้ามาในหน้านี้
          } catch (err) {
             console.log(err);
          }
@@ -40,6 +41,7 @@ function FormEditProd() {
    }, []);
    console.log("inputForm edit prod->", inputForm);
 
+   //listen to keyboard event on input box(not on button) and update inputForm
    const handleOnchange = (e) => {
       console.log(e.target.name, e.target.value);
       setInputForm({
@@ -67,15 +69,7 @@ function FormEditProd() {
       try {
          const res = await updateProduct(token, id, inputForm);
          toast.success(`Update Product: ${res.data.data.title} Success.`);
-        //  //refresh the list after click 'update Product'
-        //   setInputForm({
-        //      title: "",
-        //      description: "",
-        //      price: "",
-        //      quantity: "",
-        //      categoryId: "",
-        //      images: []
-        //   });
+         navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
       } catch (err) {
          console.log(err);
       }
@@ -170,9 +164,8 @@ function FormEditProd() {
                      </option>
                   ))}
                </select>
-               
-               <div>
-               </div>
+
+               <div></div>
                {/* upload img file */}
                <UploadFile
                   inputForm={inputForm}

@@ -1,4 +1,5 @@
 //sortable table of all products
+//parent→ FormProduct.jsx
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Table } from "flowbite-react";
@@ -6,12 +7,15 @@ import { Table } from "flowbite-react";
 //icon
 import { Pencil, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import ImgProdInTableList from "./ImgProdInTableList";
 
 function TableListProducts({ products }) {
    //initialize the sort col and order
    const [tableData, setTableData] = useState(products);
    const [sortCol, setSortCol] = useState(null);
    const [sortOrder, setSortOrder] = useState("asc");
+   console.log("prod in table", products); //===[{images:[{url:..}],...}, {}]
+   // console.log('data',data)
 
    //function to sort table data
    const sortData = (col) => {
@@ -24,6 +28,7 @@ function TableListProducts({ products }) {
       setSortCol(col);
       setSortOrder(sortOrder === "asc" ? "desc" : "asc"); //toggle between asc and desc
    };
+
    return (
       <div>
          <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
@@ -54,6 +59,9 @@ function TableListProducts({ products }) {
                            </svg>
                         )}
                      </div>
+                  </Table.HeadCell>
+                  <Table.HeadCell>
+                     <div className='text-center'>Image</div>
                   </Table.HeadCell>
                   <Table.HeadCell
                      className='cursor-pointer'
@@ -272,14 +280,22 @@ function TableListProducts({ products }) {
                      <div className='flex items-center'>Edit</div>
                   </Table.HeadCell>
                </Table.Head>
+
                <Table.Body className='divide-y'>
-                  {tableData.map((row, index) => (
+                  {/* TableData === products */}
+                  {tableData.map((row, rowIndex) => (
                      <Table.Row
-                        key={index}
+                        key={rowIndex}
                         className='bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-600'
                      >
                         <Table.Cell className='font-medium text-gray-900 dark:text-white'>
                            {row.id}
+                        </Table.Cell>
+                        <Table.Cell className='text-center'>
+                           <ImgProdInTableList
+                              images={row.images}
+                              rowIndex={rowIndex}
+                           />
                         </Table.Cell>
                         <Table.Cell className='whitespace-nowrap'>{row.title}</Table.Cell>
                         <Table.Cell>{row.categoryId}</Table.Cell>
@@ -294,9 +310,9 @@ function TableListProducts({ products }) {
                               className='cursor-pointer'
                               title='Edit'
                            >
-                           <Link to={'/admin/product/'+row.id}>
-                              <Pencil className='w-3 hover:text-Bg-warning' />
-                           </Link>
+                              <Link to={"/admin/product/" + row.id}>
+                                 <Pencil className='w-3 hover:text-Bg-warning' />
+                              </Link>
                            </p>
                            <p
                               className='cursor-pointer'

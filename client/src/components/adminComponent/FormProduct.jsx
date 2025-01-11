@@ -44,7 +44,7 @@ function FormProduct() {
    }, [token, getCategory]);
 
    useEffect(() => {
-      getProduct(token, 10);
+      getProduct(token, 20);
    }, [token, getProduct]);
 
    const handleOnchange = (e) => {
