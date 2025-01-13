@@ -1,5 +1,5 @@
 const prisma = require("../config/prisma");
-const cloudinary = require("cloudinary").v2;// import { v2 as cloudinary } from 'cloudinary';
+const cloudinary = require("cloudinary").v2; // import { v2 as cloudinary } from 'cloudinary';
 
 exports.create = async (req, res) => {
    try {
@@ -188,12 +188,12 @@ exports.remove = async (req, res) => {
             images: true
          }
       });
-      console.log('productToRm->',productToRm);
+      console.log("productToRm->", productToRm);
       //del process: del record from table 'Product' + del images from table 'Image' + del img from cloudinary
       await prisma.product.delete({
          where: {
             id: Number(id)
-         },
+         }
       });
 
       /*
@@ -211,9 +211,23 @@ exports.remove = async (req, res) => {
                            ]
       */
       // Delete the images from Cloudinary
+      let imgToRm = [];
+      for (const image of productToRm.images) {
+         imgToRm.push(
+            new Promise((resolve, reject) => {
+               cloudinary.uploader.destroy(image.public_id, (error, result) => {
+                  if (error) reject(error)
+                  else resolve(result)
+               });
+            })
+         );
+      }
+      await Promise.all(imgToRm);
+      /*
       for (const image of productToRm.images) {
          await cloudinary.uploader.destroy(image.public_id);
       }
+      */
 
       res.status(200).json({
          success: true,
@@ -393,18 +407,37 @@ exports.uploadImages = async (req, res) => {
 };
 
 exports.removeImage = async (req, res) => {
+   //if method doesn't return Promise by default → use new Promise
    try {
       // table Image in db also has public_id col
       // console.log("public_id-->", req.body.public_id);
-      await cloudinary.uploader.destroy(req.body.public_id, (resolve, reject) => {
-         res.status(200).json({
-            success: true,
-            message: "Remove success",
-            data: resolve
+      await new Promise((resolve, reject) => {
+         cloudinary.uploader.destroy(req.body.public_id, (error, result) => {
+            if (error) reject(error); //trigger .catch() or catch(err){..}
+            else resolve(result); //trigger .then() method or do next code in try{..}
          });
+      });
+      res.status(200).json({
+         success: true,
+         message: "Remove img from cloud success"
       });
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });
    }
 };
+
+/*
+//in case Cloudinary support return Promise by default ▼
+exports.removeImage = async (req, res) => {
+   try {
+      await cloudinary.uploader.destroy(req.body.public_id, (err, resolve) => {
+         if (err) return res.status(500).json({ message: "Server Error" });
+         else return res.status(200).json({ message: "Remove img from cloud success" });
+      });
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Server Error" });
+   }
+};
+*/

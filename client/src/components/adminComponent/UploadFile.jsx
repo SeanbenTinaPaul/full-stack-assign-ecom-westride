@@ -93,11 +93,11 @@ const UploadFile = ({ inputForm, setInputForm }) => {
       }
    };
 
-   //del img preview when click 'x'
+   //del img in cloudinary + preview, when click 'x'
    const handleDelImg = (public_id) => {
       delImg(token, public_id)
          .then((res) => {
-            // console.log(res);
+            console.log('res del img in cloud',res);
             const filteredImg = imgDataArr.filter((obj) => {
                return obj.public_id !== public_id;
             });
@@ -153,7 +153,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                         >
                            <IconX
                               bgColor={bgColors[obj.asset_id]}
-                              className={`lucide lucide-x ${
+                              className={`${
                                  bgColors[obj.asset_id] === "black" ? "text-black " : "text-white"
                               } hover:text-red-600`}
                            />
