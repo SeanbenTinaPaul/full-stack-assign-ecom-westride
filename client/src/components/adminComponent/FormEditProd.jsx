@@ -1,3 +1,4 @@
+//parent→ EditProd.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; //to get id from url | to redirect
 import { toast } from "react-toastify";
@@ -23,6 +24,7 @@ function FormEditProd() {
    const navigate = useNavigate();
    const { token, getCategory, categories } = useEcomStore((state) => state);
    const [inputForm, setInputForm] = useState(inputProd);
+   const [loading, setLoading] = useState(false);
    //  console.log('inputForm bf edit->', inputForm);
 
    useEffect(() => {
@@ -36,9 +38,9 @@ function FormEditProd() {
             console.log(err);
          }
       };
-      getCategory(token);
+      getCategory(token);//for dropdown select Category
       fetchProduct(token, id, inputForm);
-   }, []);
+   }, [token, getCategory, id]);
    console.log("inputForm edit prod->", inputForm);
 
    //listen to keyboard event on input box(not on button) and update inputForm
@@ -67,11 +69,19 @@ function FormEditProd() {
       }
 
       try {
+         setLoading(true);
          const res = await updateProduct(token, id, inputForm);
          toast.success(`Update Product: ${res.data.data.title} Success.`);
-         navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
+         setTimeout(() => {
+            navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
+         }, 200);
+         // setTimeout(() => {
+         //    window.location.reload();
+         // }, 1000); //"/admin/product" page will be reloaded after 1 sec
+         setLoading(false);
       } catch (err) {
          console.log(err);
+         setLoading(false);
       }
    };
 
@@ -171,8 +181,11 @@ function FormEditProd() {
                   inputForm={inputForm}
                   setInputForm={setInputForm}
                />
-               <button className='bg-fuchsia-800 hover:bg-fuchsia-700 text-white font-bold py-2 px-4 rounded-md shadow-md'>
-                  Upadate Product
+               <button
+                  className='bg-fuchsia-800 hover:bg-fuchsia-700 text-white font-bold py-2 px-4 rounded-md shadow-md'
+                  disabled={loading}
+               >
+                  {loading ? "Updating..." : "Update Product"}
                </button>
             </form>
          </div>

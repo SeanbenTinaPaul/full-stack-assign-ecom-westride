@@ -1,10 +1,11 @@
+//parent → Product.jsx
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; //(optional) provides the default styles for the toast notifications
 //Global state
 import useEcomStore from "../../store/ecom-store";
 //API
-import { createProduct } from "../../api/ProductAuth";
+import { createProduct, delProduct } from "../../api/ProductAuth";
 //Component
 import TableListProducts from "./TableListProducts";
 import UploadFile from "./UploadFile";
@@ -24,8 +25,10 @@ function FormProduct() {
    // const categories = useEcomStore((state)=> state.categories)
    const { token, getCategory, categories, getProduct, products } = useEcomStore((state) => state);
    const [inputForm, setInputForm] = useState(inputProd);
+   const [loading, setLoading] = useState(false);//for Btn loading animation
+   const [isRerender, setIsRerender] = useState(false);//for TableListProducts.jsx re-render
    // console.log('categories->',categories)
-   // console.log(products);
+   // console.log('products->',products);
 
    //separate to avoid calling unnessary fn in useEffect()
    /*
@@ -58,7 +61,6 @@ function FormProduct() {
    const handleSubmit = async (e) => {
       e.preventDefault();
       console.log("inputForm->", inputForm);
-
       /* 
         const titleInput = inputForm.title;
         const priceInput = inputForm.price;
@@ -68,7 +70,6 @@ function FormProduct() {
         if (!titleInput || !priceInput || !quantityInput)
            return toast.warning("Please enter all fields.");
       */
-
       //if user did not select category and click 'Add Product' ► won't let to submit, using return to stop
       for (let key in inputForm) {
          if (!inputForm[key] || inputForm[key] === "") {
@@ -80,10 +81,10 @@ function FormProduct() {
             }
          }
       }
-
       try {
+         setLoading(true);
          const res = await createProduct(token, inputForm);
-         console.log("res->", res);
+         console.log("res FormProduct->", res);
          toast.success(`Add Product: ${res.data.title} Success.`); //not (res.data.data.title) bc backend use res.send()
          //refresh the list after click 'Add Product'
          getProduct(token);
@@ -95,6 +96,52 @@ function FormProduct() {
             categoryId: "",
             images: []
          });
+
+         setLoading(false);
+         setIsRerender(!isRerender);//rerender TableListProducts if click 'Add Product'
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
+   //click in TableListProducts.jsx to delete a product + Toastify confirm box
+   const handleDel = async (id) => {
+      // Dismiss(cancel) any existing toasts but keep the most recent one, prevent multiple toast boxes appearing
+      toast.dismiss();
+      // Show the confirmation toast
+      toast(
+         ({ closeToast }) => (
+            <div className='flex flex-col gap-2'>
+               <p className='text-Text-black'>Are you sure you want to delete this product?</p>
+               <div className='flex justify-end gap-4'>
+                  <button
+                     className='bg-Bg-warning py-1 px-2 text-gray-500 rounded-md'
+                     onClick={() => confirmDelete(id, closeToast)}
+                  >
+                     Yes
+                  </button>
+                  <button
+                     className='bg-Primary-btn py-1 px-2 text-white rounded-md'
+                     onClick={closeToast}
+                  >
+                     No
+                  </button>
+               </div>
+            </div>
+         ),
+         { autoClose: false } //no cooldown auto close
+      );
+   };
+   //if user click 'Yes' in Toastify confirm box
+   const confirmDelete = async (id, closeToast) => {
+      try {
+         console.log("id for del product->", id);
+         // const res = await delProduct(token, id);
+         // console.log("res->", res);
+         // toast.success(`Delete Product: ${res.data.title} Success.`);
+         //refresh the list after click 'Delete Product'
+         // getProduct(token);
+         closeToast();
       } catch (err) {
          console.log(err);
       }
@@ -102,6 +149,7 @@ function FormProduct() {
 
    return (
       <div>
+         <ToastContainer />
          <div className='container mx-auto p-4 gap-4 bg-Dropdown-option-night shadow-md rounded-md'>
             <form
                action=''
@@ -196,13 +244,17 @@ function FormProduct() {
                   setInputForm={setInputForm}
                />
                <button className='bg-fuchsia-800 hover:bg-fuchsia-700 text-white font-bold py-2 px-4 rounded-md shadow-md'>
-                  Add Product
+                  {loading ? "Adding..." : "Add Product"}
                </button>
             </form>
          </div>
          {/* table of all products */}
          <div className='mt-4'>
-            <TableListProducts products={products} />
+            <TableListProducts
+               products={products}
+               handleDel={handleDel}
+               isRerender={isRerender}
+            />
          </div>
       </div>
    );

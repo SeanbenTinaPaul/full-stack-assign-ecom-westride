@@ -10,6 +10,14 @@ const ecomStore = (set) => ({
    token: null,
    categories: [],
    products: [],
+   productUpdated: false,// for ImgProdInTableList + TableListProducts re-render
+   setProductUpdated: (updated) => {
+      set({ productUpdated: updated });
+   },
+   //use this function to re-render any component
+   callThisToRender: (func) => {
+      func();
+   },
 
    actionLogin: async (form) => {
       //1. Send req with form to backend, path : http://localhost:5000/api/login
@@ -39,9 +47,12 @@ const ecomStore = (set) => ({
    getProduct: async (token, count=50) => {
       try {
          const res = await listProduct(token, count);
+         console.log("getProduct response:", res);
          set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
+         return res; // Return the response
       } catch (err) {
          console.log(err);
+         return undefined; // Return undefined in case of error
       }
    }
 });

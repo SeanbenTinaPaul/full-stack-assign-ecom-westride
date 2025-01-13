@@ -1,21 +1,48 @@
 //sortable table of all products
 //parent→ FormProduct.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Table } from "flowbite-react";
 
 //icon
 import { Pencil, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ImgProdInTableList from "./ImgProdInTableList";
 
-function TableListProducts({ products }) {
+import useEcomStore from "../../store/ecom-store";
+
+//props.products=[{},{},..] → data from DB with cloudinary URL
+function TableListProducts({ products, handleDel, isRerender }) {
+   const { getProduct, token } = useEcomStore((state) => state);
    //initialize the sort col and order
    const [tableData, setTableData] = useState(products);
    const [sortCol, setSortCol] = useState(null);
    const [sortOrder, setSortOrder] = useState("asc");
-   console.log("prod in table", products); //===[{images:[{url:..}],...}, {}]
+   const location = useLocation(); //to listen to location change
+   console.log("prod in table", products); //products===[{images:[{url:..}],...}, {}]
    // console.log('data',data)
+
+   /*
+   if redirected to this page → trigger useEffect to fetch data and display in table
+   - alternative to refresh whole page by window.location.reload()
+   - refresh only TableListProducts.jsx
+   */
+   useEffect(() => {
+      const fetchProduct = async (token) => {
+         try {
+            const res = await getProduct(token);
+            console.log("res from TableListProducts->", res.data);
+            if (res && res.data) {
+               setTableData(res.data);
+            } else {
+               console.error("Unexpected response structure:", res);
+            }
+         } catch (err) {
+            console.log(err);
+         }
+      };
+      fetchProduct(token);
+   }, [getProduct, token, location, isRerender]);
 
    //function to sort table data
    const sortData = (col) => {
@@ -317,6 +344,12 @@ function TableListProducts({ products }) {
                            <p
                               className='cursor-pointer'
                               title='Delete'
+                              onClick={() => handleDel(row.id)}
+                              // onClick={() => {
+                              //    if (window.confirm("Are you sure you want to delete this product?")) {
+                              //       handleDel(row.id);
+                              //    }
+                              // }}
                            >
                               <Trash2 className='w-4 hover:text-rose-700' />
                            </p>
@@ -331,7 +364,9 @@ function TableListProducts({ products }) {
 }
 
 TableListProducts.propTypes = {
-   products: PropTypes.array
+   products: PropTypes.array,
+   handleDel: PropTypes.func,
+   isRerender: PropTypes.bool
 };
 
 export default TableListProducts;

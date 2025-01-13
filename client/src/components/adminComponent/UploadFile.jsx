@@ -1,8 +1,10 @@
-//parent→ FormProduct.jsx
+//parent→ FormProduct.jsx, FormEditProd.jsx
 import React, { useState, createRef } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
+
+import { X } from "lucide-react";
 
 import { delImg, uploadFiles } from "../../api/ProductAuth";
 
@@ -16,12 +18,12 @@ const UploadFile = ({ inputForm, setInputForm }) => {
    const [textColors, setTextColors] = useState({}); // Store text color for each image
    const fileInputRef = createRef(); // Create a ref for the file input
    // const [selectedFiles, setSelectedFiles] = useState([]); // State to keep track of selected files
-   
+
    // imgDataArr used to save image-data obj
    let imgDataArr = inputForm.images; //images → empty array
    // console.log("inputForm before img upload->", inputForm);
    // console.log("imgDataArr->", imgDataArr);
-   
+
    const handleOnChange = (e) => {
       console.log("inputForm after img upload->", inputForm);
       const fileList = e.target.files;
@@ -87,7 +89,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
          if (successCount === fileList.length && successCount > 0) {
             toast.success(`Upload ${successCount} images success!!!`);
          }
-         if(fileList.length === 0) fileInputRef.current.value = ""; // Reset the file input value
+         if (fileList.length === 0) fileInputRef.current.value = ""; // Reset the file input value
       }
    };
 
@@ -105,7 +107,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                images: filteredImg
             });
             // setSelectedFiles([]); // Reset selected files state
-            if(filteredImg.length === 0) fileInputRef.current.value = ""; // Reset the file input value
+            if (filteredImg.length === 0) fileInputRef.current.value = ""; // Reset the file input value
          })
          .catch((err) => {
             console.log(err);
@@ -130,7 +132,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                   return (
                      <div
                         key={obj.asset_id}
-                        className='relative hover:z-50'
+                        className='relative hover:z-22'
                      >
                         <img
                            src={obj.url}
@@ -141,12 +143,26 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                         />
                         <span
                            title='Delete image'
-                           className={`absolute top-0 right-1 font-bold opacity-70 cursor-pointer`}
-                           style={{ color: textColors[obj.asset_id] || "black" }}
+                           className={`absolute top-0 right-2 w-4 opacity-70 cursor-pointer hover:border-y-rose-700 hover:text-red-600 hover:rotate-180 hover:scale-x-125 transition duration-300 hover:border-y-2 ${
+                              textColors[obj.asset_id] === "black"
+                                 ? "text-black border-white"
+                                 : "text-white border-black"
+                           }`}
                            onClick={() => handleDelImg(obj.public_id)}
                         >
-                           X
+                           <X />
                         </span>
+                        {/* <span title='Delete image'>
+                           <X
+                              className={`absolute top-0 right-1 w-4 opacity-70 cursor-pointer hover:border-y-2 hover:border-y-red-600 hover:scale-150 transition duration-300`}
+                              style={{
+                                 // color: textColors[obj.asset_id] || "black",
+                                 stroke: textColors[obj.asset_id] || "black",
+                                 strokeWidth: "5" // ความหนาของเส้นรอบตัว
+                              }}
+                              onClick={() => handleDelImg(obj.public_id)}
+                           />
+                        </span> */}
                      </div>
                   );
                })}

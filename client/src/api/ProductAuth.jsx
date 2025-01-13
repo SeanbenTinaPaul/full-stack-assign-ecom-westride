@@ -28,6 +28,7 @@ export const readProduct = async (token, id) => {
       }
    });
 };
+
 export const updateProduct = async (token, id, form) => {
    return await axios.patch("http://localhost:5000/api/product/" + id, form, {
       headers: {
@@ -36,6 +37,13 @@ export const updateProduct = async (token, id, form) => {
    });
 };
 
+export const delProduct = async (token, id) => {
+   return await axios.delete("http://localhost:5000/api/product/" + id, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};
 //accroding to Frontend, uploadFiles() is called before createProduct()
 export const uploadFiles = async (token, form) => {
    // console.log('form api frontend',form);
