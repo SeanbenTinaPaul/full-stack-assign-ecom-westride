@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css"; //(optional) provides the defaul
 import useEcomStore from "../../store/ecom-store";
 //API
 import { createProduct, delProduct } from "../../api/ProductAuth";
+//icons
+import { LoaderCircle, CloudUpload, HardDriveUpload } from "lucide-react";
 //Component
 import TableListProducts from "./TableListProducts";
 import UploadFile from "./UploadFile";
@@ -25,8 +27,8 @@ function FormProduct() {
    // const categories = useEcomStore((state)=> state.categories)
    const { token, getCategory, categories, getProduct, products } = useEcomStore((state) => state);
    const [inputForm, setInputForm] = useState(inputProd);
-   const [loading, setLoading] = useState(false);//for Btn loading animation
-   const [isRerender, setIsRerender] = useState(false);//for TableListProducts.jsx re-render
+   const [loading, setLoading] = useState(false); //for Btn loading animation
+   const [isRerender, setIsRerender] = useState(false); //for TableListProducts.jsx re-render
    // console.log('categories->',categories)
    // console.log('products->',products);
 
@@ -75,8 +77,10 @@ function FormProduct() {
          if (!inputForm[key] || inputForm[key] === "") {
             if (key === "description") continue; //empty description can be allowed
             if (key === "categoryId") {
+               toast.dismiss();
                return toast.warning("Please select category.");
             } else {
+               toast.dismiss();
                return toast.warning("Please enter all fields.");
             }
          }
@@ -98,7 +102,7 @@ function FormProduct() {
          });
 
          setLoading(false);
-         setIsRerender(!isRerender);//rerender TableListProducts if click 'Add Product'
+         setIsRerender(!isRerender); //rerender TableListProducts if click 'Add Product'
       } catch (err) {
          console.log(err);
       }
@@ -169,6 +173,7 @@ function FormProduct() {
                   value={inputForm.title} ////โผล่ใน event.target.value
                   placeholder='e.g. ขาหมูเยอรมัน, HP Laptop...'
                   onChange={handleOnchange}
+                  required
                />
                <label
                   htmlFor='description'
@@ -198,6 +203,7 @@ function FormProduct() {
                   value={inputForm.price}
                   placeholder='e.g. 5000, 99.50'
                   onChange={handleOnchange}
+                  required
                />
                <label
                   htmlFor='quantity'
@@ -212,6 +218,7 @@ function FormProduct() {
                   value={inputForm.quantity}
                   placeholder='e.g. 150'
                   onChange={handleOnchange}
+                  required
                />
                <br />
                <select
@@ -242,8 +249,15 @@ function FormProduct() {
                   inputForm={inputForm}
                   setInputForm={setInputForm}
                />
-               <button className='bg-fuchsia-800 hover:bg-fuchsia-700 text-white font-bold py-2 px-4 rounded-md shadow-md'>
-                  {loading ? "Adding..." : "Add Product"}
+               <button className='bg-fuchsia-800 hover:bg-fuchsia-700 transition-colors duration-300 ease-in-out text-white font-bold py-2 px-4 rounded-md shadow-md'>
+                  {loading ? (
+                     <div className='flex items-center gap-2'>
+                        <HardDriveUpload className='w-4 animate-bounceScale' />{" "}
+                        <span>Adding..</span>
+                     </div>
+                  ) : (
+                     "Add Product"
+                  )}
                </button>
             </form>
          </div>

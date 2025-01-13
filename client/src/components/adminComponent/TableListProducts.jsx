@@ -16,7 +16,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
    const { getProduct, token } = useEcomStore((state) => state);
    //initialize the sort col and order
    const [tableData, setTableData] = useState(products);
-   const [sortCol, setSortCol] = useState(null);
+   const [sortCol, setSortCol] = useState("id");
    const [sortOrder, setSortOrder] = useState("asc");
    const location = useLocation(); //to listen to location change
    console.log("prod in table", products); //products===[{images:[{url:..}],...}, {}]
@@ -67,24 +67,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         ID
-                        {sortCol === "id" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
                   <Table.HeadCell>
@@ -96,24 +94,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Title
-                        {sortCol === "title" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "title" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
                   <Table.HeadCell
@@ -122,24 +118,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center truncate'>
                         Category ID
-                        {sortCol === "categoryId" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "categoryId" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
 
@@ -149,24 +143,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Price
-                        {sortCol === "price" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "price" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
 
@@ -176,24 +168,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Quantity
-                        {sortCol === "quantity" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "quantity" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
 
@@ -203,24 +193,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Sold
-                        {sortCol === "sold" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "sold" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
 
@@ -230,24 +218,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Description
-                        {sortCol === "description" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "description" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
                   <Table.HeadCell
@@ -256,24 +242,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Created At
-                        {sortCol === "createdAt" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "createdAt" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
 
@@ -283,24 +267,22 @@ function TableListProducts({ products, handleDel, isRerender }) {
                   >
                      <div className='flex items-center'>
                         Updated At
-                        {sortCol === "updatedAt" && (
-                           <svg
-                              className={`w-4 h-4 ml-2 transition-transform ${
-                                 sortOrder === "asc" ? "rotate-180" : ""
-                              }`}
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 24 24'
-                              stroke='currentColor'
-                           >
-                              <path
-                                 strokeLinecap='round'
-                                 strokeLinejoin='round'
-                                 strokeWidth={2}
-                                 d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                              />
-                           </svg>
-                        )}
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "updatedAt" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
                      </div>
                   </Table.HeadCell>
                   <Table.HeadCell>
@@ -338,7 +320,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
                               title='Edit'
                            >
                               <Link to={"/admin/product/" + row.id}>
-                                 <Pencil className='w-3 hover:text-Bg-warning' />
+                                 <Pencil className='w-3 hover:text-Bg-warning hover:scale-125 transition duration-300' />
                               </Link>
                            </p>
                            <p
@@ -351,7 +333,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
                               //    }
                               // }}
                            >
-                              <Trash2 className='w-4 hover:text-rose-700' />
+                              <Trash2 className='w-4 hover:text-rose-500 hover:scale-125 transition duration-300' />
                            </p>
                         </Table.Cell>
                      </Table.Row>

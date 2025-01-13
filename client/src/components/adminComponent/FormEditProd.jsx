@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import useEcomStore from "../../store/ecom-store";
 //API
 import { createProduct, readProduct, listProduct, updateProduct } from "../../api/ProductAuth";
+//icons
+import { LoaderCircle, HardDriveUpload } from "lucide-react";
 //Component
 import UploadFile from "./UploadFile";
 
@@ -38,7 +40,7 @@ function FormEditProd() {
             console.log(err);
          }
       };
-      getCategory(token);//for dropdown select Category
+      getCategory(token); //for dropdown select Category
       fetchProduct(token, id, inputForm);
    }, [token, getCategory, id]);
    console.log("inputForm edit prod->", inputForm);
@@ -155,7 +157,7 @@ function FormEditProd() {
                   name='categoryId'
                   value={inputForm.categoryId}
                   id=''
-                  className='border my-1 rounded-md'
+                  className='border my-1 rounded-md duration-300 ease-in-out'
                   onChange={handleOnchange}
                   required
                >
@@ -182,10 +184,17 @@ function FormEditProd() {
                   setInputForm={setInputForm}
                />
                <button
-                  className='bg-fuchsia-800 hover:bg-fuchsia-700 text-white font-bold py-2 px-4 rounded-md shadow-md'
+                  className='bg-fuchsia-800 hover:bg-fuchsia-700 transition-colors duration-300 ease-in-out text-white font-bold py-2 px-4 rounded-md shadow-md'
                   disabled={loading}
                >
-                  {loading ? "Updating..." : "Update Product"}
+                  {loading ? (
+                     <div className='flex items-center gap-2'>
+                        <HardDriveUpload className='w-4 animate-bounceScale' />{" "}
+                        <span>Updating..</span>
+                     </div>
+                  ) : (
+                     "Update Product"
+                  )}
                </button>
             </form>
          </div>

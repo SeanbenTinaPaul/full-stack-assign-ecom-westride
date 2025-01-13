@@ -97,7 +97,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
    const handleDelImg = (public_id) => {
       delImg(token, public_id)
          .then((res) => {
-            console.log('res del img in cloud',res);
+            console.log("res del img in cloud", res);
             const filteredImg = imgDataArr.filter((obj) => {
                return obj.public_id !== public_id;
             });
@@ -142,20 +142,20 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                         <img
                            src={obj.url}
                            alt='product-img'
-                           className='h-24 hover:scale-150 transition duration-300'
+                           className='h-24 hover:shadow-lg hover:scale-150 transition duration-500 ease-in-out'
                            crossOrigin='anonymous' // Needed for Color Thief
                            onLoad={(e) => handleCalculateTextColor(e.target, obj.asset_id)}
                         />
                         <span
                            title='Delete image'
-                           className={`absolute top-0 right-2 w-4 opacity-70 cursor-pointer hover:border-y-rose-700  hover:rotate-180 hover:scale-x-125 transition duration-300 hover:border-y-2`}
+                           className={`absolute top-0 right-2 w-4 opacity-30 cursor-pointer hover:opacity-100 hover:rotate-90 hover:scale-y-125 transition duration-500`}
                            onClick={() => handleDelImg(obj.public_id)}
                         >
                            <IconX
                               bgColor={bgColors[obj.asset_id]}
                               className={`${
                                  bgColors[obj.asset_id] === "black" ? "text-black " : "text-white"
-                              } hover:text-red-600`}
+                              } hover:text-red-600 `}
                            />
                         </span>
                      </div>
@@ -168,7 +168,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                name='images'
                ref={fileInputRef} // Attach the ref to the file input
                multiple //ให้สามารถเลือกไฟล์มากกว่า 1
-               className='form-control rounded-md mb-2'
+               className='form-control rounded-md mb-2 hover:bg-slate-400 transition-colors duration-300 ease-in-out'
                onChange={handleOnChange}
             />
             {/* <div>

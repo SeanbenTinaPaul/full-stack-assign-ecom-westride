@@ -20,14 +20,14 @@ const IconX = ({ bgColor, className }) => {
             d='M18 6 6 18'
             stroke={contrastColor}
             strokeWidth='4'
-            opacity='0.5'
+            opacity='0.8'
          />
          <path d='M18 6 6 18' />
          <path
             d='m6 6 12 12'
             stroke={contrastColor}
             strokeWidth='4'
-            opacity='0.5'
+            opacity='0.8'
          />
          <path d='m6 6 12 12' />
       </svg>
