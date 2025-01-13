@@ -1,5 +1,5 @@
 //npm i colorthief
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import ColorThief from 'colorthief';
 
 export const calculateTextColor = (imgElement) => {

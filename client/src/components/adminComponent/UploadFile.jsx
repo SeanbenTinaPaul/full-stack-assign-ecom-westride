@@ -4,18 +4,18 @@ import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
 //icons
-import { X } from "lucide-react";
+import IconX from "../../utilities/IconX";
 //API
 import { delImg, uploadFiles } from "../../api/ProductAuth";
 //Global state
 import useEcomStore from "../../store/ecom-store";
 //use for making text color auto-contrast
-import { calculateTextColor } from "../../utilities/useContrastText"; 
+import { calculateTextColor } from "../../utilities/useContrastText";
 
 const UploadFile = ({ inputForm, setInputForm }) => {
    const token = useEcomStore((state) => state.token);
    const [isLoading, setIsLoading] = useState(false);
-   const [textColors, setTextColors] = useState({}); // Store text color for each image
+   const [bgColors, setBgColors] = useState({}); // Store text color for each image
    const fileInputRef = createRef(); // Create a ref for the file input
    // const [selectedFiles, setSelectedFiles] = useState([]); // State to keep track of selected files
 
@@ -115,10 +115,11 @@ const UploadFile = ({ inputForm, setInputForm }) => {
    };
 
    //calculate text color - colorThief
+   //contrastColor is 'black' or 'white'
    const handleCalculateTextColor = (imgElement, assetId) => {
       const contrastColor = calculateTextColor(imgElement);
-      setTextColors((prev) => ({ ...prev, [assetId]: contrastColor }));
-    };
+      setBgColors((prev) => ({ ...prev, [assetId]: contrastColor }));
+   };
 
    // const calculateTextColor = (imgElement, assetId) => {
    //    const colorThief = new ColorThief();
@@ -147,26 +148,16 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                         />
                         <span
                            title='Delete image'
-                           className={`absolute top-0 right-2 w-4 opacity-70 cursor-pointer hover:border-y-rose-700 hover:text-red-600 hover:rotate-180 hover:scale-x-125 transition duration-300 hover:border-y-2 ${
-                              textColors[obj.asset_id] === "black"
-                                 ? "text-black border-white"
-                                 : "text-white border-black"
-                           }`}
+                           className={`absolute top-0 right-2 w-4 opacity-70 cursor-pointer hover:border-y-rose-700  hover:rotate-180 hover:scale-x-125 transition duration-300 hover:border-y-2`}
                            onClick={() => handleDelImg(obj.public_id)}
                         >
-                           <X />
-                        </span>
-                        {/* <span title='Delete image'>
-                           <X
-                              className={`absolute top-0 right-1 w-4 opacity-70 cursor-pointer hover:border-y-2 hover:border-y-red-600 hover:scale-150 transition duration-300`}
-                              style={{
-                                 // color: textColors[obj.asset_id] || "black",
-                                 stroke: textColors[obj.asset_id] || "black",
-                                 strokeWidth: "5" // ความหนาของเส้นรอบตัว
-                              }}
-                              onClick={() => handleDelImg(obj.public_id)}
+                           <IconX
+                              bgColor={bgColors[obj.asset_id]}
+                              className={`lucide lucide-x ${
+                                 bgColors[obj.asset_id] === "black" ? "text-black " : "text-white"
+                              } hover:text-red-600`}
                            />
-                        </span> */}
+                        </span>
                      </div>
                   );
                })}
