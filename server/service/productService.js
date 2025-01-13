@@ -167,7 +167,7 @@ exports.update = async (req, res) => {
       res.status(200).json({
          success: true,
          data: product
-      })
+      });
       // res.send(product);
    } catch (err) {
       console.log(err);
@@ -179,13 +179,33 @@ exports.update = async (req, res) => {
 exports.remove = async (req, res) => {
    try {
       const { id } = req.params;
+      //for sending res.title to frontend
+      const productToRm = await prisma.product.findUnique({
+         where: {
+            id: Number(id)
+         },
+         include: {
+            images: true
+         }
+      });
+      console.log('productToRm->',productToRm);
+      //del process: del record from table 'Product' + del images from table 'Image' + del img from cloudinary
       await prisma.product.delete({
          where: {
             id: Number(id)
-         }
+         },
       });
 
-      res.send("removed product");
+      // Delete the images from Cloudinary
+      for (const image of productToRm.images) {
+         await cloudinary.uploader.destroy(image.public_id);
+      }
+
+      res.status(200).json({
+         success: true,
+         message: "Remove success",
+         data: productToRm
+      });
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });
@@ -360,6 +380,7 @@ exports.uploadImages = async (req, res) => {
 
 exports.removeImage = async (req, res) => {
    try {
+      // table Image in db also has public_id col
       // console.log("public_id-->", req.body.public_id);
       await cloudinary.uploader.destroy(req.body.public_id, (resolve, reject) => {
          res.status(200).json({

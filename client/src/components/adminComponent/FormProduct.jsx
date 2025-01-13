@@ -135,12 +135,11 @@ function FormProduct() {
    //if user click 'Yes' in Toastify confirm box
    const confirmDelete = async (id, closeToast) => {
       try {
-         console.log("id for del product->", id);
-         // const res = await delProduct(token, id);
-         // console.log("res->", res);
-         // toast.success(`Delete Product: ${res.data.title} Success.`);
-         //refresh the list after click 'Delete Product'
-         // getProduct(token);
+         const res = await delProduct(token, id);
+         console.log("res del product->", res);
+         toast.success(`Delete Product: ${res.data.data.title} Success.`);
+         //rerender TableListProducts if click 'Delete Product' ► click <Trash2/> in TableListProducts.jsx
+         setIsRerender(!isRerender);
          closeToast();
       } catch (err) {
          console.log(err);
