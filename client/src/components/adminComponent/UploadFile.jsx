@@ -3,14 +3,14 @@ import React, { useState, createRef } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
-
+//icons
 import { X } from "lucide-react";
-
+//API
 import { delImg, uploadFiles } from "../../api/ProductAuth";
-
+//Global state
 import useEcomStore from "../../store/ecom-store";
-
-import ColorThief from "colorthief"; //use for making text color auto-contrast
+//use for making text color auto-contrast
+import { calculateTextColor } from "../../utilities/useContrastText"; 
 
 const UploadFile = ({ inputForm, setInputForm }) => {
    const token = useEcomStore((state) => state.token);
@@ -115,14 +115,18 @@ const UploadFile = ({ inputForm, setInputForm }) => {
    };
 
    //calculate text color - colorThief
-   const calculateTextColor = (imgElement, assetId) => {
-      const colorThief = new ColorThief();
-      const [r, g, b] = colorThief.getColor(imgElement);
-      const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b; // Calculate luminance
-      const contrastColor = luminance > 128 ? "black" : "white"; // Choose contrast color
+   const handleCalculateTextColor = (imgElement, assetId) => {
+      const contrastColor = calculateTextColor(imgElement);
       setTextColors((prev) => ({ ...prev, [assetId]: contrastColor }));
-   };
+    };
 
+   // const calculateTextColor = (imgElement, assetId) => {
+   //    const colorThief = new ColorThief();
+   //    const [r, g, b] = colorThief.getColor(imgElement);
+   //    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b; // Calculate luminance
+   //    const contrastColor = luminance > 128 ? "black" : "white"; // Choose contrast color
+   //    setTextColors((prev) => ({ ...prev, [assetId]: contrastColor }));
+   // };
    return (
       <div>
          <div className='flex flex-wrap gap-1 justify-start mx-2 my-3'>
@@ -139,7 +143,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                            alt='product-img'
                            className='h-24 hover:scale-150 transition duration-300'
                            crossOrigin='anonymous' // Needed for Color Thief
-                           onLoad={(e) => calculateTextColor(e.target, obj.asset_id)}
+                           onLoad={(e) => handleCalculateTextColor(e.target, obj.asset_id)}
                         />
                         <span
                            title='Delete image'

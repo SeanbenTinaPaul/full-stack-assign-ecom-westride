@@ -1,5 +1,5 @@
 const prisma = require("../config/prisma");
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require("cloudinary").v2;// import { v2 as cloudinary } from 'cloudinary';
 
 exports.create = async (req, res) => {
    try {
@@ -196,6 +196,20 @@ exports.remove = async (req, res) => {
          },
       });
 
+      /*
+      roductToRm.images === [
+                              {
+                              "id": 900,
+                              "asset_id": "788964f30ee2768df55f6539c039f649",
+                              "public_id": "Ecom_fullstack_app_msc_products/product-1736767026915",
+                              "url": "http://res.cloudinary.com/dvzlnabwf.jpg",
+                              "secure_url": "https://res.cloudinary.com/dvzlnabwf/image/.jpg",
+                              "createdAt": "2025-01-13T11:17:12.276Z",
+                              "updatedAt": "2025-01-13T11:17:12.276Z",
+                              "productId": 31
+                              }, {..}
+                           ]
+      */
       // Delete the images from Cloudinary
       for (const image of productToRm.images) {
          await cloudinary.uploader.destroy(image.public_id);
