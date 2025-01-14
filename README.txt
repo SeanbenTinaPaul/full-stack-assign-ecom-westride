@@ -126,6 +126,48 @@ module.exports = {
 };
 --------------------------------------------------------
 
+ลง ShadCN UI เพื่อใช้ component(additional)
+https://ui.shadcn.com/docs/installation/vite
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+สร้าง jsconfig.json
+วาง 
+{
+  "compilerOptions": {
+    // ...
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+    // ...
+  }
+}
+
+
+npm install -D @types/node
+
+
+เพิ่มใน vite.config.js
+import path from "path"
+
+resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+
+
+npx shadcn@latest init
+Would you like to use CSS variables for theming? Yes
+
+เพิ่ม component 
+npx shadcn@latest add <component> เช่น  
+npx shadcn@latest add card
+สร้าง card.jsx ใน src/components/ui/card.jsx
+
+
 ส่งข้อมูลไปยัง backend (เข้าไปเปิดไฟล์ของ backend แล้ว >npm start ก่อน)
 >npm i axios
 

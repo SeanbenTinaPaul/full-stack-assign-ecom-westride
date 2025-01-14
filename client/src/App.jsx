@@ -1,4 +1,5 @@
 //rafce
+import { Toaster } from "@/components/ui/toaster";
 import React from "react";
 import AppRoutes from "./routes/AppRoutes";
 import { ToastContainer } from "react-toastify";
@@ -8,6 +9,7 @@ const App = () => {
    return (
       <>
          <ToastContainer />
+         <Toaster/>
          <AppRoutes />
       </>
    );

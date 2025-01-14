@@ -52,6 +52,7 @@ function FormProduct() {
       getProduct(token, 20);
    }, [token, getProduct]);
 
+   //when fill input box
    const handleOnchange = (e) => {
       console.log(e.target.name, e.target.value);
       setInputForm({
@@ -60,6 +61,7 @@ function FormProduct() {
       });
    };
 
+   //when click 'Add Product'
    const handleSubmit = async (e) => {
       e.preventDefault();
       console.log("inputForm->", inputForm);

@@ -348,7 +348,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
 TableListProducts.propTypes = {
    products: PropTypes.array,
    handleDel: PropTypes.func,
-   isRerender: PropTypes.bool
+   isRerender: PropTypes.bool,
 };
 
 export default TableListProducts;

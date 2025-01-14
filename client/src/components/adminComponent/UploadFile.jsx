@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
 //icons
 import IconX from "../../utilities/IconX";
+import { HardDriveDownload,ImageDown  } from "lucide-react";
 //API
 import { delImg, uploadFiles } from "../../api/ProductAuth";
 //Global state
@@ -25,6 +26,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
    // console.log("imgDataArr->", imgDataArr);
 
    const handleOnChange = (e) => {
+      setIsLoading(true);
       console.log("inputForm after img upload->", inputForm);
       const fileList = e.target.files;
       // setSelectedFiles(Array.from(fileList)); // Update selected files state
@@ -41,7 +43,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
       */
       //after user click 'select' for images → files === true
       if (fileList) {
-         setIsLoading(!isLoading);
+         setIsLoading(true);
          let successCount = 0; // Count the number of successful uploads
          // loop to upload each image
          for (let i = 0; i < fileList.length; i++) {
@@ -76,9 +78,11 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                            ...inputForm,
                            images: imgDataArr
                         });
+                        setIsLoading(false);
                      })
                      .catch((err) => {
                         console.log(err);
+                        setIsLoading(false);
                      });
                },
                "base64" //encode img to base64 binary
@@ -132,6 +136,11 @@ const UploadFile = ({ inputForm, setInputForm }) => {
       <div>
          <div className='flex flex-wrap gap-1 justify-start mx-2 my-3'>
             {/*access url -> inputForm.images[i].data.url */}
+            {isLoading && (
+               <div className="w-40 text-Text-white drop-shadow-sm flex items-center justify-center">
+                  <ImageDown className='size-8 animate-bounceScale' />
+               </div>
+            )}
             {inputForm.images &&
                inputForm.images.map((obj) => {
                   return (
