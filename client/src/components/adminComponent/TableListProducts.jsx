@@ -57,8 +57,8 @@ function TableListProducts({ products, handleDel, isRerender }) {
    };
 
    return (
-      <div>
-         <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
+      <div className="w-full">
+         <div className='relative sm:rounded-lg rounded-xl border bg-card text-card-foreground shadow '>
             <Table>
                <Table.Head>
                   <Table.HeadCell

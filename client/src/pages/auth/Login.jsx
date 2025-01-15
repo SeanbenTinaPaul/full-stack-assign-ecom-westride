@@ -1,12 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { toast } from "react-toastify";//ใช้แสดงข้อความแจ้งเตือน (toast message) บนเว็บไซต์
+import { useToast } from "@/components/hooks/use-toast";
+// import { toast } from "react-toastify";//ใช้แสดงข้อความแจ้งเตือน (toast message) บนเว็บไซต์
 import useEcomStore from "../../store/ecom-store"; 
 import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
 
-const Login = () => {
+function Login() {
    const navigate = useNavigate();
-
+   const { toast } = useToast();
    const actionLogin = useEcomStore((state) => state.actionLogin); //ยังไม่ใช่การ call function actionLogin() นะ
 
    const user = useEcomStore((state) => state.user); //ลองดึงข้อมูล user(เดิมที่เก็บไว้) มาจาก hook (ไม่ใส่ก็ได้)
@@ -38,11 +39,19 @@ const Login = () => {
          roleRedirect(role);
 
          //toast → มี popup เด้งแจ้งเตือน
-         toast.success(res.data.message || "Login Success");
+         toast({
+            title: 'Welcome Back',
+            description: res.data.message || "Login Success",
+         })
+         // toast.success(res.data.message || "Login Success");
       } catch (err) {
          console.log(err);
          const errMsg = err.response?.data?.message;
-         toast.error(errMsg || "Login Failed");
+         toast({
+            title: 'Error!',
+            description: errMsg || "Login Failed",
+         })
+         // toast.error(errMsg || "Login Failed");
       }
 
       /*try {

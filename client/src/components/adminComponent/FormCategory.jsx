@@ -1,5 +1,5 @@
 //for building category form ►►► to import to Category.jsx ('/admin/category')
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 //component UI
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -205,7 +205,7 @@ function FormCategory() {
                         onChange={(e) => setName(e.target.value)}
                         value={name}
                         placeholder='Enter a category name'
-                        className='flex-1'
+                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                      />
                      <Button
                         type='submit'

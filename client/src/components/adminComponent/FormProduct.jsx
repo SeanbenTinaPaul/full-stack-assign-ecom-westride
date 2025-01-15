@@ -1,13 +1,31 @@
 //parent → Product.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; //(optional) provides the default styles for the toast notifications
+import "react-toastify/dist/ReactToastify.css";
+//(optional) provides the default styles for the toast notifications
 //Global state
 import useEcomStore from "../../store/ecom-store";
 //API
 import { createProduct, delProduct } from "../../api/ProductAuth";
 //icons
-import { LoaderCircle, CloudUpload, HardDriveUpload } from "lucide-react";
+import {
+   Package,
+   Package2,
+   FileText,
+   DollarSign,
+   Image,
+   FolderOpen,
+   HardDriveUpload
+} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+   Select,
+   SelectContent,
+   SelectItem,
+   SelectTrigger,
+   SelectValue
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 //Component
 import TableListProducts from "./TableListProducts";
 import UploadFile from "./UploadFile";
@@ -29,6 +47,7 @@ function FormProduct() {
    const [inputForm, setInputForm] = useState(inputProd);
    const [loading, setLoading] = useState(false); //for Btn loading animation
    const [isRerender, setIsRerender] = useState(false); //for TableListProducts.jsx re-render
+   const fileInputRef = useRef(null);
    // console.log('categories->',categories)
    // console.log('products->',products);
 
@@ -60,6 +79,12 @@ function FormProduct() {
          [e.target.name]: e.target.value
       });
    };
+   const handleCategoryChange = (value) => {
+      setInputForm({
+         ...inputForm,
+         categoryId: value
+      });
+   };
 
    //when click 'Add Product'
    const handleSubmit = async (e) => {
@@ -79,10 +104,10 @@ function FormProduct() {
          if (!inputForm[key] || inputForm[key] === "") {
             if (key === "description") continue; //empty description can be allowed
             if (key === "categoryId") {
-               toast.dismiss();
+               toast.dismiss(); //***** */
                return toast.warning("Please select category.");
             } else {
-               toast.dismiss();
+               toast.dismiss(); /***** */
                return toast.warning("Please enter all fields.");
             }
          }
@@ -91,6 +116,7 @@ function FormProduct() {
          setLoading(true);
          const res = await createProduct(token, inputForm);
          console.log("res FormProduct->", res);
+         //****** */
          toast.success(`Add Product: ${res.data.title} Success.`); //not (res.data.data.title) bc backend use res.send()
          //refresh the list after click 'Add Product'
          getProduct(token);
@@ -113,6 +139,7 @@ function FormProduct() {
    //click in TableListProducts.jsx to delete a product + Toastify confirm box
    const handleDel = async (id) => {
       // Dismiss(cancel) any existing toasts but keep the most recent one, prevent multiple toast boxes appearing
+      /******** */
       toast.dismiss();
       // Show the confirmation toast
       toast(
@@ -143,9 +170,11 @@ function FormProduct() {
       try {
          const res = await delProduct(token, id);
          console.log("res del product->", res);
+         /***** */
          toast.success(`Delete Product: ${res.data.data.title} Success.`);
          //rerender TableListProducts if click 'Delete Product' ► click <Trash2/> in TableListProducts.jsx
          setIsRerender(!isRerender);
+         /****** */
          closeToast();
       } catch (err) {
          console.log(err);
@@ -154,7 +183,173 @@ function FormProduct() {
 
    return (
       <div>
-         <ToastContainer />
+         <div>
+            <ToastContainer />
+            <form
+               onSubmit={handleSubmit}
+               className='p-6 space-y-6 max-w-3xl mx-auto'
+            >
+               <h1 className='text-2xl font-bold mb-6'>Product Management</h1>
+
+               <Card className='shadow-lg'>
+                  <CardHeader>
+                     <CardTitle className='flex items-center gap-2'>
+                        <Package className='w-5 h-5' />
+                        ข้อมูลพื้นฐาน
+                     </CardTitle>
+                  </CardHeader>
+                  <CardContent className='space-y-4'>
+                     <div className='space-y-2'>
+                        <label className='flex items-center gap-2 text-sm font-medium'>
+                           <Package2 className='w-4 h-4' />
+                           Product Name
+                        </label>
+                        <input
+                           type='text'
+                           name='title'
+                           value={inputForm.title}
+                           placeholder='e.g. จานเมลามีน, HP Laptop'
+                           onChange={handleOnchange}
+                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           // className='w-full shadow-[0_0_10px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent'
+                           required
+                        />
+                     </div>
+
+                     <div className='space-y-2'>
+                        <label className='flex items-center gap-2 text-sm font-medium'>
+                           <FileText className='w-4 h-4' />
+                           Description
+                        </label>
+                        <textarea
+                           name='description'
+                           value={inputForm.description}
+                           placeholder='e.g. มีสีฟ้าหวาน, อุปกรณ์'
+                           onChange={handleOnchange}
+                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        />
+                     </div>
+                  </CardContent>
+               </Card>
+
+               <Card className='shadow-lg'>
+                  <CardHeader>
+                     <CardTitle className='flex items-center gap-2'>
+                        <FolderOpen className='w-5 h-5' />
+                        รายละเอียดสินค้า
+                     </CardTitle>
+                  </CardHeader>
+                  <CardContent className='space-y-4'>
+                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <div className='space-y-2'>
+                           <label className='flex items-center gap-2 text-sm font-medium'>
+                              <DollarSign className='w-4 h-4' />
+                              Price (฿)
+                           </label>
+                           <input
+                              type='number'
+                              step='0.01'
+                              name='price'
+                              value={inputForm.price}
+                              placeholder='e.g. 5000, 99.50'
+                              onChange={handleOnchange}
+                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              required
+                           />
+                        </div>
+
+                        <div className='space-y-2'>
+                           <label className='flex items-center gap-2 text-sm font-medium'>
+                              <Package2 className='w-4 h-4' />
+                              Quantity
+                           </label>
+                           <input
+                              type='number'
+                              name='quantity'
+                              value={inputForm.quantity}
+                              placeholder='e.g. 150'
+                              onChange={handleOnchange}
+                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              required
+                           />
+                        </div>
+                     </div>
+
+                     <div className='space-y-2'>
+                        <label className='flex items-center gap-2 text-sm font-medium'>
+                           <FolderOpen className='w-4 h-4' />
+                           Category
+                        </label>
+                        {/* แก้ปัญหาเลือก selectValue แล้วไม่แสดงชื่อ category ในช่อง
+                        1. ส่ง props ที่เป็น string ไปยัง Select()  
+                        2.เพิ่ม categories.find()
+                        */}
+                        <Select
+                           value={inputForm.categoryId.toString()}
+                           onValueChange={handleCategoryChange}
+                        >
+                           <SelectTrigger className='w-full'>
+                              <SelectValue placeholder='Select category'>
+                                 {
+                                    categories.find(
+                                       (cat) =>
+                                          cat.id.toString() === inputForm.categoryId.toString()
+                                    )?.name
+                                 }
+                              </SelectValue>
+                           </SelectTrigger>
+                           <SelectContent>
+                              {categories.map((item) => (
+                                 <SelectItem
+                                    key={item.id}
+                                    value={item.id.toString()}
+                                 >
+                                    {item.name}
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
+
+                     <div className='space-y-2'>
+                        <label className='flex items-center gap-2 text-sm font-medium'>
+                           <Image className='w-4 h-4' />
+                           Product Image
+                        </label>
+                        <UploadFile
+                           inputForm={inputForm}
+                           setInputForm={setInputForm}
+                        />
+                     </div>
+                  </CardContent>
+               </Card>
+
+               <Button
+                  type='submit'
+                  className='w-full md:w-auto bg-fuchsia-800 hover:bg-fuchsia-700'
+                  disabled={loading}
+               >
+                  {loading ? (
+                     <div className='flex items-center gap-2'>
+                        <HardDriveUpload className='w-4 animate-bounceScale' />
+                        <span>Adding...</span>
+                     </div>
+                  ) : (
+                     "Add Product"
+                  )}
+               </Button>
+            </form>
+
+            <div className='mt-4 p-6 max-w-full max-h-[80vh] mx-auto overflow-hidden overflow-y-auto overflow-x-auto'>
+               <TableListProducts
+                  products={products}
+                  handleDel={handleDel}
+                  isRerender={isRerender}
+               />
+            </div>
+         </div>
+         {/* ****** ลบ toastify */}
+         {/* <ToastContainer />
          <div className='container mx-auto p-4 gap-4 bg-Dropdown-option-night shadow-md rounded-md'>
             <form
                action=''
@@ -247,7 +442,7 @@ function FormProduct() {
                   ))}
                </select>
                {/* upload img file */}
-               <UploadFile
+         {/* <UploadFile
                   inputForm={inputForm}
                   setInputForm={setInputForm}
                />
@@ -262,15 +457,15 @@ function FormProduct() {
                   )}
                </button>
             </form>
-         </div>
+         </div> */}
          {/* table of all products */}
-         <div className='mt-4'>
+         {/* <div className='mt-4'>
             <TableListProducts
                products={products}
                handleDel={handleDel}
                isRerender={isRerender}
             />
-         </div>
+         </div>  */}
       </div>
    );
 }

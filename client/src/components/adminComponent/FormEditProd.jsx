@@ -22,17 +22,18 @@ const inputProd = {
 };
 
 function FormEditProd() {
-   const { id } = useParams();
+   const { id } = useParams(); //get '26' from 'http://localhost:5173/admin/product/26'
    const navigate = useNavigate();
    const { token, getCategory, categories } = useEcomStore((state) => state);
    const [inputForm, setInputForm] = useState(inputProd);
    const [loading, setLoading] = useState(false);
    //  console.log('inputForm bf edit->', inputForm);
 
+   //to display default value in input box
    useEffect(() => {
-      const fetchProduct = async (token, id, inputForm) => {
+      const fetchProduct = async (token, id, ) => {
          try {
-            const res = await readProduct(token, id, inputForm);
+            const res = await readProduct(token, id, );
             console.log("res edit prod->", res.data);
             // res.data = { data: res.data.data };//remove 'success: true' key from {}
             setInputForm(res.data.data); //ทำให้เติม value ในช่อง form by default เมื่อเข้ามาในหน้านี้
@@ -41,7 +42,7 @@ function FormEditProd() {
          }
       };
       getCategory(token); //for dropdown select Category
-      fetchProduct(token, id, inputForm);
+      fetchProduct(token, id, );
    }, [token, getCategory, id]);
    console.log("inputForm edit prod->", inputForm);
 

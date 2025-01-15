@@ -1,80 +1,409 @@
 //parent→ LayoutAdmin.jsx
-import React from "react";
-import PropTypes from "prop-types";
-import { NavLink } from "react-router-dom";
-import { LayoutDashboard, ChartNoAxesGantt,ChartBarStacked,PackagePlus ,LogOut } from "lucide-react";
 
-const SidebarAdmin = () => {
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+   LayoutDashboard,
+   ChartNoAxesGantt,
+   ChartBarStacked,
+   PackagePlus,
+   LogOut
+} from "lucide-react";
+
+const navItems = [
+   {
+      title: "Dashboard",
+      url: "/admin",
+      icon: LayoutDashboard,
+      end: true
+   },
+   {
+      title: "Manage",
+      url: "manage",
+      icon: ChartNoAxesGantt
+   },
+   {
+      title: "Category",
+      url: "category",
+      icon: ChartBarStacked
+   },
+   {
+      title: "Product",
+      url: "product",
+      icon: PackagePlus
+   }
+];
+
+const SidebarAdmin = ({ isCollapsed }) => {
+   const sidebarWidth = isCollapsed ? "w-16" : "w-64";
+   //Added fixed top-0 left-0 to the sidebar's root div to make unscrollable along with Category.jsx content
+   //go to LayoutAdmin.jsx to set more...
    return (
-      <div className='bg-Header-footer-bar-night w-64 text-Text-white flex flex-col h-screen drop-shadow-xl'>
-         <div className='h-24 bg-Header-bar-light flex items-center justify-center text-2xl font-bold'>
-            Admin Panel
+      <div className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}>
+         <div className={`mt-10 h-24 bg-slate-700 flex items-center justify-center ${isCollapsed ? 'px-2' : 'px-4'}`}>
+            <h2 className={`font-bold transition-all duration-300 ${isCollapsed ? 'text-sm' : 'text-2xl'}`}>
+               {isCollapsed ? 'AP' : 'Admin Panel'}
+            </h2>
          </div>
-         <nav className='flex-1 px-2 py-4 space-y-2'>
-            <NavLink
-               to={"/admin"} //path ต่างๆอยู่ใน AppRoutes.jsx
-               end //end คือ path ต้องเป็น /admin และไม่ต้องเป็น /admin/ จึงจะแสดง isActive===true
-               // {isActive} ใช้ตรวจว่าโดน "คลิก หรือ โดนเอาเมาส์ไปโดน"แล้วหรือยัง
-               className={({ isActive }) =>
-                  isActive
-                     ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
-                     : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
-               }
+         
+         <ScrollArea className="flex-1 px-2 py-4 h-[calc(100vh-8.5rem)]">
+            <nav className="space-y-2">
+               {navItems.map((item) => (
+                  <NavLink
+                     key={item.title}
+                     to={item.url}
+                     end={item.end}
+                     className={({ isActive }) =>
+                        `${isActive ? 'bg-slate-900 text-white' : 'text-gray-300 hover:bg-slate-700'} 
+                        px-3 py-2 rounded flex items-center transition-all duration-300
+                        ${isCollapsed ? 'justify-center' : 'justify-start'}`
+                     }
+                  >
+                     <item.icon className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-5 w-5`} />
+                     <span className={`transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
+                        {item.title}
+                     </span>
+                  </NavLink>
+               ))}
+            </nav>
+         </ScrollArea>
+         
+         <div className="p-2">
+            <button
+               className={`w-full text-gray-300 px-3 py-2 hover:bg-slate-700 rounded flex items-center transition-all duration-300
+               ${isCollapsed ? 'justify-center' : 'justify-start'}`}
             >
-               <LayoutDashboard className='mr-2' />
-               Dashboard
-            </NavLink>
-            <NavLink
-               to={"manage"} //จะเป็น '/admin/manage' (ต่อท้าย '/admin') | ถ้าใช้ {'/manage'} เมื่อคลิกจะเป็น path :'/manage' (แทนที่ '/admin')
-               className={({ isActive }) =>
-                  isActive
-                     ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
-                     : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
-               }
-            >
-               <ChartNoAxesGantt className='mr-2' />
-               Manage
-            </NavLink>
-            <NavLink
-               to={"category"}
-               className={({ isActive }) =>
-                  isActive
-                     ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
-                     : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
-               }
-            >
-               <ChartBarStacked className='mr-2' />
-               Category
-            </NavLink>
-            <NavLink
-               to={"product"}
-               className={({ isActive }) =>
-                  isActive
-                     ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
-                     : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
-               }
-            >
-               <PackagePlus className='mr-2' />
-               Product
-            </NavLink>
-         </nav>
-         <div>
-            <NavLink
-            //    to={"logout"}
-               className={({ isActive }) =>
-                  isActive
-                     ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
-                     : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
-               }
-            >
-               <LogOut className='mr-2' />
-               Log out
-            </NavLink>
+               <LogOut className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-5 w-5`} />
+               <span className={`transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
+                  Log out
+               </span>
+            </button>
          </div>
       </div>
    );
 };
 
-SidebarAdmin.propTypes = {};
-
 export default SidebarAdmin;
+// import React from "react";
+// import PropTypes from "prop-types";
+// import { Link } from "react-router-dom";
+// import {
+//    Sidebar,
+//    SidebarContent,
+//    SidebarGroup,
+//    SidebarGroupContent,
+//    SidebarGroupLabel,
+//    SidebarMenu,
+//    SidebarMenuButton,
+//    SidebarMenuItem,
+// } from "@/components/ui/sidebar";
+// import { LayoutDashboard, ChartBarStacked, PackagePlus, LogOut } from "lucide-react";
+
+// // Menu items.
+// const items = [
+//    {
+//       title: "Dashboard",
+//       url: "/admin",
+//       icon: LayoutDashboard,
+//    },
+//    {
+//       title: "Category",
+//       url: "/admin/category",
+//       icon: ChartBarStacked,
+//    },
+//    {
+//       title: "Products",
+//       url: "/admin/product",
+//       icon: PackagePlus,
+//    },
+//    {
+//       title: "Logout",
+//       url: "/logout",
+//       icon: LogOut,
+//    },
+// ];
+
+// const SidebarAdmin = ({ isOpen }) => {
+//    return (
+//       <Sidebar
+//          className={`fixed top-0 left-0 h-full bg-secondary text-foreground border-r shadow transition-all duration-300 ease-in-out  ${
+//             isOpen ? "w-64" : "w-16"
+//          }`}
+//       >
+//          <SidebarContent className="border-2 border-red-500 ">
+//             <SidebarGroup className="border-2 border-red-500 ">
+//                <SidebarGroupLabel
+//                   className={`px-4 mt-16 mb-8 text-lg font-bold border-purple-400 border-2 ${
+//                      isOpen ? "block" : "hidden"
+//                   }`}
+//                >
+//                   Admin Panel
+//                </SidebarGroupLabel>
+//                <SidebarGroupContent className={`border-2 border-green-500 ${isOpen ? "":"mt-32"}`}>
+//                   <SidebarMenu >
+//                      {items.map((item) => (
+//                         <SidebarMenuItem key={item.title} >
+//                            <SidebarMenuButton asChild >
+//                               <Link
+//                                  to={item.url}
+//                                  className="flex items-center gap-2 px-4 py-2 hover:bg-accent rounded "
+//                               >
+//                                  <item.icon className="h-5 w-5  border-2 border-red-500 " />
+//                                  <span className={`${isOpen ? "block" : "hidden"}`}>
+//                                     {item.title}
+//                                  </span>
+//                               </Link>
+//                            </SidebarMenuButton>
+//                         </SidebarMenuItem>
+//                      ))}
+//                   </SidebarMenu>
+//                </SidebarGroupContent>
+//             </SidebarGroup>
+//          </SidebarContent>
+//       </Sidebar>
+//    );
+// };
+
+// SidebarAdmin.propTypes = {
+//    isOpen: PropTypes.bool.isRequired,
+// };
+
+// export default SidebarAdmin;
+
+
+
+// import React from "react";
+// import {
+//    Sidebar,
+//    SidebarContent,
+//    SidebarGroup,
+//    SidebarGroupContent,
+//    SidebarGroupLabel,
+//    SidebarMenu,
+//    SidebarMenuButton,
+//    SidebarMenuItem,
+// } from "@/components/ui/sidebar";
+// import { LayoutDashboard, ChartBarStacked, PackagePlus, LogOut } from "lucide-react";
+
+// // Menu items.
+// const items = [
+//    {
+//       title: "Dashboard",
+//       url: "/admin",
+//       icon: LayoutDashboard,
+//    },
+//    {
+//       title: "Category",
+//       url: "/admin/category",
+//       icon: ChartBarStacked,
+//    },
+//    {
+//       title: "Products",
+//       url: "/admin/product",
+//       icon: PackagePlus,
+//    },
+//    {
+//       title: "Logout",
+//       url: "/logout",
+//       icon: LogOut,
+//    },
+// ];
+
+// const SidebarAdmin = () => {
+//    return (
+//       <Sidebar className="w-64 bg-secondary text-foreground border-r">
+//          <SidebarContent>
+//             <SidebarGroup>
+//                <SidebarGroupLabel className="text-lg font-bold px-4 py-2">Admin Panel</SidebarGroupLabel>
+//                <SidebarGroupContent>
+//                   <SidebarMenu>
+//                      {items.map((item) => (
+//                         <SidebarMenuItem key={item.title}>
+//                            <SidebarMenuButton asChild>
+//                               <a href={item.url} className="flex items-center gap-2 px-4 py-2 hover:bg-accent rounded">
+//                                  <item.icon className="h-5 w-5" />
+//                                  <span>{item.title}</span>
+//                               </a>
+//                            </SidebarMenuButton>
+//                         </SidebarMenuItem>
+//                      ))}
+//                   </SidebarMenu>
+//                </SidebarGroupContent>
+//             </SidebarGroup>
+//          </SidebarContent>
+//       </Sidebar>
+//    );
+// };
+
+// export default SidebarAdmin;
+
+
+
+// import React from "react";
+// import PropTypes from "prop-types";
+// import { NavLink } from "react-router-dom";
+// import { LayoutDashboard, ChartNoAxesGantt, ChartBarStacked, PackagePlus, LogOut } from "lucide-react";
+
+// const SidebarAdmin = ({ isOpen }) => {
+//    return (
+//       <div
+//          className={`fixed top-0 left-0 h-full w-64 bg-secondary text-foreground border-border transform transition-transform duration-300 ease-in-out ${
+//             isOpen ? 'translate-x-0' : '-translate-x-full'
+//          }`}
+//       >
+//          <div className="h-16 bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold">
+//             Admin Panel
+//          </div>
+//          <nav className="flex-1 px-4 py-6 space-y-2">
+//             <NavLink
+//                to="/admin"
+//                end
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-accent text-accent-foreground px-4 py-2 flex items-center rounded"
+//                      : "text-foreground/80 hover:bg-accent hover:text-accent-foreground px-4 py-2 rounded flex items-center"
+//                }
+//             >
+//                <LayoutDashboard className="mr-2" />
+//                Dashboard
+//             </NavLink>
+//             <NavLink
+//                to="manage"
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-accent text-accent-foreground px-4 py-2 flex items-center rounded"
+//                      : "text-foreground/80 hover:bg-accent hover:text-accent-foreground px-4 py-2 rounded flex items-center"
+//                }
+//             >
+//                <ChartNoAxesGantt className="mr-2" />
+//                Manage
+//             </NavLink>
+//             <NavLink
+//                to="category"
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-accent text-accent-foreground px-4 py-2 flex items-center rounded"
+//                      : "text-foreground/80 hover:bg-accent hover:text-accent-foreground px-4 py-2 rounded flex items-center"
+//                }
+//             >
+//                <ChartBarStacked className="mr-2" />
+//                Category
+//             </NavLink>
+//             <NavLink
+//                to="product"
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-accent text-accent-foreground px-4 py-2 flex items-center rounded"
+//                      : "text-foreground/80 hover:bg-accent hover:text-accent-foreground px-4 py-2 rounded flex items-center"
+//                }
+//             >
+//                <PackagePlus className="mr-2" />
+//                Product
+//             </NavLink>
+//          </nav>
+//          <div className="px-4 py-2">
+//             <NavLink
+//                to="logout"
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-accent text-accent-foreground px-4 py-2 flex items-center rounded"
+//                      : "text-foreground/80 hover:bg-accent hover:text-accent-foreground px-4 py-2 rounded flex items-center"
+//                }
+//             >
+//                <LogOut className="mr-2" />
+//                Log out
+//             </NavLink>
+//          </div>
+//       </div>
+//    );
+// };
+
+// SidebarAdmin.propTypes = {
+//    isOpen: PropTypes.bool.isRequired,
+// };
+
+// export default SidebarAdmin;
+
+
+
+
+// import React from "react";
+// import PropTypes from "prop-types";
+// import { NavLink } from "react-router-dom";
+// import { LayoutDashboard, ChartNoAxesGantt,ChartBarStacked,PackagePlus ,LogOut } from "lucide-react";
+
+// const SidebarAdmin = () => {
+//    return (
+//       <div className='bg-Header-footer-bar-night w-64 text-Text-white flex flex-col h-screen drop-shadow-xl'>
+//          <div className='h-24 bg-Header-bar-light flex items-center justify-center text-2xl font-bold'>
+//             Admin Panel
+//          </div>
+//          <nav className='flex-1 px-2 py-4 space-y-2'>
+//             <NavLink
+//                to={"/admin"} //path ต่างๆอยู่ใน AppRoutes.jsx
+//                end //end คือ path ต้องเป็น /admin และไม่ต้องเป็น /admin/ จึงจะแสดง isActive===true
+//                // {isActive} ใช้ตรวจว่าโดน "คลิก หรือ โดนเอาเมาส์ไปโดน"แล้วหรือยัง
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
+//                      : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
+//                }
+//             >
+//                <LayoutDashboard className='mr-2' />
+//                Dashboard
+//             </NavLink>
+//             <NavLink
+//                to={"manage"} //จะเป็น '/admin/manage' (ต่อท้าย '/admin') | ถ้าใช้ {'/manage'} เมื่อคลิกจะเป็น path :'/manage' (แทนที่ '/admin')
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
+//                      : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
+//                }
+//             >
+//                <ChartNoAxesGantt className='mr-2' />
+//                Manage
+//             </NavLink>
+//             <NavLink
+//                to={"category"}
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
+//                      : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
+//                }
+//             >
+//                <ChartBarStacked className='mr-2' />
+//                Category
+//             </NavLink>
+//             <NavLink
+//                to={"product"}
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
+//                      : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
+//                }
+//             >
+//                <PackagePlus className='mr-2' />
+//                Product
+//             </NavLink>
+//          </nav>
+//          <div>
+//             <NavLink
+//             //    to={"logout"}
+//                className={({ isActive }) =>
+//                   isActive
+//                      ? "bg-gray-900 text-white px-4 py-2 flex items-center rounded"
+//                      : "text-gray-300 px-4 py-2 hover:bg-gray-700 hover:text-white rounded flex items-center"
+//                }
+//             >
+//                <LogOut className='mr-2' />
+//                Log out
+//             </NavLink>
+//          </div>
+//       </div>
+//    );
+// };
+
+// SidebarAdmin.propTypes = {};
+
+// export default SidebarAdmin;

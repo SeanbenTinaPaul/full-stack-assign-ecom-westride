@@ -116,6 +116,7 @@ const product = await prisma.product.update({
 //update → ไป copy try ของ create มา → เปลี่ยน .create เป็น .update
 exports.update = async (req, res) => {
    try {
+      //req.body === inputForm → form in Frontend
       const { title, description, price, quantity, categoryId, images } = req.body;
 
       // ดึงข้อมูลปัจจุบันจากฐานข้อมูล
@@ -124,10 +125,37 @@ exports.update = async (req, res) => {
          where: { id: parseInt(req.params.id) },
          include: { images: true } // ดึงข้อมูล images ด้วย
       });
-
+      /*
+      existingProduct==={
+         id: number,
+         title: string,
+         description: string,
+         price: number,
+         sold: number,..,
+         images: [  // Array of image objects
+                  {
+                     id: number,
+                     asset_id: string,
+                     public_id: string,
+                     url: string,
+                     productId: number
+                  },...
+                ]
+               };
+      */
       if (!existingProduct) {
          return res.status(404).json({ message: "Product not found" });
       }
+      //verify if user sent the same images.id → not delete that image in DB
+      
+      /*
+      // Create a set of existing image IDs for faster lookup
+         const existingImageIds = new Set(existingProduct.images.map(img => img.id));
+
+      // Filter out images that are not in the existing images
+         const imgIdNotDel = images.filter(img => !existingImageIds.has(img.id));
+      */
+
       //ลบรูปเก่า(เฉพาะใน DB) ออกก่อนเพื่อ insert รูปใหม่
       //ต้องเพิ่ม list product ใน req path ด้วยเพื่อแสดงรายละเอียดของ product ที่ต้องการแก้ไข
       await prisma.image.deleteMany({
@@ -216,8 +244,8 @@ exports.remove = async (req, res) => {
          imgToRm.push(
             new Promise((resolve, reject) => {
                cloudinary.uploader.destroy(image.public_id, (error, result) => {
-                  if (error) reject(error)
-                  else resolve(result)
+                  if (error) reject(error);
+                  else resolve(result);
                });
             })
          );

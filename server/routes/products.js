@@ -19,7 +19,7 @@ const { adminCheck, authCheck } = require("../middlewares/authCheck");
 router.post("/product", create);
 //read
 router.get("/products/:count", list); //view product records according to count numbers
-router.get("/product/:id", read);//for FormEditProd.jsx → readProduct(token, id, inputForm)
+router.get("/product/:id", read);//for FormEditProd.jsx → readProduct(token, id,)
 //write
 router.patch("/product/:id", update);
 router.delete("/product/:id", remove);//delete only a single product

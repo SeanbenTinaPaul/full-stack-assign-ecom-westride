@@ -5,7 +5,20 @@ import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
 //icons
 import IconX from "../../utilities/IconX";
-import { HardDriveDownload,ImageDown  } from "lucide-react";
+import { HardDriveDownload, ImageDown, AlertCircle } from "lucide-react";
+import { useToast } from "@/components/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 //API
 import { delImg, uploadFiles } from "../../api/ProductAuth";
 //Global state
@@ -13,22 +26,25 @@ import useEcomStore from "../../store/ecom-store";
 //use for making text color auto-contrast
 import { calculateTextColor } from "../../utilities/useContrastText";
 
-const UploadFile = ({ inputForm, setInputForm }) => {
+function UploadFile({ inputForm, setInputForm }) {
    const token = useEcomStore((state) => state.token);
    const [isLoading, setIsLoading] = useState(false);
    const [bgColors, setBgColors] = useState({}); // Store text color for each image
    const fileInputRef = createRef(); // Create a ref for the file input
    // const [selectedFiles, setSelectedFiles] = useState([]); // State to keep track of selected files
-
-   // imgDataArr used to save image-data obj
+   const [alert, setAlert] = useState(null); //for alert Warning!
+   const { toast } = useToast();
+   const [imageCount, setImageCount] = useState(inputForm.images.length); // Add state for image count
+   // imgDataArr used to save image-data obj → both existing and new ► from cloud ONLY
    let imgDataArr = inputForm.images; //images → empty array
    // console.log("inputForm before img upload->", inputForm);
    // console.log("imgDataArr->", imgDataArr);
 
    const handleOnChange = (e) => {
-      setIsLoading(true);
       console.log("inputForm after img upload->", inputForm);
+      //fileList ref to fileInputRef.current.value, which is somehow assigned to ""
       const fileList = e.target.files;
+      // setIsLoading(true);
       // setSelectedFiles(Array.from(fileList)); // Update selected files state
       /*fileList === {
                         "0": { lastModified : 1736416405065,
@@ -41,19 +57,70 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                         "1": {...}
                      }
       */
-      //after user click 'select' for images → files === true
+      //check if there is existing images
+      // let existImg = [];
+
+      //after user click select some images → fileList === true
       if (fileList) {
+         console.log("fileList come->", fileList);
+         console.log("fileList len come->", fileList.length);
          setIsLoading(true);
          let successCount = 0; // Count the number of successful uploads
+
+         // Update file input display immediately with total images
+         const existingImagesCount = inputForm.images.length;
+         const newImagesCount = fileList.length;
+         let totalImages = existingImagesCount + newImagesCount;
+         setImageCount(totalImages);
+
+         // if (fileInputRef.current) {
+         //    fileInputRef.current.value = ""; // Reset first
+         //    fileInputRef.current.value = `${totalImages} image(s)`;
+         // }
+
          // loop to upload each image
          for (let i = 0; i < fileList.length; i++) {
-            console.log(fileList[i]);
+            console.log(`fileList[${i}]->`, fileList[i]);
             //validate if it is image → type: "image/jpeg" , "image/png"
             if (!fileList[i].type.startsWith("image/")) {
-               toast.error(`${fileList[i].name} is not image file`);
+               setIsLoading(false);
+               setAlert(
+                  <Alert variant='destructive'>
+                     <AlertCircle className='h-4 w-4' />
+                     <AlertTitle>Warning!</AlertTitle>
+                     <AlertDescription>
+                        `{fileList[i].name.slice(0, 10)}..{fileList[i].name.slice(-7)} is NOT image
+                        file`
+                     </AlertDescription>
+                  </Alert>
+               );
+               //reset file name in input if NOT image
+               fileInputRef.current.value = "";
+
+               //update image count
+               totalImages--;
+               setImageCount(totalImages);
+
+               //hide this alert after 3 seconds
+               setTimeout(() => {
+                  setAlert(null);
+               }, 4000);
                continue; //skip Resizer.imageFileResizer()
+               // toast.error(`${fileList[i].name} is not image file`);
             }
-            //Image Resize
+
+            //// for image files section ////
+
+            //if img name already exist → skip upload
+            // if (existImg.includes(fileList[i].name)) {
+            //    continue; //skip upload
+            // } else {
+            //    existImg.push(fileList[i].name);
+            // }
+
+            setIsLoading(true);
+
+            //Image Resize and upload
             Resizer.imageFileResizer(
                fileList[i],
                720,
@@ -63,7 +130,7 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                0,
                (binaryImg) => {
                   // data === base64 of image
-                  //ProductAuth.jsx → backend
+                  //ProductAuth.jsx → backend → cloudinary (not db yet)
                   uploadFiles(token, binaryImg)
                      .then((res) => {
                         // console.log('chaeck res.data',res.data);
@@ -72,12 +139,38 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                                  message: "Upload success",
                                  data: {asset_id:"4a1b",...}
                                  } 
-                        */
+                         */
+
+                        /*** ให้ทำ ถ้า res.data.data.etag เจอใน imgDataArr[i].etag
+                       → call delImg(token, public_id)
+                       */
+                        if (imgDataArr.length > 0) {
+                           for (let i = 0; i < imgDataArr.length; i++) {
+                              if (imgDataArr[i].etag === res.data.data.etag) {
+                                 //ลบตัวเก่า เก็บตัวใหม่
+                                 delImg(token, imgDataArr[i].public_id);
+                                 //ลบตัวเก่าออกจาก imgDataArr ก่อน push ตัวใหม่
+                                 imgDataArr.splice(i, 1);
+                                 toast({
+                                    title: "Found Duplicate Images!",
+                                    description: `We can keep the latest image only.`
+                                 })
+
+                                 //update image count
+                                 totalImages--;
+                              }
+                           }
+                           //update image count
+                           setImageCount(totalImages);
+                        }
+
+                        console.log('imgDataArr->', imgDataArr);
                         imgDataArr.push(res.data.data);
                         setInputForm({
                            ...inputForm,
                            images: imgDataArr
                         });
+                        console.log('imgDataArr-++>', imgDataArr);
                         setIsLoading(false);
                      })
                      .catch((err) => {
@@ -91,27 +184,71 @@ const UploadFile = ({ inputForm, setInputForm }) => {
          }
          // Show toast success message only if all uploads were successful
          if (successCount === fileList.length && successCount > 0) {
-            toast.success(`Upload ${successCount} images success!!!`);
+            toast({
+               title: "Upload Images Success!",
+               description: `uploaded: ${successCount} image(s)`
+            });
+
+            if (fileList.length === 0) {
+               fileInputRef.current.value = ""; // Reset the file input value
+               setIsLoading(false); //if user click 'Choose file' but click 'Cancel' img selected → no animation
+            }
+            // setIsLoading(false);
+            // Reset file input after successful upload
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            // toast.success(`Upload ${successCount} images success!!!`);
          }
-         if (fileList.length === 0) fileInputRef.current.value = ""; // Reset the file input value
       }
    };
 
+   //click 'Choose file'
+   // const handleButtonClick = () => {
+   //    fileInputRef.current?.click();
+   // };
+
    //del img in cloudinary + preview, when click 'x'
+   //ProductAuth.jsx → backend → cloudinary
    const handleDelImg = (public_id) => {
       delImg(token, public_id)
          .then((res) => {
             console.log("res del img in cloud", res);
+            //filteredImg → remaining images
             const filteredImg = imgDataArr.filter((obj) => {
                return obj.public_id !== public_id;
             });
             console.log(filteredImg);
+            // Update inputForm with remaining images
             setInputForm({
                ...inputForm,
                images: filteredImg
             });
-            // setSelectedFiles([]); // Reset selected files state
-            if (filteredImg.length === 0) fileInputRef.current.value = ""; // Reset the file input value
+            // Update image count after deletion
+            setImageCount(filteredImg.length);
+            // Always reset file input after deletion
+            if (fileInputRef.current) {
+               fileInputRef.current.value = "";
+            }
+
+            // // Update selectedFiles state to match remaining images
+            // setSelectedFiles((prev) => {
+            //    const updatedFiles = [...prev];
+            //    // Remove one file from selectedFiles
+            //    updatedFiles.pop();
+            //    return updatedFiles;
+            // });
+            /// Reset file input if no images left
+
+            console.log("filteredImg.length->", filteredImg.length);
+            // If no images remain, ensure everything is reset
+            if (filteredImg.length === 0) {
+               setImageCount(0);
+            }
+
+            // Update file input display after deletion
+            // if (fileInputRef.current) {
+            //    fileInputRef.current.value = ""; // Reset first
+            //    fileInputRef.current.value = `${filteredImg.length} image(s)`;
+            // }
          })
          .catch((err) => {
             console.log(err);
@@ -135,12 +272,17 @@ const UploadFile = ({ inputForm, setInputForm }) => {
    return (
       <div>
          <div className='flex flex-wrap gap-1 justify-start mx-2 my-3'>
-            {/*access url -> inputForm.images[i].data.url */}
+            {/* error not picture type */}
+            {alert && <div className='mb-4'>{alert}</div>}
+            {/* animate during upload */}
             {isLoading && (
-               <div className="w-40 text-Text-white drop-shadow-sm flex items-center justify-center">
+               <div className='w-40 text-slate-900 drop-shadow-sm flex items-center justify-center'>
                   <ImageDown className='size-8 animate-bounceScale' />
                </div>
             )}
+            {/* display selected(uploaded) images */}
+            {/*access url -> inputForm.images[i].data.url */}
+            {console.log("inputForm.images", inputForm.images)}
             {inputForm.images &&
                inputForm.images.map((obj) => {
                   return (
@@ -171,26 +313,35 @@ const UploadFile = ({ inputForm, setInputForm }) => {
                   );
                })}
          </div>
-         <div>
+         <div className='flex items-center gap-4'>
             <input
                type='file'
                name='images'
                ref={fileInputRef} // Attach the ref to the file input
                multiple //ให้สามารถเลือกไฟล์มากกว่า 1
-               className='form-control rounded-md mb-2 hover:bg-slate-400 transition-colors duration-300 ease-in-out'
+               className='form-control bg-transparent block w-32 text-sm text-transparent rounded-lg file:rounded-lg '
                onChange={handleOnChange}
             />
-            {/* <div>
+            <span className='text-sm text-gray-500'>
+               {imageCount > 0 ? `${imageCount} image(s)` : "No images selected"}
+            </span>
+            {/* <button
+               onClick={handleButtonClick}
+               className='px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2'
+            >
+               Choose Files
+            </button>
+            <span className='text-sm text-gray-500'>
                {selectedFiles.length === 0
                   ? "No file chosen"
                   : selectedFiles.length === 1
                   ? selectedFiles[0].name
                   : `${selectedFiles.length} images selected`}
-            </div> */}
+            </span> */}
          </div>
       </div>
    );
-};
+}
 
 UploadFile.propTypes = {
    inputForm: PropTypes.object,
