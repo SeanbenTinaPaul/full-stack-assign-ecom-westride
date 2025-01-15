@@ -153,16 +153,15 @@ function UploadFile({ inputForm, setInputForm }) {
                                  imgDataArr.splice(i, 1);
                                  toast({
                                     title: "Found Duplicate Images!",
-                                    description: `We can keep the latest image only.`
+                                    description: `We can keep the latest one only.`
                                  })
-
                                  //update image count
                                  totalImages--;
                               }
                            }
                            //update image count
                            setImageCount(totalImages);
-                        }
+                        };
 
                         console.log('imgDataArr->', imgDataArr);
                         imgDataArr.push(res.data.data);
