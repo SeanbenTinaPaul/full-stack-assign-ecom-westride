@@ -28,9 +28,9 @@ function TableListProducts({ products, handleDel, isRerender }) {
    - refresh only TableListProducts.jsx
    */
    useEffect(() => {
-      const fetchProduct = async (token) => {
+      const fetchProduct = async () => {
          try {
-            const res = await getProduct(token);
+            const res = await getProduct(100);
             console.log("res from TableListProducts->", res.data);
             if (res && res.data) {
                setTableData(res.data);
@@ -41,8 +41,8 @@ function TableListProducts({ products, handleDel, isRerender }) {
             console.log(err);
          }
       };
-      fetchProduct(token);
-   }, [getProduct, token, location, isRerender]);
+      fetchProduct();
+   }, [getProduct,location, isRerender]);
 
    //function to sort table data
    const sortData = (col) => {

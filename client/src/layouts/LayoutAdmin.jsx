@@ -9,9 +9,10 @@ const LayoutAdmin = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
    const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-64"; //to maintain content margin when fixed sidebar
    /*
+Add const contentMargin *in this file*
+DO it ▼ in SidebarAdmin.jsx ...
 Added h-[calc(100vh-8.5rem)] to the ScrollArea to account for the header height
 Added margin left (ml-64 or ml-16) to the main content to offset the fixed sidebar
-Go to SidebarAdmin.jsx to set more...
 */
    return (
       <div className='min-h-screen flex'>

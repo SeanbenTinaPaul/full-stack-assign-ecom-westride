@@ -81,14 +81,14 @@ function FormProduct() {
    }, [token, getCategory]);
    */
    useEffect(() => {
-      getCategory(token).then((result) => {
+      getCategory().then((result) => {
          console.log("category->", result);
       });
-   }, [token, getCategory]);
+   }, [getCategory]);
 
    useEffect(() => {
-      getProduct(token, 20);
-   }, [token, getProduct]);
+      getProduct(100);
+   }, [getProduct]);
 
    //when filling each key in input box
    const handleOnchange = (e) => {
@@ -106,7 +106,7 @@ function FormProduct() {
       });
    };
 
-   //when click 'Add Product'
+   //when click 'Add Product' → record in DB
    const handleSubmit = async (e) => {
       e.preventDefault();
       console.log("inputForm->", inputForm);
@@ -168,7 +168,7 @@ function FormProduct() {
          });
          // toast.success(`Add Product: ${res.data.title} Success.`);
          //refresh the list after click 'Add Product'
-         getProduct(token);
+         getProduct();
          setInputForm({
             title: "",
             description: "",
@@ -226,7 +226,7 @@ function FormProduct() {
             title: "Product Deleted Successfully",
             description: `Product: ${res.data.data.title}`
          });
-         getProduct(token);
+         getProduct();
          setShowDialog(false);
          setProductToRemove(null);
          // toast.success(`Delete Product: ${res.data.data.title} Success.`);

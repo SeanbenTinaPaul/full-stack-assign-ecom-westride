@@ -10,13 +10,9 @@ export const createCategory = async (token, form) => {
     }
   })
 }
-
-export const listCategory = async (token) => {
-  return await axios.get('http://localhost:5000/api/category', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
+//dropdown category
+export const listCategory = async () => {
+  return await axios.get('http://localhost:5000/api/category')
 }
 
 export const removeCategory = async (token,id) => {

@@ -7,22 +7,26 @@ import { Menu } from "lucide-react";
 
 const Layout = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+   const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-64"; //to maintain content margin when fixed sidebar
 
    return (
       <div className="min-h-screen flex">
          <MainNav isCollapsed={isSidebarCollapsed} />
-         <div className="flex-1 flex flex-col">
-            <div className="fixed top-1 left-3 z-50 ">
+         <div className={`flex-1 flex flex-col ${contentMargin} transition-all duration-300`}>
+            <div className="fixed top-1 left-3 z-[60]">
                <Button 
                   className="bg-transparent border-none hover:bg-transparent "
                   variant="outline" 
                   size="icon"
                   onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                >
+                  {/* Trigger Button */}
                   <Menu className="h-4 w-4 text-white" />
                </Button>
             </div>
-            <main className="flex-1 p-6 bg-slate-100 overflow-y-auto pt-14">
+            {/* content space */}
+            <main className="flex-1 border-2 border-red-500 h-full p-6 bg-slate-100 overflow-y-auto pt-14">
+               {/* Outlet → Navlink in MainNav.jsx */}
                <Outlet />
             </main>
          </div>

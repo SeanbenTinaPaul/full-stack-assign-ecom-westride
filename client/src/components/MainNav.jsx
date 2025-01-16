@@ -2,13 +2,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-   Home, 
-   Store, 
-   ShoppingCart, 
-   UserPlus, 
-   LogIn 
-} from "lucide-react";
+import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
 
 const navItems = [
    {
@@ -44,30 +38,54 @@ const authItems = [
 
 const MainNav = ({ isCollapsed }) => {
    const sidebarWidth = isCollapsed ? "w-16" : "w-64";
-   
+
    return (
-      <div className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl`}>
-         <div className={` mt-10 h-24 bg-slate-700 flex items-center justify-center ${isCollapsed ? 'px-2' : 'px-4'}`}>
-            <h2 className={`font-bold transition-all duration-300 ${isCollapsed ? 'text-sm' : 'text-2xl'}`}>
-               {isCollapsed ? 'L' : 'LOGO'}
+      <div
+         className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
+      >
+         <div
+            className={` mt-10 h-24 bg-slate-700 flex items-center justify-center ${
+               isCollapsed ? "px-2" : "px-4"
+            }`}
+         >
+            <h2
+               className={`font-bold transition-all duration-300 ${
+                  isCollapsed ? "text-sm" : "text-2xl"
+               }`}
+            >
+               {isCollapsed ? (
+                  <Slack />
+               ) : (
+                  <div className='flex items-center pr-4 gap-2'>
+                     <Slack />
+                     <span>LOGO</span>
+                  </div>
+               )}
             </h2>
          </div>
-         
-         <ScrollArea className="flex-1 px-2 py-4">
-            <nav className="space-y-2">
+
+         <ScrollArea className='flex-1 px-2 py-4 h-[calc(100vh-8.5rem)]'>
+            <nav className='space-y-2'>
                {navItems.map((item) => (
                   <NavLink
                      key={item.title}
                      to={item.url}
                      end={item.end}
+                     title={item.title}
                      className={({ isActive }) =>
-                        `${isActive ? 'bg-slate-900 text-white' : 'text-gray-300 hover:bg-slate-700'} 
+                        `${
+                           isActive ? "bg-slate-900 text-white" : "text-gray-300 hover:bg-slate-700"
+                        } 
                         px-3 py-2 rounded flex items-center transition-all duration-300
-                        ${isCollapsed ? 'justify-center' : 'justify-start'}`
+                        ${isCollapsed ? "justify-center" : "justify-start"}`
                      }
                   >
-                     <item.icon className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-5 w-5`} />
-                     <span className={`transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
+                     <item.icon className={`${isCollapsed ? "mr-0" : "mr-2"} h-5 w-5`} />
+                     <span
+                        className={`transition-all duration-300 ${
+                           isCollapsed ? "hidden" : "block"
+                        }`}
+                     >
                         {item.title}
                      </span>
                   </NavLink>
@@ -75,19 +93,26 @@ const MainNav = ({ isCollapsed }) => {
             </nav>
 
             {/* Auth Links */}
-            <div className="mt-8 pt-4 border-t border-slate-700">
+            <div className='mt-8 pt-4 border-t border-slate-700'>
                {authItems.map((item) => (
                   <NavLink
                      key={item.title}
                      to={item.url}
+                     title={item.title}
                      className={({ isActive }) =>
-                        `${isActive ? 'bg-slate-900 text-white' : 'text-gray-300 hover:bg-slate-700'} 
+                        `${
+                           isActive ? "bg-slate-900 text-white" : "text-gray-300 hover:bg-slate-700"
+                        } 
                         px-3 py-2 rounded flex items-center transition-all duration-300 mb-2
-                        ${isCollapsed ? 'justify-center' : 'justify-start'}`
+                        ${isCollapsed ? "justify-center" : "justify-start"}`
                      }
                   >
-                     <item.icon className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-5 w-5`} />
-                     <span className={`transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
+                     <item.icon className={`${isCollapsed ? "mr-0" : "mr-2"} h-5 w-5`} />
+                     <span
+                        className={`transition-all duration-300 ${
+                           isCollapsed ? "hidden" : "block"
+                        }`}
+                     >
                         {item.title}
                      </span>
                   </NavLink>
@@ -104,12 +129,12 @@ export default MainNav;
 // import { Link } from "react-router-dom";
 // import { Button } from "@/components/ui/button";
 // import { ScrollArea } from "@/components/ui/scroll-area";
-// import { 
-//    Home, 
-//    Store, 
-//    ShoppingCart, 
-//    UserPlus, 
-//    LogIn 
+// import {
+//    Home,
+//    Store,
+//    ShoppingCart,
+//    UserPlus,
+//    LogIn
 // } from "lucide-react";
 
 // const navItems = [
@@ -146,33 +171,33 @@ export default MainNav;
 
 // const MainNav = ({ isCollapsed }) => {
 //    const sidebarWidth = isCollapsed ? "w-16" : "w-64";
-   
+
 //    return (
-//       <div 
+//       <div
 //          className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl`}
 //       >
 //          <ScrollArea className="h-full">
 //             <div className="flex flex-col gap-4 py-4 pt-16">
 //                {/* Logo section */}
-//                <div className={`px-4 py-2 transition-all duration-300 
+//                <div className={`px-4 py-2 transition-all duration-300
 //                   ${isCollapsed ? 'flex justify-center' : ''}`}>
-//                   <h2 className={`font-bold transition-all duration-300 
+//                   <h2 className={`font-bold transition-all duration-300
 //                      ${isCollapsed ? 'text-sm' : 'text-2xl'}`}>
 //                      {isCollapsed ? 'L' : 'LOGO'}
 //                   </h2>
 //                </div>
-               
+
 //                {/* Navigation Links */}
 //                <div className="flex flex-col space-y-2 px-2">
 //                   {navItems.map((item) => (
 //                      <Link key={item.title} to={item.url}>
-//                         <Button 
-//                            variant="ghost" 
+//                         <Button
+//                            variant="ghost"
 //                            className={`w-full transition-all duration-300
 //                               ${isCollapsed ? 'justify-center px-2' : 'justify-start'}`}
 //                         >
 //                            <item.icon className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-4 w-4`} />
-//                            <span className={`transition-all duration-300 
+//                            <span className={`transition-all duration-300
 //                               ${isCollapsed ? 'hidden' : 'block'}`}>
 //                               {item.title}
 //                            </span>
@@ -185,13 +210,13 @@ export default MainNav;
 //                <div className="flex flex-col space-y-2 mt-auto px-2">
 //                   {authItems.map((item) => (
 //                      <Link key={item.title} to={item.url}>
-//                         <Button 
-//                            variant="ghost" 
+//                         <Button
+//                            variant="ghost"
 //                            className={`w-full transition-all duration-300
 //                               ${isCollapsed ? 'justify-center px-2' : 'justify-start'}`}
 //                         >
 //                            <item.icon className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-4 w-4`} />
-//                            <span className={`transition-all duration-300 
+//                            <span className={`transition-all duration-300
 //                               ${isCollapsed ? 'hidden' : 'block'}`}>
 //                               {item.title}
 //                            </span>
@@ -214,7 +239,7 @@ export default MainNav;
 
 // function MainNav({ isOpen }) {
 //   return (
-//     <div 
+//     <div
 //       className={`fixed border-red-400 border-4 top-0 left-0 h-full w-64 bg-background border-r transform transition-transform duration-300 ease-in-out ${
 //         isOpen ? 'translate-x-0' : '-translate-x-full'
 //       }`}
@@ -225,7 +250,7 @@ export default MainNav;
 //           <div className="px-4 py-2">
 //             <h2 className="text-2xl font-bold">LOGO</h2>
 //           </div>
-          
+
 //           {/* Navigation Links */}
 //           <div className="flex flex-col space-y-2">
 //             <Link to="/">
@@ -234,14 +259,14 @@ export default MainNav;
 //                 Home
 //               </Button>
 //             </Link>
-            
+
 //             <Link to="shop">
 //               <Button variant="ghost" className="w-full justify-start">
 //                 <Store className="mr-2 h-4 w-4" />
 //                 Shop
 //               </Button>
 //             </Link>
-            
+
 //             <Link to="cart">
 //               <Button variant="ghost" className="w-full justify-start">
 //                 <ShoppingCart className="mr-2 h-4 w-4" />
@@ -258,7 +283,7 @@ export default MainNav;
 //                 Register
 //               </Button>
 //             </Link>
-            
+
 //             <Link to="login">
 //               <Button variant="ghost" className="w-full justify-start">
 //                 <LogIn className="mr-2 h-4 w-4" />
@@ -274,11 +299,8 @@ export default MainNav;
 
 // export default MainNav;
 
-
-
 // import React from "react";
 // import { Link } from "react-router-dom";
-
 
 // function MainNav() {
 //    return (

@@ -11,22 +11,13 @@ export const createProduct = async (token, form) => {
    });
 };
 //count = 20 → LIMIT = 20
-export const listProduct = async (token, count = 50) => {
-   return await axios.get("http://localhost:5000/api/products/" + count, {
-      headers: {
-         Authorization: `Bearer ${token}`
-      }
-   });
+export const listProduct = async (count = 50) => {
+   return await axios.get("http://localhost:5000/api/products/" + count);
 };
 
-
 //for EditProd.jsx → FormEditProd.jsx
-export const readProduct = async (token, id) => {
-   return await axios.get("http://localhost:5000/api/product/" + id, {
-      headers: {
-         Authorization: `Bearer ${token}`
-      }
-   });
+export const readProduct = async (id) => {
+   return await axios.get("http://localhost:5000/api/product/" + id);
 };
 
 export const updateProduct = async (token, id, form) => {

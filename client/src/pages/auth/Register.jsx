@@ -32,7 +32,7 @@ const Register = () => {
       }
    };
    return (
-      <div className="text-Text-white">
+      <div className="flex flex-col items-center">
          Register
          <form
             action=''

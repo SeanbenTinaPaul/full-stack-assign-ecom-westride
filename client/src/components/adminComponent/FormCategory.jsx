@@ -67,10 +67,10 @@ function FormCategory() {
          */
 
    useEffect(() => {
-      getCategory(token).then((result) => {
+      getCategory().then((result) => {
          console.log("category->", result);
       });
-   }, [token, getCategory]);
+   }, [getCategory]);
 
    //add single category Btn
    const handleSubmit = async (e) => {
@@ -104,7 +104,7 @@ function FormCategory() {
             description: `Category: ${res.data.name}`
          });
 
-         getCategory(token); //to update the list
+         getCategory(); //to update the list
          setName(""); //to empty the input text after click 'Add Category' btn
          setAlert(null);
          //  e.target.reset();//to empty the input text after click 'Add Category' btn
@@ -130,7 +130,7 @@ function FormCategory() {
             title: "You've removed category!",
             description: `ID: ${categoryToRemove.id} Category: ${categoryToRemove.name}`
          });
-         getCategory(token);
+         getCategory();
          setShowDialog(false);
          setCategoryToRemove(null);
       } catch (err) {
@@ -272,7 +272,7 @@ function FormCategory() {
                                  Cancel
                               </AlertDialogCancel>
                               <AlertDialogAction onClick={confirmRemove}>
-                                 Continue
+                                 Yes, delete
                               </AlertDialogAction>
                            </AlertDialogFooter>
                         </AlertDialogContent>

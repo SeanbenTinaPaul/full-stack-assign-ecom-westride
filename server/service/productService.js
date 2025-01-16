@@ -203,6 +203,7 @@ exports.update = async (req, res) => {
    }
 };
 
+//del a product in db 
 //ต้อง Del รูปทั้งใน table 'Image' และใน cloud ด้วย
 exports.remove = async (req, res) => {
    try {

@@ -35,18 +35,18 @@ const ecomStore = (set) => ({
       return res;
    },
 
-   getCategory: async (token) => {
+   getCategory: async () => {
       try {
-         const res = await listCategory(token);
+         const res = await listCategory();
          set({ categories: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
       } catch (err) {
          console.log(err);
       }
    },
 
-   getProduct: async (token, count=50) => {
+   getProduct: async (count=50) => {
       try {
-         const res = await listProduct(token, count);
+         const res = await listProduct(count);
          console.log("getProduct response:", res);
          set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
          return res; // Return the response

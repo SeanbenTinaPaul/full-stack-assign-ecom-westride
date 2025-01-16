@@ -38,140 +38,79 @@ const navItems = [
 const SidebarAdmin = ({ isCollapsed }) => {
    const sidebarWidth = isCollapsed ? "w-16" : "w-64";
    //Added fixed top-0 left-0 to the sidebar's root div to make unscrollable along with Category.jsx content
-   //go to LayoutAdmin.jsx to set more...
+   //Added h-[calc(100vh-8.5rem)] to the ScrollArea to account for the header height
+   //▼go to LayoutAdmin.jsx to set more...
+   //Added margin left (ml-64 or ml-16) to the main content to offset the fixed sidebar
    return (
-      <div className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}>
-         <div className={`mt-10 h-24 bg-slate-700 flex items-center justify-center ${isCollapsed ? 'px-2' : 'px-4'}`}>
-            <h2 className={`font-bold transition-all duration-300 ${isCollapsed ? 'text-sm' : 'text-2xl'}`}>
-               {isCollapsed ? 'AP' : 'Admin Panel'}
+      <div
+         className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
+      >
+         <div
+            className={`mt-10 h-24 bg-slate-700 flex items-center justify-center ${
+               isCollapsed ? "px-2" : "px-4"
+            }`}
+         >
+            <h2
+               className={`font-bold transition-all duration-300 ${
+                  isCollapsed ? "text-sm" : "text-2xl"
+               }`}
+            >
+               {isCollapsed ? "AP" : "Admin Panel"}
             </h2>
          </div>
-         
-         <ScrollArea className="flex-1 px-2 py-4 h-[calc(100vh-8.5rem)]">
-            <nav className="space-y-2">
+
+         <ScrollArea className='flex-1 px-2 py-4 h-[calc(100vh-8.5rem)]'>
+            <nav className='space-y-2'>
                {navItems.map((item) => (
                   <NavLink
                      key={item.title}
                      to={item.url}
                      end={item.end}
                      className={({ isActive }) =>
-                        `${isActive ? 'bg-slate-900 text-white' : 'text-gray-300 hover:bg-slate-700'} 
+                        `${
+                           isActive ? "bg-slate-900 text-white" : "text-gray-300 hover:bg-slate-700"
+                        } 
                         px-3 py-2 rounded flex items-center transition-all duration-300
-                        ${isCollapsed ? 'justify-center' : 'justify-start'}`
+                        ${isCollapsed ? "justify-center" : "justify-start"}`
                      }
                   >
-                     <item.icon className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-5 w-5`} />
-                     <span className={`transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
+                     <item.icon className={`${isCollapsed ? "mr-0" : "mr-2"} h-5 w-5`} />
+                     <span
+                        className={`transition-all duration-300 ${
+                           isCollapsed ? "hidden" : "block"
+                        }`}
+                     >
                         {item.title}
                      </span>
                   </NavLink>
                ))}
             </nav>
          </ScrollArea>
-         
-         <div className="p-2">
-            <button
-               className={`w-full text-gray-300 px-3 py-2 hover:bg-slate-700 rounded flex items-center transition-all duration-300
-               ${isCollapsed ? 'justify-center' : 'justify-start'}`}
+
+         <div className='p-2'>
+            <NavLink
+            // redirect to 'http://localhost:5173/' when click
+               to={"/"}
+               end={true}
             >
-               <LogOut className={`${isCollapsed ? 'mr-0' : 'mr-2'} h-5 w-5`} />
-               <span className={`transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`}>
-                  Log out
-               </span>
-            </button>
+               <button
+                  className={`w-full text-gray-300 px-3 py-2 hover:bg-slate-700 rounded flex items-center transition-all duration-300
+               ${isCollapsed ? "justify-center" : "justify-start"}`}
+               >
+                  <LogOut className={`${isCollapsed ? "mr-0" : "mr-2"} h-5 w-5`} />
+                  <span
+                     className={`transition-all duration-300 ${isCollapsed ? "hidden" : "block"}`}
+                  >
+                     Log out
+                  </span>
+               </button>
+            </NavLink>
          </div>
       </div>
    );
 };
 
 export default SidebarAdmin;
-// import React from "react";
-// import PropTypes from "prop-types";
-// import { Link } from "react-router-dom";
-// import {
-//    Sidebar,
-//    SidebarContent,
-//    SidebarGroup,
-//    SidebarGroupContent,
-//    SidebarGroupLabel,
-//    SidebarMenu,
-//    SidebarMenuButton,
-//    SidebarMenuItem,
-// } from "@/components/ui/sidebar";
-// import { LayoutDashboard, ChartBarStacked, PackagePlus, LogOut } from "lucide-react";
-
-// // Menu items.
-// const items = [
-//    {
-//       title: "Dashboard",
-//       url: "/admin",
-//       icon: LayoutDashboard,
-//    },
-//    {
-//       title: "Category",
-//       url: "/admin/category",
-//       icon: ChartBarStacked,
-//    },
-//    {
-//       title: "Products",
-//       url: "/admin/product",
-//       icon: PackagePlus,
-//    },
-//    {
-//       title: "Logout",
-//       url: "/logout",
-//       icon: LogOut,
-//    },
-// ];
-
-// const SidebarAdmin = ({ isOpen }) => {
-//    return (
-//       <Sidebar
-//          className={`fixed top-0 left-0 h-full bg-secondary text-foreground border-r shadow transition-all duration-300 ease-in-out  ${
-//             isOpen ? "w-64" : "w-16"
-//          }`}
-//       >
-//          <SidebarContent className="border-2 border-red-500 ">
-//             <SidebarGroup className="border-2 border-red-500 ">
-//                <SidebarGroupLabel
-//                   className={`px-4 mt-16 mb-8 text-lg font-bold border-purple-400 border-2 ${
-//                      isOpen ? "block" : "hidden"
-//                   }`}
-//                >
-//                   Admin Panel
-//                </SidebarGroupLabel>
-//                <SidebarGroupContent className={`border-2 border-green-500 ${isOpen ? "":"mt-32"}`}>
-//                   <SidebarMenu >
-//                      {items.map((item) => (
-//                         <SidebarMenuItem key={item.title} >
-//                            <SidebarMenuButton asChild >
-//                               <Link
-//                                  to={item.url}
-//                                  className="flex items-center gap-2 px-4 py-2 hover:bg-accent rounded "
-//                               >
-//                                  <item.icon className="h-5 w-5  border-2 border-red-500 " />
-//                                  <span className={`${isOpen ? "block" : "hidden"}`}>
-//                                     {item.title}
-//                                  </span>
-//                               </Link>
-//                            </SidebarMenuButton>
-//                         </SidebarMenuItem>
-//                      ))}
-//                   </SidebarMenu>
-//                </SidebarGroupContent>
-//             </SidebarGroup>
-//          </SidebarContent>
-//       </Sidebar>
-//    );
-// };
-
-// SidebarAdmin.propTypes = {
-//    isOpen: PropTypes.bool.isRequired,
-// };
-
-// export default SidebarAdmin;
-
-
 
 // import React from "react";
 // import {
@@ -229,16 +168,6 @@ export default SidebarAdmin;
 //                         </SidebarMenuItem>
 //                      ))}
 //                   </SidebarMenu>
-//                </SidebarGroupContent>
-//             </SidebarGroup>
-//          </SidebarContent>
-//       </Sidebar>
-//    );
-// };
-
-// export default SidebarAdmin;
-
-
 
 // import React from "react";
 // import PropTypes from "prop-types";
@@ -324,9 +253,6 @@ export default SidebarAdmin;
 // };
 
 // export default SidebarAdmin;
-
-
-
 
 // import React from "react";
 // import PropTypes from "prop-types";
