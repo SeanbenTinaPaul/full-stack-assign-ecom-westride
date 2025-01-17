@@ -34,16 +34,16 @@ const ecomStore = (set) => ({
       //res ใช้รับสิ่งที่ส่ง(res) มาจาก backend
       return res;
    },
-
+   //dropdown category
    getCategory: async () => {
       try {
          const res = await listCategory();
-         set({ categories: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
+         set({ categories: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend  res.send()
       } catch (err) {
          console.log(err);
       }
    },
-
+   //product in table
    getProduct: async (count=50) => {
       try {
          const res = await listProduct(count);

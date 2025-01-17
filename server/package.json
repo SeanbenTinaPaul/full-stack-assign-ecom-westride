@@ -7,7 +7,7 @@
     "start": "nodemon server.js"
   },
   "dependencies": {
-    "@prisma/client": "^6.1.0",
+    "@prisma/client": "^6.2.1",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
@@ -17,5 +17,8 @@
     "migrate": "^2.1.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "prisma": "^6.2.1"
   }
 }

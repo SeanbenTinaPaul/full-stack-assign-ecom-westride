@@ -2,6 +2,7 @@
 
 import axios from "axios";
 
+//backend res.send()
 export const createProduct = async (token, form) => {
    console.log("form to create prod", form);
    return await axios.post("http://localhost:5000/api/product", form, {
@@ -10,16 +11,20 @@ export const createProduct = async (token, form) => {
       }
    });
 };
+
+//backend res.send()
 //count = 20 → LIMIT = 20
 export const listProduct = async (count = 50) => {
    return await axios.get("http://localhost:5000/api/products/" + count);
 };
 
 //for EditProd.jsx → FormEditProd.jsx
+//backend res.json()
 export const readProduct = async (id) => {
    return await axios.get("http://localhost:5000/api/product/" + id);
 };
 
+//backend res.json()
 export const updateProduct = async (token, id, form) => {
    return await axios.patch("http://localhost:5000/api/product/" + id, form, {
       headers: {
@@ -28,6 +33,7 @@ export const updateProduct = async (token, id, form) => {
    });
 };
 
+//backend res.json()
 export const delProduct = async (token, id) => {
    return await axios.delete("http://localhost:5000/api/product/" + id, {
       headers: {
@@ -35,7 +41,9 @@ export const delProduct = async (token, id) => {
       }
    });
 };
+
 //accroding to Frontend, uploadFiles() is called before createProduct()
+//backend res.json()
 export const uploadFiles = async (token, form) => {
    // console.log('form api frontend',form);
    return await axios.post(
@@ -51,6 +59,7 @@ export const uploadFiles = async (token, form) => {
    );
 };
 
+//backend res.json()
 export const delImg = async (token, public_id) => {
    return await axios.post(
       "http://localhost:5000/api/removeimage",
