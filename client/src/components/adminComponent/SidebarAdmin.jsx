@@ -8,7 +8,8 @@ import {
    ChartNoAxesGantt,
    ChartBarStacked,
    PackagePlus,
-   LogOut
+   LogOut,
+   Gem 
 } from "lucide-react";
 
 const navItems = [
@@ -32,6 +33,14 @@ const navItems = [
       title: "Product",
       url: "product",
       icon: PackagePlus
+   },
+   {
+      title: "Promotion",
+      url: "promotion",
+      icon: Gem 
+      //1. Create a new page: Promotion.jsx → pages/admin
+      //2. Create a new component: FormPromotion.jsx → components/adminComponent
+      //3. go to AppRoutes.jsx to add a new route
    }
 ];
 

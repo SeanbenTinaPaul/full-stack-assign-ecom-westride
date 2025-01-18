@@ -11,9 +11,10 @@ const {
    listBy,
    searchFilters,
    uploadImages,
-   removeImage
+   removeImage,
+   handleBulkDiscount
 } = require("../service/productService");
-const { adminCheck, authCheck } = require("../middlewares/authCheck");
+const { authCheck, adminCheck } = require("../middlewares/authCheck");
 
 //ENDPOINT: http://localhost:5000/api/product
 //read
@@ -21,9 +22,10 @@ router.get("/products/:count", list); //view product records according to count 
 router.get("/product/:id", read); //for FormEditProd.jsx → readProduct(token, id,)
 
 //write
-router.post("/product", adminCheck, authCheck, create);
-router.patch("/product/:id", adminCheck, authCheck, update);
-router.delete("/product/:id", adminCheck, authCheck, remove); //delete only a single product
+router.post("/product", authCheck, adminCheck, create);
+router.patch("/product/:id", authCheck, adminCheck, update);
+router.delete("/product/:id", authCheck, adminCheck, remove); //delete only a single product
+router.post("/bulk-discount", authCheck, adminCheck, handleBulkDiscount);
 //read
 router.post("/productby", listBy);
 router.post("/search/filters", searchFilters);

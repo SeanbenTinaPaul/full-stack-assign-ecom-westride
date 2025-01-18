@@ -53,7 +53,11 @@ exports.list = async (req, res) => {
          //เพิ่มเพื่อดึงข้อมูลจากตาราง category
          include: {
             category: true,
-            images: true
+            images: true,
+            discounts: true,
+            favorites: true,
+            ratings: true
+         
             /*
                 model Product {
                     category Category? @relation(fields: [categoryId], references: [id])  // Points to one category
@@ -470,3 +474,52 @@ exports.removeImage = async (req, res) => {
    }
 };
 */
+
+/*
+req.body === 
+   {
+      products:[ {id:1, title:test ,... images:[]} ],
+      amount:0,
+      startDate: "",
+      endDate: "",
+      description: "",
+      isPromotion: true
+   }
+*/
+exports.handleBulkDiscount= async(req, res)=> {
+   const { products, amount, startDate, endDate, description, isPromotion } = req.body;
+   
+   try {
+     if (isPromotion) {
+       // อัพเดตฟิลด์ promotion ในตาราง Product
+       await prisma.product.updateMany({
+         where: {
+           id: {
+             in: products.map(p => p.id)
+           }
+         },
+         data: {
+           promotion: amount
+         }
+       });
+     } else {
+       // สร้าง records ในตาราง Discount
+       await prisma.discount.createMany({
+         data: products.map(product => ({
+           productId: product.id,
+           amount: amount,
+           startDate: new Date(startDate),
+           endDate: new Date(endDate),
+           description: description,
+           isActive: true,
+           createdBy: req.user.email
+         }))
+       });
+     }
+     
+     res.status(200).json({ message: `Discount applied on ${products.length} products successfully` });
+   } catch (error) {
+      console.log(error);
+     res.status(500).json({ error: "Failed to apply discount" });
+   }
+ }

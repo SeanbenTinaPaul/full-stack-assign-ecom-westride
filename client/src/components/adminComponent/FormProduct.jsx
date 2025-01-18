@@ -257,7 +257,7 @@ function FormProduct() {
                   <CardHeader>
                      <CardTitle className='flex items-center gap-2'>
                         <Package className='w-5 h-5' />
-                        ข้อมูลพื้นฐาน
+                        Basic Information
                      </CardTitle>
                   </CardHeader>
                   <CardContent className='space-y-4'>
@@ -298,7 +298,7 @@ function FormProduct() {
                   <CardHeader>
                      <CardTitle className='flex items-center gap-2'>
                         <FolderOpen className='w-5 h-5' />
-                        รายละเอียดสินค้า
+                        Product details
                      </CardTitle>
                   </CardHeader>
                   <CardContent className='space-y-4'>

@@ -73,3 +73,19 @@ export const delImg = async (token, public_id) => {
       }
    );
 };
+
+//backend res.json()
+export const bulkDiscount = async (token, form) => {
+   return await axios.post("http://localhost:5000/api/bulk-discount", form, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};
+//  const response = await fetch("/api/bulk-discount", {
+//     method: "POST",
+//     headers: {
+//        "Content-Type": "application/json"
+//     },
+//     body: JSON.stringify(discountData)
+//  });

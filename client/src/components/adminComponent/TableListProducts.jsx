@@ -93,7 +93,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
                      onClick={() => sortData("title")}
                   >
                      <div className='flex items-center'>
-                        Title
+                        Product name
                         <svg
                            className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
                               sortCol === "title" && sortOrder === "asc" ? "rotate-180" : ""

@@ -47,7 +47,7 @@ const ecomStore = (set) => ({
    getProduct: async (count=50) => {
       try {
          const res = await listProduct(count);
-         console.log("getProduct response:", res);
+         console.log("getProduct response:", res.data);
          set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
          return res; // Return the response
       } catch (err) {

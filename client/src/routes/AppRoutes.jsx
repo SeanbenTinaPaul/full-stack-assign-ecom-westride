@@ -16,6 +16,7 @@ import Category from "../pages/admin/Category";
 import Product from "../pages/admin/Product";
 import Manage from "../pages/admin/Manage";
 import EditProd from "../pages/admin/EditProd";
+import Promotion from "../pages/admin/Promotion";
 
 import LayoutUser from "../layouts/LayoutUser";
 import HomeUser from "../pages/user/HomeUser";
@@ -51,7 +52,8 @@ const router = createBrowserRouter([
          { path: "category", element: <Category /> },
          { path: "product", element: <Product /> },
          { path: "product/:id", element: <EditProd /> },
-         { path: "manage", element: <Manage /> }
+         { path: "manage", element: <Manage /> },
+         { path: "promotion", element: <Promotion /> }
       ]
    },
    {
