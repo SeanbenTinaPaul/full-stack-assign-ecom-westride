@@ -40,6 +40,8 @@ exports.create = async (req, res) => {
 };
 
 exports.list = async (req, res) => {
+   // console.log("req to list", req);
+   // console.log("req.user to list", req.user);//undefined when NO <token> sent in req.header
    try {
       //findMany === SELECT * from TableName
       //take === LIMIT
@@ -57,7 +59,7 @@ exports.list = async (req, res) => {
             discounts: true,
             favorites: true,
             ratings: true
-         
+
             /*
                 model Product {
                     category Category? @relation(fields: [categoryId], references: [id])  // Points to one category
@@ -76,6 +78,7 @@ exports.list = async (req, res) => {
 
 //อ่านข้อมูลเดียว ตาม id
 exports.read = async (req, res) => {
+   console.log("req.user to read", req.user);
    try {
       //findFirst === SELECT * from TableName WHERE id = ?
       //take === LIMIT
@@ -151,7 +154,7 @@ exports.update = async (req, res) => {
          return res.status(404).json({ message: "Product not found" });
       }
       //verify if user sent the same images.id → not delete that image in DB
-      
+
       /*
       // Create a set of existing image IDs for faster lookup
          const existingImageIds = new Set(existingProduct.images.map(img => img.id));
@@ -207,7 +210,7 @@ exports.update = async (req, res) => {
    }
 };
 
-//del a product in db 
+//del a product in db
 //ต้อง Del รูปทั้งใน table 'Image' และใน cloud ด้วย
 exports.remove = async (req, res) => {
    try {
@@ -478,48 +481,178 @@ exports.removeImage = async (req, res) => {
 /*
 req.body === 
    {
-      products:[ {id:1, title:test ,... images:[]} ],
+      products:[ {id:1, title:test ,... images:[]}, {..} ],
       amount:0,
-      startDate: "",
-      endDate: "",
+      startDate: "2025-01-17T21:58:44.063Z",
+      endDate: "2025-01-17T21:58:44.063Z",
       description: "",
       isPromotion: true
    }
+
+   isPromotion===true for promotion
+   isPromotion===false for discount
 */
-exports.handleBulkDiscount= async(req, res)=> {
+exports.handleBulkDiscount = async (req, res) => {
    const { products, amount, startDate, endDate, description, isPromotion } = req.body;
-   
+   const { email } = req.user; //can access req.user bc <token> sent in req.headers.authorization
+   // console.log("req.user to handleBulkDiscount", req.user);
+   // console.log("isPromotion", isPromotion);
    try {
-     if (isPromotion) {
-       // อัพเดตฟิลด์ promotion ในตาราง Product
-       await prisma.product.updateMany({
+      //need to replace the old discounts with new discounts
+      const existProdWithDiscounts = await prisma.product.findMany({
          where: {
-           id: {
-             in: products.map(p => p.id)
-           }
+            id: {
+               in: products.map((obj) => obj.id)
+            }
          },
-         data: {
-           promotion: amount
+         include: {
+            discounts: true
          }
-       });
-     } else {
-       // สร้าง records ในตาราง Discount
-       await prisma.discount.createMany({
-         data: products.map(product => ({
-           productId: product.id,
-           amount: amount,
-           startDate: new Date(startDate),
-           endDate: new Date(endDate),
-           description: description,
-           isActive: true,
-           createdBy: req.user.email
-         }))
-       });
-     }
-     
-     res.status(200).json({ message: `Discount applied on ${products.length} products successfully` });
+      });
+      // existProdWithDiscounts[i].discounts===[ [], [{1}] ,[{2}] ] → [{1},{2}]
+      // let existingDiscount = existProdWithDiscounts.map((d) => d.discounts).flat();
+      let existingDiscount = [].concat(...existProdWithDiscounts.map((obj) => obj.discounts));
+      // console.log("existingDiscount-->", existingDiscount);
+      // console.log("existProdWithDiscounts-->", existProdWithDiscounts);
+
+      let prodToCreate = [];
+      let prodToUpdate = products.filter((obj) => {
+         for (let i = 0; i < existingDiscount.length; i++) {
+            if (obj.id === existingDiscount[i].productId) {
+               return true;
+            } else {
+               prodToCreate.push(obj);
+               return false;
+            }
+         }
+      });
+      // console.log("prodToCreate-->", prodToCreate);
+      // console.log("prodToUpdate-->", prodToUpdate);
+      const promises = [];
+      //if existProdWithDiscounts is empty, then create new discounts
+      if (isPromotion) {
+         //อัพเดตฟิลด์ promotion ในตาราง Product
+         promises.push(
+            await prisma.product.updateMany({
+               where: {
+                  id: {
+                     in: products.map((obj) => obj.id)
+                  }
+               },
+               data: {
+                  promotion: amount
+               }
+            })
+         );
+      } else {
+         // อัพเดต existing discounts และสร้าง new discounts พร้อมกัน
+         if (prodToUpdate.length > 0) {
+            promises.push(
+               prisma.discount.updateMany({
+                  where: {
+                     productId: {
+                        in: prodToUpdate.map((obj) => obj.id)
+                     }
+                  },
+                  data: {
+                     amount: amount,
+                     startDate: new Date(startDate),
+                     endDate: new Date(endDate),
+                     description: description,
+                     isActive: true,
+                     createdBy: email
+                  }
+               })
+            );
+         }
+         if (prodToCreate.length > 0) {
+            promises.push(
+               prisma.discount.createMany({
+                  data: prodToCreate.map((obj) => ({
+                     productId: obj.id,
+                     amount: amount,
+                     startDate: new Date(startDate),
+                     endDate: new Date(endDate),
+                     description: description,
+                     isActive: true,
+                     createdBy: email
+                  }))
+               })
+            );
+         }
+      }
+      await Promise.allSettled(promises);
+      return res.status(200).json({
+         message: `Discount applied on ${products.length} products successfully`
+      });
    } catch (error) {
       console.log(error);
-     res.status(500).json({ error: "Failed to apply discount" });
+      return res.status(500).json({ error: "Failed to apply discount" });
    }
- }
+};
+
+//for toggle promotion and discount of prod
+//not complete yet...
+const changeStatusDiscount = async (req, res) => {
+   try {
+      const { id, enabled } = req.body;
+      const user = await prisma.user.update({
+         where: { id: Number(id) },
+         data: { enabled: enabled }
+      });
+
+      res.status(200).json({
+         success: true,
+         message: `Update userID: ${id} status to ${enabled}.`
+      });
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({
+         success: false,
+         message: "Error!!! Cannot change status."
+      });
+   }
+};
+//not complete yet...
+exports.favoriteProduct = async (req, res) => {
+   const { productId, id } = req.body;
+   try {
+      const { productId } = req.body;
+      const user = await prisma.user.findUnique({
+         where: { email: req.user.email },
+         include: {
+            favorites: true
+         }
+      });
+      if (!user) return res.status(404).json({ message: "User not found" });
+      const product = await prisma.product.findUnique({
+         where: { id: productId }
+      });
+      if (!product) return res.status(404).json({ message: "Product not found" });
+      const isFavorite = user.favorites.some((fav) => fav.id === productId);
+      if (isFavorite) {
+         await prisma.user.update({
+            where: { email: req.user.email },
+            data: {
+               favorites: {
+                  disconnect: { id: productId }
+               }
+            }
+         });
+         return res.status(200).json({ message: "Product removed from favorites" });
+      } else {
+         await prisma.user.update({
+            where: { email: req.user.email },
+            data: {
+               favorites: {
+                  connect: { id: productId }
+               }
+            }
+         });
+         return res.status(200).json({ message: "Product added to favorites" });
+      }
+   } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Server Error" });
+   }
+};

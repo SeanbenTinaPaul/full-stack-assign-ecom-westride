@@ -26,6 +26,7 @@
 | `/api/product/:id`                  | DELETE | Delete product by ID    | None                                                                                  |
 | `/api/productby`                    | POST   | Get products by filters | `{ "sort": "price", "order": "asc", "limit": 2 }` or `{ "sort": "quantity", "order": "desc", "limit": 2 }` |
 | `/api/search/filters`               | POST   | Search with filters     | `{ "query": "mouse" }`, `{ "price": [100, 600] }`, or `{ "category": [1, 2] }`        |
+| `/api/bulk-discount`               | POST   | Manage product promotion for Admin     | `{ products:[ {id:1, title:test ,... images:[]}, {..} ], amount:0, startDate:"2025-01-17T21:58:44.063Z", endDate: "2025-01-17T21:58:44.063Z",description: "", isPromotion: true }`        |
 
 ## User Management
 

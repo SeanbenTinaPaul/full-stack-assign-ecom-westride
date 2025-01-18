@@ -30,7 +30,7 @@ function FormPromotion(props) {
    const [endDate, setEndDate] = useState(new Date());
    const [description, setDescription] = useState("");
    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-   const [isPromotion, setIsPromotion] = useState(false);
+   const [isPromotion, setIsPromotion] = useState(false);//true = promotion, false = discount
 
    // สำหรับโหลดข้อมูลสินค้าทั้งหมด
    useEffect(() => {

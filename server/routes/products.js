@@ -12,9 +12,11 @@ const {
    searchFilters,
    uploadImages,
    removeImage,
-   handleBulkDiscount
+   handleBulkDiscount,
+   favoriteProduct
 } = require("../service/productService");
 const { authCheck, adminCheck } = require("../middlewares/authCheck");
+const { favorite } = require("../config/prisma");
 
 //ENDPOINT: http://localhost:5000/api/product
 //read
@@ -26,6 +28,7 @@ router.post("/product", authCheck, adminCheck, create);
 router.patch("/product/:id", authCheck, adminCheck, update);
 router.delete("/product/:id", authCheck, adminCheck, remove); //delete only a single product
 router.post("/bulk-discount", authCheck, adminCheck, handleBulkDiscount);
+router.post("/favorite-prod", favoriteProduct);
 //read
 router.post("/productby", listBy);
 router.post("/search/filters", searchFilters);

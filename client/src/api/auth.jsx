@@ -12,7 +12,7 @@ Note: 2 ways to import ▼
 
 export const currentUser = async (token) =>
    await axios.post(
-      "http://localhost:5000/api/current-user",
+      "http://localhost:5000/api/profile-user",
       {},
       {
          headers: {
@@ -23,7 +23,7 @@ export const currentUser = async (token) =>
 
 export const currentAdmin = async (token) => {
    return await axios.post(
-      "http://localhost:5000/api/current-admin",
+      "http://localhost:5000/api/profile-admin",
       {},
       {
          headers: {

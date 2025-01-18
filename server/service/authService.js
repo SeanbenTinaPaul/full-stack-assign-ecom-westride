@@ -30,7 +30,8 @@ exports.register = async (req, res) => {
             password: hashPassword
          }
       });
-      res.status(200).json({ success: true, message: "Register success☻", data: user });
+      console.log("existing user", user);
+      res.status(200).json({ success: true, message: "Register success☻" });
       // res.send("Register success☻");
    } catch (err) {
       console.log(err);
@@ -71,8 +72,11 @@ exports.logIn = async (req, res) => {
          (err, token) => {
             if (err) {
                return res.status(500).json({ message: "Server Error" });
+            } else {
+               console.log("token login", token);
+               console.log("paylod login", payload);
+               return res.status(200).json({ message: "Login success☻" });
             }
-            res.status(200).json({ message: "Login success☻", payload: payload, token: token });
          }
       );
 
@@ -80,12 +84,12 @@ exports.logIn = async (req, res) => {
       // res.send("login success ☻");
    } catch (err) {
       console.log(err);
-      res.status(500).json({ success: false, message: "Server Error ╬" });
+      return res.status(500).json({ success: false, message: "Server Error ╬" });
    }
 };
 
-//
-exports.currentUser = async (req, res) => {
+//pending to create axois frontend...
+exports.currUserProfile = async (req, res) => {
    try {
       const user = await prisma.user.findFirst({
          where: { email: req.user.email },
@@ -94,6 +98,10 @@ exports.currentUser = async (req, res) => {
             email: true,
             name: true,
             role: true
+         },
+         include: {
+            favorites: true,
+            productRatings: true
          }
       });
       res.status(200).json({ success: true, message: "Enter current user", data: user });
@@ -104,7 +112,7 @@ exports.currentUser = async (req, res) => {
    }
 };
 
-exports.currentAdmin = async (req, res) => {
+exports.currAdminProfile = async (req, res) => {
    try {
       const user = await prisma.user.findFirst({
          where: { email: req.user.email },
