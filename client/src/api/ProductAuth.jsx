@@ -89,3 +89,8 @@ export const bulkDiscount = async (token, form) => {
 //     },
 //     body: JSON.stringify(discountData)
 //  });
+
+//backend res.send()
+export const seachFilterProd = async (filter) => {
+   return await axios.post("http://localhost:5000/api/search/filters", filter);
+};

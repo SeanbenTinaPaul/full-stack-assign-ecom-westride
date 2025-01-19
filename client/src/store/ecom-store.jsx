@@ -3,7 +3,7 @@ import axios from "axios";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware"; //ใช้เก็บข้อมูลที่ user กรอกลง inout ไว้ใน localStorage
 import { listCategory } from "../api/CategoryAuth.jsx";
-import { listProduct } from "../api/ProductAuth.jsx";
+import { listProduct,seachFilterProd } from "../api/ProductAuth.jsx";
 
 const ecomStore = (set) => ({
    user: null, //ตั้งค่า null ไว้รอ res.data ก่อน
@@ -14,16 +14,12 @@ const ecomStore = (set) => ({
    setProductUpdated: (updated) => {
       set({ productUpdated: updated });
    },
-   //use this function to re-render any component
-   callThisToRender: (func) => {
-      func();
-   },
 
    actionLogin: async (form) => {
       //1. Send req with form to backend, path : http://localhost:5000/api/login
       const res = await axios.post("http://localhost:5000/api/login", form);
 
-      //2. เอา res.data ต่างๆ มา setState ให้ ecomStore()
+      //2. เอา res.data ต่างๆ มา setState ให้ ecomStore().user และ ecomStore().token
       set({
          user: res.data.payload,
          token: res.data.token
@@ -39,8 +35,10 @@ const ecomStore = (set) => ({
       try {
          const res = await listCategory();
          set({ categories: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend  res.send()
+         return res;
       } catch (err) {
          console.log(err);
+         return undefined;
       }
    },
    //product in table
@@ -54,7 +52,19 @@ const ecomStore = (set) => ({
          console.log(err);
          return undefined; // Return undefined in case of error
       }
-   }
+   },
+
+   getSeachFilterProd: async (filter) => {
+      try {
+         const res = await seachFilterProd(filter);
+         // console.log("getSeachFilterProd response:", res.data);
+         set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend  res.send()
+         return res; // Return response for checking results length
+      } catch (err) {
+         console.log(err);
+         return { data: [] }; // Return empty array if error
+      }
+   },
 });
 
 //ตัวแปรมาเพื่อที่จะใช้ ecomStore()

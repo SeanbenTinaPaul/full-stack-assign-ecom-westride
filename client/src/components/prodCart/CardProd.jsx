@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 //icons
 import { Heart, ShoppingCart, Star, StarHalf } from "lucide-react";
 
-function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
+function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
    const [isFavorite, setIsFavorite] = useState(false);
 
    const handleFavorite = () => {
@@ -26,7 +26,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
             //fill bg only in svg area ► fill-current text-*-*
             stars.push(
                <Star
-                  key={`star-${i}`}
+                  key={`full-star-${i}`}
                   className='w-4 h-4 fill-current text-yellow-500'
                />
             );
@@ -36,7 +36,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
                <div className='relative'>
                   <Star className='w-4 h-4 fill-current text-gray-300' />
                   <StarHalf
-                     key={`star-${i}`}
+                     key={`half-star-${i}`}
                      className='absolute top-0 left-0 w-4 h-4 fill-current text-yellow-500'
                   />
                </div>
@@ -45,7 +45,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
             //full grey star
             stars.push(
                <Star
-                  key={`stargrey-${i}`}
+                  key={`empty-star-${i}`}
                   className='w-4 h-4 fill-current text-gray-300'
                />
             );
@@ -53,18 +53,52 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
       }
       return stars;
    };
+// Safe discount amount getter
+   const getDiscountAmount = () => {
+      return prodObj?.discounts?.[0]?.amount;
+    };
+
+   //cal promotion va discount price
+   const renderDiscountPrice = (price) => {
+      const discountAmount = getDiscountAmount();
+      if (prodObj?.promotion > discountAmount) {
+         return price * (1 - prodObj.promotion / 100);
+      } else if (prodObj?.promotion < discountAmount) {
+         return price * (1 - prodObj.discounts[0].amount / 100);
+      } else {
+         return price;
+      }
+   };
+   //cal percent discount for badge
+   const renderPercentDiscount = () => {
+      const discountAmount = getDiscountAmount();
+      if (prodObj?.promotion && discountAmount) {
+        return Math.max(prodObj.promotion, discountAmount);
+      } else if (prodObj?.promotion) {
+        return prodObj.promotion;
+      } else if (discountAmount) {
+        return discountAmount;
+      }
+      return null;
+    };
 
    return (
       <div>
+         {/* {console.log("prodObj", prodObj)} */}
          <Card className='w-72 h-96 max-lg:w-36 max-lg:h-52 overflow-hidden'>
             {/* Product Image */}
             <div className='relative'>
                <img
-                  src=''
+                  src={prodObj?.images?.[0]?.url || ""}
+                  // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
                   alt='No image'
                   className='w-full h-52 max-lg:h-32 object-cover bg-slate-200'
                />
-               <Badge className='absolute top-2 right-2 bg-red-500'>-{promotion}%</Badge>
+               {(prodObj?.promotion || getDiscountAmount()) && (
+                  <Badge className='absolute top-2 right-2 bg-red-500'>
+                    -{renderPercentDiscount()}%
+                  </Badge>
+                )}
                <Button
                   variant='ghost'
                   size='icon'
@@ -82,8 +116,8 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
             <CardHeader className='space-y-1 px-4 py-2 max-lg:py-1'>
                <div className='flex justify-between items-start'>
                   <div>
-                     <h3 className='font-normal text-sm max-lg:text-xs'>Product title</h3>
-                     <p className='text-sm text-gray-500 max-lg:hidden'>description...</p>
+                     <h3 className='font-normal text-sm max-lg:text-xs'>{prodObj.title}</h3>
+                     <p className='text-sm text-gray-500 max-lg:hidden'>{prodObj.description}</p>
                   </div>
                   <p className='text-sm text-gray-500'>Brand title</p>
                </div>
@@ -91,12 +125,20 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
 
             <CardContent className='pb-2 px-4 my-0  pt-0 max-lg:py-1'>
                <div className='flex items-center space-x-2'>
-                  <span className='text-xl font-bold text-blue-600 max-lg:text-lg'>฿990</span>
-                  <span className='text-sm text-gray-500 line-through'>฿1,190</span>
+                  <span className='text-xl font-bold text-blue-600 max-lg:text-lg'>
+                  ฿{(prodObj?.promotion || getDiscountAmount())
+                ? renderDiscountPrice(prodObj?.price)
+                : prodObj?.price}
+                  </span>
+                  <span className='text-sm text-gray-500 line-through'>
+              {(prodObj?.promotion || getDiscountAmount()) 
+                ? `฿${prodObj?.price}` 
+                : ""}
+            </span>
                </div>
                <div className='mt-1 mb-0 flex items-center space-x-1'>
-                  {renderStar(rating)}
-                  <span className='text-sm text-gray-500 ml-1'>{rating}</span>
+                  {renderStar(prodObj.avgRating)}
+                  <span className='text-sm text-gray-500 ml-1'>{prodObj.avgRating}</span>
                </div>
             </CardContent>
 
@@ -114,7 +156,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodArr }) {
 CardProd.propTypes = {
    rating: PropTypes.number,
    promotion: PropTypes.number,
-   prodArr: PropTypes.array,
+   prodObj: PropTypes.object.isRequired,
 };
 
 export default CardProd;

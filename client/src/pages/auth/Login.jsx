@@ -48,6 +48,7 @@ function Login() {
          console.log(err);
          const errMsg = err.response?.data?.message;
          toast({
+            variant: 'destructive',
             title: 'Error!',
             description: errMsg || "Login Failed",
          })
@@ -66,6 +67,12 @@ function Login() {
    };
 
    //เรียกใช้เพื่อ redirect หน้าpage ตาม payload.role
+   /*
+   in AppRoutes.jsx: go to..
+   ProtectRouteAdmin.jsx → LoadingToRedirect.jsx  <No permis..> 
+   → LayoutAdmin.jsx <path: "/admin">
+   
+   */
    const roleRedirect = (role) => {
       if (role === "admin") {
          navigate("/admin");

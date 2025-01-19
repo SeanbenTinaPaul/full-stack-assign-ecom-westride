@@ -75,7 +75,8 @@ exports.logIn = async (req, res) => {
             } else {
                console.log("token login", token);
                console.log("paylod login", payload);
-               return res.status(200).json({ message: "Login success☻" });
+               //front need payload.role and token to access
+               return res.status(200).json({ message: "Login success☻", payload, token });
             }
          }
       );

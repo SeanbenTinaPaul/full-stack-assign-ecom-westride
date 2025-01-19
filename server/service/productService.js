@@ -298,6 +298,7 @@ exports.listBy = async (req, res) => {
 1. ตามที่พิมพ์ลงช่อง input
 2. ตามติ๊ก ✔ ช่อง category
 3. ตามราคา */
+//not used
 const handleQuery = async (req, res, query) => {
    try {
       const products = await prisma.product.findMany({
@@ -334,6 +335,7 @@ $1:
 
 ตัวแปรที่ใช้แทนค่า query ที่ส่งมาจากผู้ใช้งาน เช่น "apple", "phone", หรือคำค้นหาอื่น.
 */
+//not used
 const handlePrice = async (req, res, priceRange) => {
    try {
       const products = await prisma.product.findMany({
@@ -348,12 +350,7 @@ const handlePrice = async (req, res, priceRange) => {
             images: true
          }
       });
-      res.status(200).json({
-         success: true,
-         count: products.length,
-         message: products.length ? "Products found" : "No products found",
-         data: products
-      });
+      res.send(products);
    } catch (err) {
       console.log(err);
       res.status(500).json({
@@ -362,7 +359,7 @@ const handlePrice = async (req, res, priceRange) => {
       });
    }
 };
-
+//not used...
 const handleCategory = async (req, res, categoryIdArr) => {
    try {
       const products = await prisma.product.findMany({
@@ -376,12 +373,7 @@ const handleCategory = async (req, res, categoryIdArr) => {
             images: true
          }
       });
-      res.status(200).json({
-         success: true,
-         count: products.length,
-         message: products.length ? "Products found" : "No products found",
-         data: products
-      });
+      res.send(products);
    } catch (err) {
       console.log(err);
       res.status(500).json({
@@ -391,23 +383,58 @@ const handleCategory = async (req, res, categoryIdArr) => {
    }
 };
 
+//req.body === {category: [7,1], query: 'tes', price: [0, 100]}
 exports.searchFilters = async (req, res) => {
    try {
       const { query, category, price } = req.body;
-      if (query) {
-         console.log("query-->", query);
-         await handleQuery(req, res, query);
+   
+      /*1. สร้าง obj เก็บค่าล่วงหน้า สำหรับส่งไป query DB โดย
+      ตั้งชื่อ key ให้เหมือนชื่อคอลัมน์ใน DB และ method ของ prisma
+         {
+         title: { contains: "tes" },
+         categoryId: { in: [7,1] },
+         price: { gte: 0, lte: 100 }
+         }
+      */
+      const whereConditions = {};
+      //2. เก็บตาม key ใน req.body ที่ส่งมา
+      if (query.toString().trim() !== "") {
+         whereConditions.title = {
+            contains: query.toString().trim(),
+            mode: "insensitive" //to ignore case → .toLowerCase() didnt work.
+         };
       }
-      if (category) {
-         console.log("category-->", category);
-         await handleCategory(req, res, category);
+      if (category && category.length > 0) {
+         whereConditions.categoryId = {
+            in: category.map((id) => {
+               const intId = parseInt(id);
+               if (isNaN(intId)) {
+                  throw new Error(`Invalid category id: ${id}`);
+               } else {
+                  return intId;
+               }
+            })
+         };
       }
-      if (price) {
-         console.log("price-->", price);
-         await handlePrice(req, res, price);
+      if (price && price.length === 2) {
+         whereConditions.price = {
+            gte: parseFloat(price[0]),
+            lte: parseFloat(price[1])
+         };
       }
 
-      // res.send("searchFilters");
+      const products = await prisma.product.findMany({
+         where: whereConditions,
+         include: {
+            category: true,
+            images: true,
+            discounts: true,
+            favorites: true,
+            ratings: true
+         }
+      });
+
+      res.send(products);
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });
@@ -545,7 +572,7 @@ exports.handleBulkDiscount = async (req, res) => {
             })
          );
       } else {
-         // อัพเดต existing discounts และสร้าง new discounts พร้อมกัน
+         // update existing discounts และสร้าง new discounts พร้อมกัน
          if (prodToUpdate.length > 0) {
             promises.push(
                prisma.discount.updateMany({
@@ -591,7 +618,7 @@ exports.handleBulkDiscount = async (req, res) => {
    }
 };
 
-//for toggle promotion and discount of prod
+//for toggle isActive promotion and discount of prod
 //not complete yet...
 const changeStatusDiscount = async (req, res) => {
    try {
