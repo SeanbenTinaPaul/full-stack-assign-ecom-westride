@@ -56,9 +56,13 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
    };
 
 
-// Safe discount amount getter
+   // Safe discount amount getter
    const getDiscountAmount = () => {
-      return prodObj?.discounts?.[0]?.amount;
+      //check if isAtive === true (not expired)
+      if (prodObj?.discounts?.[0]?.isActive) {
+         return prodObj?.discounts?.[0]?.amount;
+      }
+      return null;
     };
 
    //cal promotion va discount price
@@ -87,7 +91,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
 
    return (
       <div>
-         {/* {console.log("prodObj", prodObj)} */}
+         {console.log("prodObj", prodObj)}
          <Card className='w-72 h-96 max-lg:w-36 max-lg:h-52 overflow-hidden'>
             {/* Product Image */}
             <div className='relative'>

@@ -27,7 +27,7 @@ import {
    SelectValue
 } from "@/components/ui/select";
 //-----------------------------------------------------------
-export function DataTable({ columns, data, onRowSelection, showToolbar = true }) {
+export function DataTable({ columns, data, onRowSelection, showToolbar = true, tableRef }) {
    const [rowSelection, setRowSelection] = React.useState({});
    const [globalFilter, setGlobalFilter] = React.useState("");
    const [sorting, setSorting] = React.useState([]);
@@ -39,6 +39,8 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true })
       //[{}] → 1 obj===1 col. spec of col name===key 'accessorKey'|col name===key 'header'
       columns,
       //current state of the table
+      getCoreRowModel: getCoreRowModel(),
+     
       state: {
          rowSelection,
          globalFilter,
@@ -49,7 +51,6 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true })
       //callback function that's called when the row selection changes.
       onRowSelectionChange: setRowSelection,
       //fn return models used to render the table.
-      getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
       onSortingChange: setSorting,
@@ -61,6 +62,12 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true })
       const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
       onRowSelection?.(selectedRows);
    }, [rowSelection, table, onRowSelection]);
+   // Assign table instance to ref
+   React.useEffect(() => {
+      if (tableRef) {
+         tableRef.current = table;
+      }
+   }, [table, tableRef]);
 
    return (
       <div className='space-y-4 p-6  bg-card shadow-md rounded-xl border-slate-200 border'>

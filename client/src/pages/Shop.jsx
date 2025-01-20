@@ -44,7 +44,7 @@ const Shop = () => {
                   </p>
                </div>
             )}
-            <div className='flex flex-wrap justify-between gap-4 max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-cols-2 max-[1155px]:gap-2'>
+            <div className='flex flex-wrap justify-center gap-4 max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
                {/* display products */}
                {console.log("products", products)}
                {Array.isArray(products) ? (

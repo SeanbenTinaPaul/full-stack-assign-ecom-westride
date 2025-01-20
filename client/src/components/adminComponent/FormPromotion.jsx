@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +21,9 @@ import useEcomStore from "@/store/ecom-store";
 import { bulkDiscount } from "@/api/ProductAuth";
 
 function FormPromotion(props) {
-   const { getProduct,products, token } = useEcomStore();
+   const { getProduct, products, token } = useEcomStore();
    const { toast } = useToast();
+   const tableRef = useRef(null); //for clear checkbox in table
    // const [products, setProducts] = useState([]); //for fetching all products from DB
    const [selectedProducts, setSelectedProducts] = useState([]);
    const [discountAmount, setDiscountAmount] = useState("");
@@ -38,7 +39,7 @@ function FormPromotion(props) {
          try {
             // const res = await getProduct(100);
             // setProducts(res.data);
-            getProduct(100)
+            getProduct(100);
          } catch (error) {
             console.error(error);
             toast({
@@ -50,9 +51,17 @@ function FormPromotion(props) {
       };
       fetchProducts();
    }, []);
-   useEffect(() => {
-      console.log("fetch Products:", products);
-   }, [products]);
+
+   //clear checkbox symbol in table when clicked 'Reset' button
+   const handleReset = () => {
+      setSelectedProducts([]);
+      setDiscountAmount("");
+      setDescription("");
+      // Reset table selection state
+      if (tableRef.current) {
+         tableRef.current.toggleAllRowsSelected(false);
+      }
+   };
 
    // คอลัมน์สำหรับตารางสินค้า
    //table and row props are passed from useReactTable() → data-table.jsx
@@ -261,32 +270,42 @@ function FormPromotion(props) {
       },
       {
          accessorKey: "startDate",
-         header: ({ column }) => {
-            return (
-               <Button
-                  variant='ghost'
-                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-               >
-                  startDate
-                  <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
-                     <svg
-                        className='w-4 h-4'
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                     >
-                        <path
-                           strokeLinecap='round'
-                           strokeLinejoin='round'
-                           strokeWidth={2}
-                           d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                        />
-                     </svg>
-                  </div>
-               </Button>
-            );
+         header: ({ column }) => (
+            <Button
+               variant='ghost'
+               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+               startDate
+               <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                  <svg
+                     className='w-4 h-4'
+                     xmlns='http://www.w3.org/2000/svg'
+                     fill='none'
+                     viewBox='0 0 24 24'
+                     stroke='currentColor'
+                  >
+                     <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                     />
+                  </svg>
+               </div>
+            </Button>
+         ),
+         //to sort date
+         sortingFn: (rowA, rowB) => {
+            // Get the first discount's startDate from each row
+            const dateA = rowA.original.discounts?.[0]?.startDate
+               ? new Date(rowA.original.discounts[0].startDate)
+               : new Date(0);
+            const dateB = rowB.original.discounts?.[0]?.startDate
+               ? new Date(rowB.original.discounts[0].startDate)
+               : new Date(0);
+            return dateA.getTime() - dateB.getTime();
          },
+         //display table content
          cell: ({ row }) => {
             const discounts = row.original.discounts || [];
             return discounts.length > 0
@@ -308,32 +327,41 @@ function FormPromotion(props) {
       },
       {
          accessorKey: "endDate",
-         header: ({ column }) => {
-            return (
-               <Button
-                  variant='ghost'
-                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-               >
-                  endDate
-                  <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
-                     <svg
-                        className='w-4 h-4'
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                     >
-                        <path
-                           strokeLinecap='round'
-                           strokeLinejoin='round'
-                           strokeWidth={2}
-                           d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                        />
-                     </svg>
-                  </div>
-               </Button>
-            );
+         header: ({ column }) => (
+            <Button
+               variant='ghost'
+               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+               endDate
+               <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                  <svg
+                     className='w-4 h-4'
+                     xmlns='http://www.w3.org/2000/svg'
+                     fill='none'
+                     viewBox='0 0 24 24'
+                     stroke='currentColor'
+                  >
+                     <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                     />
+                  </svg>
+               </div>
+            </Button>
+         ),
+         sortingFn: (rowA, rowB) => {
+            // Get the first discount's endDate from each row
+            const dateA = rowA.original.discounts?.[0]?.endDate
+               ? new Date(rowA.original.discounts[0].endDate)
+               : new Date(0);
+            const dateB = rowB.original.discounts?.[0]?.endDate
+               ? new Date(rowB.original.discounts[0].endDate)
+               : new Date(0);
+            return dateA.getTime() - dateB.getTime();
          },
+
          cell: ({ row }) => {
             const discounts = row.original.discounts || [];
             return discounts.length > 0
@@ -355,36 +383,62 @@ function FormPromotion(props) {
       },
       {
          accessorKey: "isActive",
-         header: ({ column }) => {
-            return (
-               <Button
-                  variant='ghost'
-                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-               >
-                  Status
-                  <div className='w-full flex justify-center hover:text-fuchsia-700 hover:scale-125 active:rotate-180 transition-transform duration-200'>
-                     <svg
-                        className='w-4 h-4'
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke='currentColor'
-                     >
-                        <path
-                           strokeLinecap='round'
-                           strokeLinejoin='round'
-                           strokeWidth={2}
-                           d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                        />
-                     </svg>
-                  </div>
-               </Button>
-            );
+         header: ({ column }) => (
+            <Button
+               variant='ghost'
+               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+               Status
+               <div className='w-full flex justify-center hover:text-fuchsia-700 hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                  <svg
+                     className='w-4 h-4'
+                     xmlns='http://www.w3.org/2000/svg'
+                     fill='none'
+                     viewBox='0 0 24 24'
+                     stroke='currentColor'
+                  >
+                     <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                     />
+                  </svg>
+               </div>
+            </Button>
+         ),
+         sortingFn: (rowA, rowB) => {
+            // Get status for each row
+            const getStatus = (row) => {
+               const discount = row.original.discounts?.[0];
+               if (!discount) return "no-discount";
+
+               const now = new Date();
+               const startDate = new Date(discount.startDate);
+
+               if (now < startDate) return "pending";
+               if (!discount.isActive) return "expired";
+               return "active";
+            };
+
+            const statusA = getStatus(rowA);
+            const statusB = getStatus(rowB);
+
+            // Define sort order: active > pending > expired > no-discount
+            const statusOrder = {
+               active: 3,
+               pending: 2,
+               expired: 1,
+               "no-discount": 0
+            };
+
+            return statusOrder[statusA] - statusOrder[statusB];
          },
+
          cell: ({ row }) => {
             const discounts = row.original.discounts || [];
             if (discounts.length === 0) return "-";
-
+            //today
             const now = new Date();
 
             // Check discount status for each discount
@@ -394,9 +448,10 @@ function FormPromotion(props) {
                if (!discount.isActive) return "expired";
                return "active";
             };
-
+            //note: based on DB, products[i].discounts.length === 1 per product
+            //discounts===[{amount:, startDate:, endDate:, isActive:, productId:}]
             const status = discounts.map((d) => getDiscountStatus(d))[0];
-
+            //display status according to recent date
             return (
                <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -517,7 +572,7 @@ function FormPromotion(props) {
                      />
                   </div>
                </div>
-
+               {/* Calendar************* */}
                {!isPromotion && (
                   <div className='space-y-2'>
                      <label className='text-sm font-medium flex items-center gap-2'>
@@ -564,23 +619,21 @@ function FormPromotion(props) {
                </div>
             </CardContent>
          </Card>
-         {console.log("products", products)}
+         {/* Table*********** */}
+         {console.log("products to table", products)}
          <div className=''>
             <DataTable
                columns={columns}
                data={products}
                onRowSelection={setSelectedProducts}
+               tableRef={tableRef} // Pass ref to DataTable
             />
          </div>
-
+         {/* Button******** */}
          <div className='flex justify-end gap-4'>
             <Button
                variant='outline'
-               onClick={() => {
-                  setSelectedProducts([]);
-                  setDiscountAmount("");
-                  setDescription("");
-               }}
+               onClick={handleReset}
             >
                Reset
             </Button>
