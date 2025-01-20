@@ -43,6 +43,29 @@ exports.list = async (req, res) => {
    // console.log("req to list", req);
    // console.log("req.user to list", req.user);//undefined when NO <token> sent in req.header
    try {
+      //auto check and update expired seasonal discount everytime frontend fetch product
+      const now = new Date();
+      const expiredDiscounts = await prisma.discount.findMany({
+         where: {
+            endDate: { lt: now },
+            isActive: true
+         }
+      });
+      console.log("expiredDiscounts", expiredDiscounts);
+      // Reset expired discounts
+      if (expiredDiscounts.length > 0) {
+         await prisma.discount.updateMany({
+            where: {
+               id: {
+                  in: expiredDiscounts.map((d) => d.id)
+               }
+            },
+            data: {
+               isActive: false
+            }
+         });
+      }
+      //----------------------------------------------------------------------------
       //findMany === SELECT * from TableName
       //take === LIMIT
       const { count } = req.params;
@@ -387,7 +410,7 @@ const handleCategory = async (req, res, categoryIdArr) => {
 exports.searchFilters = async (req, res) => {
    try {
       const { query, category, price } = req.body;
-   
+
       /*1. สร้าง obj เก็บค่าล่วงหน้า สำหรับส่งไป query DB โดย
       ตั้งชื่อ key ให้เหมือนชื่อคอลัมน์ใน DB และ method ของ prisma
          {
@@ -536,16 +559,17 @@ exports.handleBulkDiscount = async (req, res) => {
             discounts: true
          }
       });
-      // existProdWithDiscounts[i].discounts===[ [], [{1}] ,[{2}] ] → [{1},{2}]
-      // let existingDiscount = existProdWithDiscounts.map((d) => d.discounts).flat();
+      console.log("existProdWithDiscounts-->", existProdWithDiscounts);
+
+      //Make: existProdWithDiscounts[i].discounts===[ [], [{1}] ,[{2}] ] → [{1},{2}]
+      //Way2: let existingDiscount = existProdWithDiscounts.map((d) => d.discounts).flat();
       let existingDiscount = [].concat(...existProdWithDiscounts.map((obj) => obj.discounts));
-      // console.log("existingDiscount-->", existingDiscount);
-      // console.log("existProdWithDiscounts-->", existProdWithDiscounts);
+      console.log("existingDiscount-->", existingDiscount);
 
       let prodToCreate = [];
       let prodToUpdate = products.filter((obj) => {
-         for (let i = 0; i < existingDiscount.length; i++) {
-            if (obj.id === existingDiscount[i].productId) {
+         for (let i = 0; i < existProdWithDiscounts.length; i++) {
+            if (existingDiscount.length>0 && obj.id === existingDiscount[i].productId ) {
                return true;
             } else {
                prodToCreate.push(obj);
@@ -553,14 +577,14 @@ exports.handleBulkDiscount = async (req, res) => {
             }
          }
       });
-      // console.log("prodToCreate-->", prodToCreate);
-      // console.log("prodToUpdate-->", prodToUpdate);
+      console.log("prodToCreate-->", prodToCreate);
+      console.log("prodToUpdate-->", prodToUpdate);
       const promises = [];
       //if existProdWithDiscounts is empty, then create new discounts
       if (isPromotion) {
          //อัพเดตฟิลด์ promotion ในตาราง Product
          promises.push(
-            await prisma.product.updateMany({
+            prisma.product.updateMany({
                where: {
                   id: {
                      in: products.map((obj) => obj.id)
@@ -608,7 +632,8 @@ exports.handleBulkDiscount = async (req, res) => {
             );
          }
       }
-      await Promise.allSettled(promises);
+      let result = await Promise.allSettled(promises);
+      console.log("result promise all-->", result);
       return res.status(200).json({
          message: `Discount applied on ${products.length} products successfully`
       });

@@ -99,10 +99,6 @@ exports.currUserProfile = async (req, res) => {
             email: true,
             name: true,
             role: true
-         },
-         include: {
-            favorites: true,
-            productRatings: true
          }
       });
       res.status(200).json({ success: true, message: "Enter current user", data: user });

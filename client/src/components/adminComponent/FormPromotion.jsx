@@ -21,23 +21,24 @@ import useEcomStore from "@/store/ecom-store";
 import { bulkDiscount } from "@/api/ProductAuth";
 
 function FormPromotion(props) {
-   const { getProduct, token } = useEcomStore();
+   const { getProduct,products, token } = useEcomStore();
    const { toast } = useToast();
-   const [products, setProducts] = useState([]); //for fetching all products from DB
+   // const [products, setProducts] = useState([]); //for fetching all products from DB
    const [selectedProducts, setSelectedProducts] = useState([]);
    const [discountAmount, setDiscountAmount] = useState("");
    const [startDate, setStartDate] = useState(new Date());
    const [endDate, setEndDate] = useState(new Date());
    const [description, setDescription] = useState("");
    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-   const [isPromotion, setIsPromotion] = useState(false);//true = promotion, false = discount
-
+   const [isPromotion, setIsPromotion] = useState(false); //true = promotion, false = discount
+   // products === [{ title:"test", discounts:[{ isActive:true, startDate:"2025-01-17T21:58:44.063Z" }] }, {}, ..]
    // สำหรับโหลดข้อมูลสินค้าทั้งหมด
    useEffect(() => {
       const fetchProducts = async () => {
          try {
-            const res = await getProduct(100);
-            setProducts(res.data);
+            // const res = await getProduct(100);
+            // setProducts(res.data);
+            getProduct(100)
          } catch (error) {
             console.error(error);
             toast({
@@ -49,6 +50,9 @@ function FormPromotion(props) {
       };
       fetchProducts();
    }, []);
+   useEffect(() => {
+      console.log("fetch Products:", products);
+   }, [products]);
 
    // คอลัมน์สำหรับตารางสินค้า
    //table and row props are passed from useReactTable() → data-table.jsx
@@ -218,6 +222,7 @@ function FormPromotion(props) {
             );
          },
          cell: ({ row }) => {
+            //row.original === products[i]
             return row.original.promotion ? "-" + row.original.promotion + "%" : "-";
          }
       },
@@ -285,17 +290,19 @@ function FormPromotion(props) {
          cell: ({ row }) => {
             const discounts = row.original.discounts || [];
             return discounts.length > 0
-               ? discounts.map((d) => {
-                    // แปลง string เป็น Date object
-                    const date = new Date(d.startDate);
-                    return date.toLocaleDateString("en-uk", {
-                       year: "numeric",
-                       month: "short",
-                       day: "numeric",
-                       hour: "2-digit",
-                       minute: "2-digit"
-                    });
-                 }).join(", ") // เพิ่ม join เพื่อแสดงผลเป็น string เดียว
+               ? discounts
+                    .map((d) => {
+                       // แปลง string เป็น Date object
+                       const date = new Date(d.startDate);
+                       return date.toLocaleDateString("en-uk", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                       });
+                    })
+                    .join(", ") // เพิ่ม join เพื่อแสดงผลเป็น string เดียว
                : "-";
          }
       },
@@ -330,18 +337,79 @@ function FormPromotion(props) {
          cell: ({ row }) => {
             const discounts = row.original.discounts || [];
             return discounts.length > 0
-               ? discounts.map((d) => {
-                    // แปลง string เป็น Date object
-                    const date = new Date(d.endDate);
-                    return date.toLocaleDateString("en-Uk", {
-                       year: "numeric",
-                       month: "short",
-                       day: "numeric",
-                       hour: "2-digit",
-                       minute: "2-digit"
-                    });
-                 }).join(", ") // เพิ่ม join เพื่อแสดงผลเป็น string เดียว
+               ? discounts
+                    .map((d) => {
+                       // แปลง string เป็น Date object
+                       const date = new Date(d.endDate);
+                       return date.toLocaleDateString("en-Uk", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                       });
+                    })
+                    .join(", ") // เพิ่ม join เพื่อแสดงผลเป็น string เดียว
                : "-";
+         }
+      },
+      {
+         accessorKey: "isActive",
+         header: ({ column }) => {
+            return (
+               <Button
+                  variant='ghost'
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+               >
+                  Status
+                  <div className='w-full flex justify-center hover:text-fuchsia-700 hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                     <svg
+                        className='w-4 h-4'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                     >
+                        <path
+                           strokeLinecap='round'
+                           strokeLinejoin='round'
+                           strokeWidth={2}
+                           d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                        />
+                     </svg>
+                  </div>
+               </Button>
+            );
+         },
+         cell: ({ row }) => {
+            const discounts = row.original.discounts || [];
+            if (discounts.length === 0) return "-";
+
+            const now = new Date();
+
+            // Check discount status for each discount
+            const getDiscountStatus = (discount) => {
+               const startDate = new Date(discount.startDate);
+               if (now < startDate) return "pending";
+               if (!discount.isActive) return "expired";
+               return "active";
+            };
+
+            const status = discounts.map((d) => getDiscountStatus(d))[0];
+
+            return (
+               <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                     status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : status === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                  }`}
+               >
+                  {status === "active" ? "Active" : status === "pending" ? "Pending" : "Expired"}
+               </span>
+            );
          }
       }
       //   {
@@ -362,7 +430,7 @@ function FormPromotion(props) {
       //   }
    ];
 
-   // จัดการการ apply ส่วนลด
+   // //// Apply ส่วนลด
    const handleApplyDiscount = async () => {
       console.log("selectedProducts", selectedProducts);
       if (!discountAmount || selectedProducts.length === 0) {
@@ -396,6 +464,7 @@ function FormPromotion(props) {
             setSelectedProducts([]);
             setDiscountAmount("");
             setDescription("");
+            getProduct(100);
          }
       } catch (error) {
          console.error(error);

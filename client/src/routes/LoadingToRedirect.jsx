@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useToast } from "@/components/hooks/use-toast";
 
-
 export const LoadingToRedirect = () => {
    const [count, setCount] = useState(3);
    const [redirect, setRedirect] = useState(false);
@@ -20,14 +19,15 @@ export const LoadingToRedirect = () => {
                clearInterval(interval);
                setRedirect(true); //อนุญาตให้ redirect
             }
-            return currentCount - 1;//loop count = --count
+            toast({
+               variant: "destructive",
+               title: "Error!",
+               description: "Permission Denied"
+            });
+            return currentCount - 1; //loop count = --count
          });
       }, 1000);
-      toast({
-         variant: 'destructive',
-         title: 'Error!',
-         description:"Permission Denied",
-      })
+     
       return () => clearInterval(interval); // ให้ clearInterval เมื่อ component ถูก unmount
    }, []); //add [] to at end to avoid infinite loop
 

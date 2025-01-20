@@ -1,6 +1,7 @@
 //parent → Shop.jsx
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { formatNumber } from "@/utilities/formatNumber";
 //component ui
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -53,6 +54,8 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
       }
       return stars;
    };
+
+
 // Safe discount amount getter
    const getDiscountAmount = () => {
       return prodObj?.discounts?.[0]?.amount;
@@ -62,11 +65,11 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
    const renderDiscountPrice = (price) => {
       const discountAmount = getDiscountAmount();
       if (prodObj?.promotion > discountAmount) {
-         return price * (1 - prodObj.promotion / 100);
+         return formatNumber(price * (1 - prodObj.promotion / 100));
       } else if (prodObj?.promotion < discountAmount) {
-         return price * (1 - prodObj.discounts[0].amount / 100);
+         return formatNumber(price * (1 - prodObj.discounts[0].amount / 100));
       } else {
-         return price;
+         return formatNumber(price);
       }
    };
    //cal percent discount for badge
@@ -126,13 +129,15 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
             <CardContent className='pb-2 px-4 my-0  pt-0 max-lg:py-1'>
                <div className='flex items-center space-x-2'>
                   <span className='text-xl font-bold text-blue-600 max-lg:text-lg'>
+                     {/* ราคาหลังหัก promotion */}
                   ฿{(prodObj?.promotion || getDiscountAmount())
                 ? renderDiscountPrice(prodObj?.price)
-                : prodObj?.price}
+                : formatNumber(prodObj?.price)}
                   </span>
                   <span className='text-sm text-gray-500 line-through'>
+                     {/* ราคาจริง มีขีด line-through */}
               {(prodObj?.promotion || getDiscountAmount()) 
-                ? `฿${prodObj?.price}` 
+                ? `฿${formatNumber(prodObj?.price)}` 
                 : ""}
             </span>
                </div>

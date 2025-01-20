@@ -7,6 +7,11 @@ import useEcomStore from "@/store/ecom-store";
 import { Button } from "../ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import Slider from "rc-slider";
+import 'rc-slider/assets/index.css';
+
+import { formatNumber } from "@/utilities/formatNumber";
+
 let seachBody = {
    query: "",
    category: [],
@@ -18,6 +23,9 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       useEcomStore((state) => state);
    const [textSearch, setTextSearch] = useState(""); //for text search
    const [selectedCate, setSelectedCate] = useState([]); // Track selected category IDs
+   const [priceRange, setPriceRange] = useState([0, 50000]);
+   const [resetKey, setResetKey] = useState(0); //to reset key of <Slider/> in order to force Slider re-render, then reset the range bar
+   const [isOk, setIsOk] = useState(false);
    const [searchTerms, setSearchTerms] = useState(seachBody);
    //console.log(textSearch);
 
@@ -26,9 +34,9 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    const handleSearchText = (e) => {
       e.preventDefault();
       const txt = e.target.value;
-      setTextSearch(txt);// use to assign to value={} of <input/>
+      setTextSearch(txt); // use to assign to value={} of <input/>
       setWhatTextSearch(txt.trim());
-      console.log(txt.trim());
+      // console.log(txt.trim());
 
       if (txt.trim()) {
          setSearchTerms((prev) => ({ ...prev, query: txt.trim() }));
@@ -44,7 +52,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       const cateId = parseInt(e.target.value); //value='' of <input/>
       const isChecked = e.target.checked; //true or false
       let updateCate = []; //reset every click at checkbox
-      console.log(cateId);
+      // console.log(cateId);
 
       if (isChecked) {
          updateCate = [...selectedCate, cateId];
@@ -61,6 +69,12 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 
    //3. search by price
    //req.body → { "price": [100, 600] }
+ 
+   const handlePriceChange = (values) => {
+      // console.log(values);
+      setPriceRange(values);
+      setSearchTerms((prev) => ({ ...prev, price: values }));
+   }
 
    //4. req to backend
    const handleSumitSearchText = async (e) => {
@@ -69,7 +83,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       try {
          //if not search input → just display all products
          //empty str is false, empty arr is true
-         if(!searchTerms.query && searchTerms.category.length === 0) {
+         if (!searchTerms.query && searchTerms.category.length === 0) {
             getProduct(100);
             setIsFoundTextSearch(true);
          }
@@ -87,6 +101,30 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       } catch (err) {
          console.error("Search error:", err);
          setIsFoundTextSearch(false);
+      }
+   };
+
+
+   //reset search to default
+   const handleReset = async () => {
+      // Reset all form states
+      setTextSearch("");
+      setSelectedCate([]);
+      setSearchTerms({
+         query: "",
+         category: [],
+         price: []
+      });
+      setWhatTextSearch("");
+      setPriceRange([0, 50000]);
+      setResetKey(prev => prev + 1); // Increment key to force re-render
+
+      // Reset search results by fetching all products
+      try {
+         await getProduct(100);
+         setIsFoundTextSearch(false);
+      } catch (err) {
+         console.error("Reset error:", err);
       }
    };
 
@@ -123,7 +161,31 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                   ))}
                </div>
             </div>
+            <div>
+               <h1>Price</h1>
+               <div>
+                  <div className="flex justify-between ">
+                     <span className="text-xs">{formatNumber(priceRange[0])}</span>
+                     <span className="text-xs">{formatNumber(priceRange[1])}</span>
+                  </div>
+                  <Slider 
+                  key={resetKey}
+                  range //e.target.value is []
+                  min={0}
+                  max={100000}
+                  step={10}
+                  defaultValue={priceRange}
+                  onChange={handlePriceChange}/>
+               </div>
+            </div>
             <Button type='submit'>Search</Button>
+            <Button
+               variant='secondary'
+               type='button'
+               onClick={handleReset}
+            >
+               Reset
+            </Button>
          </form>
          <hr />
       </div>
@@ -133,8 +195,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 SearchForProd.propTypes = {
    setIsFoundTextSearch: PropTypes.func,
    setWhatTextSearch: PropTypes.func,
-   isFoundTextSearch: PropTypes.bool,
-
+   isFoundTextSearch: PropTypes.bool
 };
 
 export default SearchForProd;
