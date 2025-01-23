@@ -76,7 +76,9 @@ exports.changeRole = async (req, res) => {
 //Feature/Button: "Add to Cart", "Update Cart", "Save Cart"
 exports.userCart = async (req, res) => {
    try {
-      const { cart } = req.body;
+      const carts  = req.body.carts;
+      // console.log('req.body carts->',req.body.carts);
+      console.log('carts->',carts); // [{id:, countCart:, price:, buyPriceNum:,promotion:,discounts: [ [Object] ]}, {}]
       //1. check ว่า user มีข้อมมูลอยู่ในตาราง User หรือไม่
       const user = await prisma.user.findFirst({
          where: { id: Number(req.user.id) }
@@ -93,7 +95,7 @@ exports.userCart = async (req, res) => {
           */
       await prisma.productOnCart.deleteMany({
          where: {
-            //cart หมายถึง เอา productOnCart.cartId ซึ่งเท่ากับ Cart.id เมื่อพบว่า Cart.orderedById เท่ากับ user.id
+            //cart หมายถึง เอา productOnCart.cartId ซึ่งเท่ากับ Cart.id, เมื่อพบว่า Cart.orderedById เท่ากับ user.id
             cart: { orderedById: user.id }
          }
       });
@@ -103,35 +105,40 @@ exports.userCart = async (req, res) => {
          }
       });
 
-      //3. เตรียมสินค้าใหม่สำหรับ insert ลงในตาราง Cart
+      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate 
+      //3. เตรียมสินค้าใหม่สำหรับ insert ลงในตาราง ProductOnCart[]
       //req.body.cart ===[{},{},...]
-      let products = cart.map((item) => ({
+      let products = carts.map((item) => ({
          productId: item.id,
-         count: item.count,
-         price: item.price
+         count: item.countCart,
+         price: item.price,
+         buyPriceNum: item.buyPriceNum,
+         // discount: item.discount //→ pending to add discount.....
+
       }));
 
-      //4. หาราคารวมของสินค้าในตะกร้า
+      //4. หาราคารวมของสินค้าในตะกร้า ลงในตาราง Cart
       let cartTotal = products.reduce((sum, item) => {
          return sum + item.price * item.count;
       }, 0);
 
       //5. Insert ข้อมูลลงในตาราง Cart
       //data: === INSERT INTO Cart (products, cartTotal, orderById) VALUES (products, cartTotal, orderById)
+      //products is ProductOnCart[] in Model Cart
       const newCart = await prisma.cart.create({
          data: {
             products: {
-               create: products
+               create: products //add products to ProductOnCart[]
             },
-            cartTotal: cartTotal,
-            orderedById: user.id
+            cartTotal: cartTotal, //add to Cart.cartTotal
+            orderedById: user.id//add to Cart.orderedById
          }
       });
       res.status(200).json({
          success: true,
          message: "Add product to cart success",
-         ProductOnCart: products,
-         Cart: newCart
+         productOnCart: products,
+         cart: newCart
       });
    } catch (err) {
       console.log(err);
@@ -154,19 +161,29 @@ exports.getUserCart = async (req, res) => {
          },
          // include === JOIN
          include: {
+            //products คือ ProductOnCart[]
             products: {
                include: {
-                  product: true
+                  // ProductOnCart join กับ Product ด้วย productId
+                  product: {
+                     include:{
+                        discounts: true,
+                     }
+                  }
                }
             }
          }
       });
+      //cal promotion vs discount และ to send res with ราคาสุทธิ
+      //get promotion from table Product, join to Discount with productId
+     
 
       res.status(200).json({
          success: true,
          message: "This is your cart.",
-         Products: cart.products,
-         "Total price": cart.cartTotal
+         // Products: cart.products,
+         carts: cart,
+         // "Total price": cart.cartTotal
       });
    } catch (err) {
       console.log(err);

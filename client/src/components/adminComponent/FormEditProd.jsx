@@ -1,4 +1,4 @@
-//parent→ EditProd.jsx
+//parent→ EditProdAdmin.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; //to get id from url | to redirect
 
@@ -115,7 +115,7 @@ function FormEditProd() {
       //if user did not select category and click 'update Product' ► won't let to submit, using return to stop
       for (let key in inputForm) {
          if (!inputForm[key] || inputForm[key] === "") {
-            if (key === "description" || key === "sold" || key === "images") continue; //empty description can be allowed
+            if (key === "description" || key === "sold" || key === "images" || key ==="avgRating" || key ==="promotion") continue; //empty description can be allowed
             if (key === "categoryId") {
                setAlert(
                   <Alert variant='destructive'>

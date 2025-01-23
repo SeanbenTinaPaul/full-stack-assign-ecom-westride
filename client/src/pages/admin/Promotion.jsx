@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import FormPromotion from "@/components/adminComponent/FormPromotion";
 
-function Promotion(props) {
+function PromotionAdmin(props) {
    return (
       <div>
          <FormPromotion />
@@ -10,6 +10,6 @@ function Promotion(props) {
    );
 }
 
-Promotion.propTypes = {};
+PromotionAdmin.propTypes = {};
 
-export default Promotion;
+export default PromotionAdmin;

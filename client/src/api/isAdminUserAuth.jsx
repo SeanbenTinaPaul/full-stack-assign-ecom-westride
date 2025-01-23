@@ -10,17 +10,31 @@ Note: 2 ways to import ▼
 //โดยมี header Authorization ที่มีค่า Bearer token
 //ไม่ได้รับเป็น {token} แสดงว่าถูกcalled ในฐานะฟังก์ชัน(ไม่ใช่ component) ► currentUser(token) เมื่อ token เป็นค่า string
 
+/* Step from Login.jsx to LayoutAdmin.jsx:
+
+1. login req.body with actionLogin(form) → recieve res.data : payload + token → set user, token in ecomStore
+- Login.jsx → go to revieve 'payload + token' from login() authService.js 
+- token, used to pass currentUser(token) → authCheck() → currUserProfile()
+2. in Login.jsx, → *middleware block* → navigate("/admin") [to <LayoutAdmin />] or ("/user")[to <LayoutUser />] according to payload.role
+3. in AppRoutes.jsx, go to ProtectRouteAdmin.jsx as *middleware block* 
+- if currentAdmin(token) === true → go to LayoutAdmin.jsx <path: "/admin"> 
+- if currentAdmin(token) === false → go to LoadingToRedirect.jsx → <Layout />.jsx <path: "/"> 
+
+*/
+//backend res.json()
+// go check if 'email:' in 'decoded token' exist in DB ► currUserProfile() in authService.js  
 export const currentUser = async (token) =>
    await axios.post(
       "http://localhost:5000/api/profile-user",
       {},
       {
          headers: {
+            //req.headers for authCheck.js
             Authorization: `Bearer ${token}`
          }
       }
    );
-
+//backend res.json()
 export const currentAdmin = async (token) => {
    return await axios.post(
       "http://localhost:5000/api/profile-admin",

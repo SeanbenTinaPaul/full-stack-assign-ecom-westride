@@ -1,3 +1,53 @@
+//for syncing carts to DB
+/*model Cart {
+   id          Int             @id @default(autoincrement())
+   cartTotal   Float
+   orderedById Int
+   orderedBy   User            @relation(fields: [orderedById], references: [id])
+   products    ProductOnCart[]
+   // Consider adding these fields
+   lastSynced  DateTime        @updatedAt // Track last sync time
+   status      String         @default("active") // Track cart status
+ }
+ 
+ model ProductOnCart {
+   id        Int     @id @default(autoincrement())
+   cartId    Int
+   productId Int
+   count     Int
+   price     Float
+   cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+   product   Product @relation(fields: [productId], references: [id])
+   // Consider adding these fields
+   buyPriceNum Float  // Store discounted price at time of adding
+   discount    Float? // Store applied discount
+ }
+
+ //add this in useEcomStore.jsx To properly sync with  global state
+ addToCart: async (productObj) => {
+   try {
+     // 1. Update local state first (for UI responsiveness)
+     const updatedCarts = [...get().carts, { ...productObj, countCart: 1 }];
+     set({ carts: _.uniqWith(updatedCarts, _.isEqual) });
+ 
+     // 2. Sync with backend
+     if (get().user) {
+       await axios.post("/api/cart", {
+         cart: updatedCarts.map(item => ({
+           productId: item.id,
+           count: item.countCart,
+           price: item.price,
+           buyPriceNum: item.buyPriceNum
+         }))
+       });
+     }
+   } catch (err) {
+     // Handle error, maybe revert local state
+     console.error(err);
+   }
+ }
+   */
+
 // //for FormProduct
 // const fileInputRef = useRef(null);
  

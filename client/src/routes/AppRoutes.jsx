@@ -6,17 +6,18 @@ import Home from "../pages/Home";
 import Shop from "../pages/Shop";
 import Cart from "../pages/Cart";
 import History from "../pages/History";
-import Checkout from "../pages/Checkout";
+import Purchase from "../pages/Purchase";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
 import LayoutAdmin from "../layouts/LayoutAdmin";
+import BrandAdmin from "../pages/admin/BrandStore";
 import Dashboard from "../pages/admin/Dashboard";
-import Category from "../pages/admin/Category";
-import Product from "../pages/admin/Product";
-import Manage from "../pages/admin/Manage";
-import EditProd from "../pages/admin/EditProd";
-import Promotion from "../pages/admin/Promotion";
+import CategoryAdmin from "../pages/admin/Category";
+import ProductAdmin from "../pages/admin/Product";
+import ManageAdmin from "../pages/admin/Manage";
+import EditProdAdmin from "../pages/admin/EditProd";
+import PromotionAdmin from "../pages/admin/Promotion";
 
 import LayoutUser from "../layouts/LayoutUser";
 import HomeUser from "../pages/user/HomeUser";
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
          { path: "shop", element: <Shop /> },
          { path: "cart", element: <Cart /> },
          { path: "history", element: <History /> },
-         { path: "checkout", element: <Checkout /> },
+         { path: "purchase", element: <Purchase /> },
          { path: "login", element: <Login /> },
          { path: "register", element: <Register /> }
       ]
@@ -49,12 +50,14 @@ const router = createBrowserRouter([
       element: <ProtectRouteAdmin element={<LayoutAdmin />} />,
       children: [
          { index: true, element: <Dashboard /> },
-         { path: "category", element: <Category /> },
-         { path: "product", element: <Product /> },
-         { path: "product/:id", element: <EditProd /> },
-         { path: "manage", element: <Manage /> },
-         { path: "promotion", element: <Promotion /> }
+         { path: "brand-store", element: <BrandAdmin /> },
+         { path: "category", element: <CategoryAdmin /> },
+         { path: "product", element: <ProductAdmin /> },
+         { path: "product/:id", element: <EditProdAdmin /> },
+         { path: "manage", element: <ManageAdmin /> },
+         { path: "promotion", element: <PromotionAdmin /> }
       ]
+      //then go to LayoutAdmin > SidebarAdmin → add these children to pages
    },
    {
       path: "/user",

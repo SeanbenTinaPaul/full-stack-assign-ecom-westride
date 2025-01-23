@@ -3,6 +3,8 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
+import useEcomStore from "@/store/ecom-store";
+import { Badge } from "./ui/badge";
 
 const navItems = [
    {
@@ -38,6 +40,7 @@ const authItems = [
 
 const MainNav = ({ isCollapsed }) => {
    const sidebarWidth = isCollapsed ? "w-16" : "w-64";
+   const {user,carts} = useEcomStore((state) => state);//for badge carts
 
    return (
       <div
@@ -69,18 +72,19 @@ const MainNav = ({ isCollapsed }) => {
                {navItems.map((item) => (
                   <NavLink
                      key={item.title}
-                     to={item.url}
+                     //cant go to cart if not logged in
+                     to={item.url==='cart' && !user ? 'login' : item.url} 
                      end={item.end}
                      title={item.title}
                      className={({ isActive }) =>
                         `${
                            isActive ? "bg-slate-900 text-white" : "text-gray-300 hover:bg-slate-700"
                         } 
-                        px-3 py-2 rounded flex items-center transition-all duration-300
+                        px-3 py-2 rounded flex items-center transition-all duration-300 relative
                         ${isCollapsed ? "justify-center" : "justify-start"}`
                      }
                   >
-                     <item.icon className={`${isCollapsed ? "mr-0" : "mr-2"} h-5 w-5`} />
+                     <item.icon className={`${isCollapsed ? "mr-0" : "mr-2"} h-5 w-5 `} />
                      <span
                         className={`transition-all duration-300 ${
                            isCollapsed ? "hidden" : "block"
@@ -88,6 +92,11 @@ const MainNav = ({ isCollapsed }) => {
                      >
                         {item.title}
                      </span>
+                     {item.title === "Cart" && carts.length > 0 && user && (
+                        <Badge className='absolute right-1 z-50 ml-2 bg-red-500 text-white rounded-full px-2'>
+                           {carts.length}
+                        </Badge>
+                     )}
                   </NavLink>
                ))}
             </nav>

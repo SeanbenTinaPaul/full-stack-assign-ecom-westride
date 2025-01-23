@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom"; //Outlet คือ component ที่ใช้ในการแสดง content ของ child route
 import SidebarAdmin from "../components/adminComponent/SidebarAdmin";
 import HeaderAdmin from "../components/adminComponent/HeaderAdmin";
 import { Button } from "@/components/ui/button";
@@ -29,8 +29,9 @@ Added margin left (ml-64 or ml-16) to the main content to offset the fixed sideb
                   <Menu className='h-4 w-4 text-white' />
                </Button>
             </div>
-            <main className='flex-1 p-6 bg-slate-100 overflow-y-auto pt-14'>
+            <main className='flex-1 p-6 bg-slate-100 overflow-y-auto pt-20'>
                <Outlet />
+               {/* Go to AppRoutes.jsx, Outlet of <LayoutAdmin/> ► <Category/>, <Product/>, <EditProd/>, <Manage/>, <Promotion/> */}
             </main>
          </div>
       </div>

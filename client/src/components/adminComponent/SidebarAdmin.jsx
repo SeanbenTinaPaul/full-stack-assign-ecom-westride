@@ -9,7 +9,9 @@ import {
    ChartBarStacked,
    PackagePlus,
    LogOut,
-   Gem 
+   Gem ,
+   ArchiveRestore,
+   Grid2x2Plus  
 } from "lucide-react";
 
 const navItems = [
@@ -25,9 +27,14 @@ const navItems = [
       icon: ChartNoAxesGantt
    },
    {
+      title: "Brand Store",
+      url: "brand-store",
+      icon: ArchiveRestore 
+   },
+   {
       title: "Category",
       url: "category",
-      icon: ChartBarStacked
+      icon: Grid2x2Plus 
    },
    {
       title: "Product",
@@ -54,6 +61,7 @@ const SidebarAdmin = ({ isCollapsed }) => {
       <div
          className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
       >
+         {/* Logo */}
          <div
             className={`mt-10 h-24 bg-slate-700 flex items-center justify-center ${
                isCollapsed ? "px-2" : "px-4"
@@ -67,7 +75,7 @@ const SidebarAdmin = ({ isCollapsed }) => {
                {isCollapsed ? "AP" : "Admin Panel"}
             </h2>
          </div>
-
+         {/* menu Pages */}
          <ScrollArea className='flex-1 px-2 py-4 h-[calc(100vh-8.5rem)]'>
             <nav className='space-y-2'>
                {navItems.map((item) => (
@@ -75,6 +83,8 @@ const SidebarAdmin = ({ isCollapsed }) => {
                      key={item.title}
                      to={item.url}
                      end={item.end}
+                     title={item.title}
+                     //isActive ► built-in prop from NavLink → true when current browser URL === to={item.url}
                      className={({ isActive }) =>
                         `${
                            isActive ? "bg-slate-900 text-white" : "text-gray-300 hover:bg-slate-700"
@@ -95,7 +105,7 @@ const SidebarAdmin = ({ isCollapsed }) => {
                ))}
             </nav>
          </ScrollArea>
-
+         {/* ONLY for Log out  */}
          <div className='p-2'>
             <NavLink
             // redirect to 'http://localhost:5173/' when click

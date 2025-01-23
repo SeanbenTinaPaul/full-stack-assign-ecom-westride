@@ -1,3 +1,4 @@
+//parent → PromotionAdmin.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";

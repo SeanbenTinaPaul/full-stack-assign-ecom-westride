@@ -1,8 +1,9 @@
 //ให้ component ProtectRouteUser  เป็นทางผ่านของทุกๆ children ที่ผ่านมาทาง '/user'
 import propTypes from "prop-types";
 import React, { useEffect, useState } from "react";
+
 import useEcomStore from "../store/ecom-store";
-import { currentUser } from "../api/auth";
+import { currentUser } from "../api/isAdminUserAuth";
 import { LoadingToRedirect } from "./LoadingToRedirect";
 
 export const ProtectRouteUser = ({ element }) => {
@@ -16,12 +17,18 @@ export const ProtectRouteUser = ({ element }) => {
    //เมื่อเข้ามาที่ ProtecRouterUser จะใหเทำงานอัตโนมัติ
    useEffect(() => {
       if (user && token) {
-         //send to backend
+         //send to backend → res.status(200).json({ success: true, })
          currentUser(token)
             //we can use then and catch alternative to try and catch
             //if cuurentUser() works ► go to then()
-            .then((res) => setPass(true))
-            .catch((err) => setPass(false));
+            .then((res) => {
+               if(res.data.success){
+                   setPass(true)
+               }else{
+                   setPass(false)//if currUserProfile() recieve res.status(401)
+               }
+            })
+            .catch((err) => setPass(false));//if currUserProfile() recieve res.status(401) 
       }
    }, []);
 

@@ -89,7 +89,8 @@ exports.logIn = async (req, res) => {
    }
 };
 
-//pending to create axois frontend...
+//req.user สร้าง key 'user' มาจาก authCheck()
+//ถ้า decoded token แล้วได้ email: ที่ไม่ตรงกับใน DB จะ return 401
 exports.currUserProfile = async (req, res) => {
    try {
       const user = await prisma.user.findFirst({
@@ -101,7 +102,12 @@ exports.currUserProfile = async (req, res) => {
             role: true
          }
       });
-      res.status(200).json({ success: true, message: "Enter current user", data: user });
+
+      if (!user) {
+         return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+
+      res.status(200).json({ success: true, message: "Enter currUserProfile user", data: user });
       // res.send("Enter current user");
    } catch (err) {
       console.log(err);
@@ -120,7 +126,10 @@ exports.currAdminProfile = async (req, res) => {
             role: true
          }
       });
-      res.status(200).json({ success: true, message: "Enter current admin", data: user });
+      if (!user) {
+         return res.status(401).json({ success: false, message: "Unauthorized" });
+      }
+      res.status(200).json({ success: true, message: "Enter currAdminProfile admin", data: user });
       // res.send("Enter current user");
    } catch (err) {
       console.log(err);

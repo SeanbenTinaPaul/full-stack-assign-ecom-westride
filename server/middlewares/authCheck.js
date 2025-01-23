@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const prisma = require("../config/prisma");
 
- 
+//handle req.headers → verify if token is valid
 exports.authCheck = async (req, res, next) => {
    try {
       const bearerToken = req.headers.authorization;
@@ -14,7 +14,7 @@ exports.authCheck = async (req, res, next) => {
       const token = bearerToken.split(" ")[1];
       //decoded ► payload info + expiration
       const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-      console.log("decoded-->", decoded);
+      console.log("decoded-->", decoded);//{id:, email:, role:'admin', iat:, exp:}
       req.user = decoded; //สร้าง key 'user' ใน req และเก็บ decoded ไว้
       console.log("req.user-->", req.user);
 

@@ -43,6 +43,8 @@ model Product {
   favorites   Favorite[] // เพิ่ม relation กับ Favorite
   ratings     Rating[] // เพิ่ม relation กับ Rating
   avgRating   Float? // เพิ่มฟิลด์เก็บค่าเฉลี่ย rating
+  // brandId     Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
+  // brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
 }
 
 model Order {
@@ -84,17 +86,23 @@ model Cart {
   orderedById Int
   orderedBy   User            @relation(fields: [orderedById], references: [id])
   products    ProductOnCart[]
+  // Consider adding these fields
+  // lastSynced  DateTime        @updatedAt // Track last sync time
+  // status      String          @default("active") // Track cart status
 }
 
 model ProductOnCart {
-  id        Int     @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   /// คือเปลี่ยนตาม id (is independent) ใน table 'Cart'
-  cartId    Int
-  productId Int
-  count     Int
-  price     Float
-  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id])
+  cartId      Int
+  productId   Int
+  count       Int
+  price       Float
+  cart        Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productId], references: [id])
+  // Consider adding these fields to support discounts
+  buyPriceNum Float // Store discounted price at time of adding
+  discount    Float? // Store applied discount
 }
 
 model Image {
@@ -105,11 +113,13 @@ model Image {
   secure_url String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  productId  Int
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId  Int?
+  product    Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  // brandId    Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
+  // brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
 }
 
-// เพิ่มโมเดลใหม่สำหรับ Favorite feature
+//  Favorite feature
 model Favorite {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -129,7 +139,7 @@ model Favorite {
   @@unique([userId, productId]) // ป้องกันการเพิ่ม favorite ซ้ำ
 }
 
-// เพิ่มโมเดลใหม่สำหรับ Rating feature
+//  Rating feature
 model Rating {
   id        Int      @id @default(autoincrement())
   rating    Int // เก็บคะแนน 1-5
@@ -145,7 +155,7 @@ model Rating {
   @@unique([userId, productId, orderId]) // ป้องกันการให้ rating ซ้ำในแต่ละ order
 }
 
-// เพิ่มโมเดลใหม่สำหรับ Seasonal Discount
+// สำหรับ Seasonal Discount
 model Discount {
   id          Int      @id @default(autoincrement())
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -172,3 +182,14 @@ model Discount {
    */
   @@index([startDate, endDate]) // เพิ่ม index เพื่อการค้นหาที่เร็วขึ้น, but not create index record
 }
+
+//  Brand
+// model Brand {
+//   id          Int       @id @default(autoincrement())
+//   title       String    @unique // ชื่อแบรนด์ต้องไม่ซ้ำกัน
+//   description String?
+//   images      Image[] // ใช้โมเดล Image เดิมสำหรับเก็บรูปภาพแบรนด์
+//   products    Product[] // relation กับสินค้า
+//   createdAt   DateTime  @default(now())
+//   updatedAt   DateTime  @updatedAt
+// }

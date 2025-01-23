@@ -2,7 +2,7 @@
 import propTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import useEcomStore from "../store/ecom-store";
-import { currentAdmin } from "../api/auth";
+import { currentAdmin } from "../api/isAdminUserAuth";
 import { LoadingToRedirect } from "./LoadingToRedirect";
 
 export const ProtectRouteAdmin = ({ element }) => {
@@ -20,8 +20,14 @@ export const ProtectRouteAdmin = ({ element }) => {
          currentAdmin(token)
             //we can use then and catch alternative to try and catch
             //if cuurentUser() works ► go to then()
-            .then((res) => setPass(true))
-            .catch((err) => setPass(false));
+            .then((res) => {
+               if(res.data.success){
+                   setPass(true)
+               }else{
+                   setPass(false)//if currentAdmin() recieve res.status(401)
+               }
+            })
+            .catch((err) => setPass(false));//if currentAdmin() recieve res.status(401) 
       }
    }, []);
 

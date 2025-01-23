@@ -2,12 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import FormCategory from '../../components/adminComponent/FormCategory'
 
-const Category = () => {
+const CategoryAdmin = () => {
   return (
     <div><FormCategory /></div>
   )
 }
 
-Category.propTypes = {}
+CategoryAdmin.propTypes = {}
 
-export default Category
+export default CategoryAdmin

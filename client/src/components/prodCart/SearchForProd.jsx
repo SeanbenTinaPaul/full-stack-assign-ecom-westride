@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import Slider from "rc-slider";
-import 'rc-slider/assets/index.css';
+import "rc-slider/assets/index.css";
 
 import { formatNumber } from "@/utilities/formatNumber";
 
@@ -23,12 +23,14 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       useEcomStore((state) => state);
    const [textSearch, setTextSearch] = useState(""); //for text search
    const [selectedCate, setSelectedCate] = useState([]); // Track selected category IDs
-   const [priceRange, setPriceRange] = useState([0, 50000]);
+   const [priceRange, setPriceRange] = useState([0, 50000]); // for price range slider
    const [resetKey, setResetKey] = useState(0); //to reset key of <Slider/> in order to force Slider re-render, then reset the range bar
-   const [isOk, setIsOk] = useState(false);
    const [searchTerms, setSearchTerms] = useState(seachBody);
    //console.log(textSearch);
-
+   useEffect(() => {
+      getCategory();
+      getProduct(100);
+   }, []);
    //1. search by text
    //req.body → { "query": "core" }
    const handleSearchText = (e) => {
@@ -69,12 +71,12 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 
    //3. search by price
    //req.body → { "price": [100, 600] }
- 
+
    const handlePriceChange = (values) => {
       // console.log(values);
       setPriceRange(values);
       setSearchTerms((prev) => ({ ...prev, price: values }));
-   }
+   };
 
    //4. req to backend
    const handleSumitSearchText = async (e) => {
@@ -104,7 +106,6 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       }
    };
 
-
    //reset search to default
    const handleReset = async () => {
       // Reset all form states
@@ -117,7 +118,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       });
       setWhatTextSearch("");
       setPriceRange([0, 50000]);
-      setResetKey(prev => prev + 1); // Increment key to force re-render
+      setResetKey((prev) => prev + 1); // Increment key to force re-render
 
       // Reset search results by fetching all products
       try {
@@ -130,7 +131,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 
    return (
       <div>
-         <h1 className='text-xl font-semibold mb-4'>Search product</h1>
+         <h1 className='text-xl font-normal mb-4'>Search product</h1>
          <form
             onSubmit={(e) => handleSumitSearchText(e)}
             className='flex flex-col gap-2'
@@ -143,6 +144,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
             />
             <div>
+               {/* {console.log('categories search',categories)} */}
                <h1>Category</h1>
                <div>
                   {categories.map((obj) => (
@@ -162,23 +164,40 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                </div>
             </div>
             <div>
+               {/* Price range */}
                <h1>Price</h1>
                <div>
-                  <div className="flex justify-between ">
-                     <span className="text-xs">{formatNumber(priceRange[0])}</span>
-                     <span className="text-xs">{formatNumber(priceRange[1])}</span>
+                  <div className='flex justify-between '>
+                     <span className='text-xs'>{formatNumber(priceRange[0])}</span>
+                     <span className='text-xs'>{formatNumber(priceRange[1])}</span>
                   </div>
-                  <Slider 
-                  key={resetKey}
-                  range //e.target.value is []
-                  min={0}
-                  max={100000}
-                  step={10}
-                  defaultValue={priceRange}
-                  onChange={handlePriceChange}/>
+                  <Slider
+                     key={resetKey}
+                     range //e.target.value is []
+                     min={0}
+                     max={100000}
+                     step={100}
+                     defaultValue={priceRange}
+                     onChange={handlePriceChange}
+                     className='w-full mt-2 bg-f'
+                     // Add trackStyle and handleStyle props
+                     trackStyle={{ backgroundColor: "#701a75" }} // Purple color for the track
+                     railStyle={{ backgroundColor: "transparent" }} // Gray color for the rail
+                     handleStyle={[
+                        // Style for the handles
+                        {
+                           backgroundColor: "#701a75",
+                           borderColor: "#9ca3af"
+                        },
+                        {
+                           backgroundColor: "#701a75",
+                           borderColor: "#9ca3af"
+                        }
+                     ]}
+                  />
                </div>
             </div>
-            <Button type='submit'>Search</Button>
+            <Button type='submit' className="hover:bg-slate-500">Search</Button>
             <Button
                variant='secondary'
                type='button'

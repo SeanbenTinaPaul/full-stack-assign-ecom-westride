@@ -1,7 +1,7 @@
 //for listing users
 import React from "react";
 
-const Manage = () => {
+const ManageAdmin = () => {
    return (
       <div>
          <div>Manage</div>
@@ -9,4 +9,4 @@ const Manage = () => {
    );
 };
 
-export default Manage;
+export default ManageAdmin;

@@ -1,7 +1,6 @@
 //parent→ FormProduct.jsx, FormEditProd.jsx
 import React, { useState, createRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import { toast } from "react-toastify";
 import Resizer from "react-image-file-resizer";
 //icons
 import IconX from "../../utilities/IconX";

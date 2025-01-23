@@ -1,4 +1,4 @@
-//parent → Product.jsx
+//parent → ProductAdmin.jsx
 import React, { useState, useEffect, useRef } from "react";
 // import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

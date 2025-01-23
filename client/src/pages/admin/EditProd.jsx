@@ -3,12 +3,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import FormEditProd from '../../components/adminComponent/FormEditProd'
 
-function EditProd(props) {
+function EditProdAdmin(props) {
   return (
     <div><FormEditProd /></div>
   )
 }
 
-EditProd.propTypes = {}
+EditProdAdmin.propTypes = {}
 
-export default EditProd
+export default EditProdAdmin

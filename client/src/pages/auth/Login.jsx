@@ -11,7 +11,7 @@ function Login() {
    const actionLogin = useEcomStore((state) => state.actionLogin); //ยังไม่ใช่การ call function actionLogin() นะ
 
    const user = useEcomStore((state) => state.user); //ลองดึงข้อมูล user(เดิมที่เก็บไว้) มาจาก hook (ไม่ใส่ก็ได้)
-   console.log("user from zustand", user);
+   console.log('user->', user);
 
    //form สำหรับส่งไป backend ► const { email, password } = req.body
    const [form, setForm] = useState({
@@ -77,7 +77,8 @@ function Login() {
       if (role === "admin") {
          navigate("/admin");
       } else {
-         navigate("/user");
+         // navigate("/user");
+         navigate(-1); //กลับไป previous url
       }
    };
    

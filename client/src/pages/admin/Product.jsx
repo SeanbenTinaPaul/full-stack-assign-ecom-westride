@@ -2,7 +2,7 @@
 import React from "react";
 import FormProduct from "../../components/adminComponent/FormProduct";
 
-const Product = () => {
+const ProductAdmin = () => {
    return (
       <div>
          <FormProduct />
@@ -10,4 +10,4 @@ const Product = () => {
    );
 };
 
-export default Product;
+export default ProductAdmin;

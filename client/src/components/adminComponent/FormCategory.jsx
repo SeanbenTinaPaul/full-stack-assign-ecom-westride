@@ -1,4 +1,4 @@
-//for building category form ►►► to import to Category.jsx ('/admin/category')
+//for building category form ►►► to import to CategoryAdmin.jsx ('/admin/category')
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 //component UI
