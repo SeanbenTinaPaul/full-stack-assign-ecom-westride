@@ -6,12 +6,13 @@ import PropTypes from "prop-types";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "../ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Check } from "lucide-react";
 
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
 import { formatNumber } from "@/utilities/formatNumber";
-
+//---------------------------------------------------------------------------
 let seachBody = {
    query: "",
    category: [],
@@ -150,13 +151,26 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                   {categories.map((obj) => (
                      <div
                         key={obj.id}
-                        className='flex gap-2'
+                        className='flex gap-2 items-center'
                      >
-                        <input
+                        {/* <input
                            type='checkbox'
                            value={obj.id}
                            checked={selectedCate.includes(obj.id)}
                            onChange={(e) => handleCheckCate(e)}
+                        /> */}
+                        <Checkbox
+                           className='w-4 h-4 bg-white border border-gray-300 rounded-sm'
+                           id={`category-${obj.id}`}
+                           checked={selectedCate.includes(obj.id)}
+                           onCheckedChange={(checked) => {
+                              handleCheckCate({
+                                 target: {
+                                    value: obj.id,
+                                    checked: checked
+                                 }
+                              });
+                           }}
                         />
                         <label>{obj.name}</label>
                      </div>
@@ -197,7 +211,12 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                   />
                </div>
             </div>
-            <Button type='submit' className="hover:bg-slate-500">Search</Button>
+            <Button
+               type='submit'
+               className='hover:bg-slate-500'
+            >
+               Search
+            </Button>
             <Button
                variant='secondary'
                type='button'

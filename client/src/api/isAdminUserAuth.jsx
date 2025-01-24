@@ -1,5 +1,6 @@
 //เก็บคำสั่งติดต่อกับ backend
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 /*
 Note: 2 ways to import ▼
 - Named Export   ► import { currentUser } from "./auth";
@@ -25,7 +26,7 @@ Note: 2 ways to import ▼
 // go check if 'email:' in 'decoded token' exist in DB ► currUserProfile() in authService.js  
 export const currentUser = async (token) =>
    await axios.post(
-      "http://localhost:5000/api/profile-user",
+      `${apiUrl}/api/profile-user`,
       {},
       {
          headers: {
@@ -37,7 +38,7 @@ export const currentUser = async (token) =>
 //backend res.json()
 export const currentAdmin = async (token) => {
    return await axios.post(
-      "http://localhost:5000/api/profile-admin",
+      `${apiUrl}/api/profile-admin`,
       {},
       {
          headers: {

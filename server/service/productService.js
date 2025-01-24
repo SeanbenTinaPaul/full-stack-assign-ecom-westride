@@ -44,13 +44,16 @@ exports.list = async (req, res) => {
    // console.log("req.user to list", req.user);//undefined when NO <token> sent in req.header
    try {
       //auto check and update expired seasonal discount everytime frontend fetch product
-      const now = new Date();
+      //use UTC time
+      const now = new Date(); 
       const expiredDiscounts = await prisma.discount.findMany({
          where: {
-            endDate: { lt: now },
+            endDate: { lt: now }, //if endDate gte now → not expired
             isActive: true
          }
       });
+      // console.log('new date',new Date())
+      // console.log("now", now);
       console.log("expiredDiscounts", expiredDiscounts);
       // Reset expired discounts
       if (expiredDiscounts.length > 0) {
@@ -569,7 +572,7 @@ exports.handleBulkDiscount = async (req, res) => {
       let prodToCreate = [];
       let prodToUpdate = products.filter((obj) => {
          for (let i = 0; i < existProdWithDiscounts.length; i++) {
-            if (existingDiscount.length>0 && obj.id === existingDiscount[i].productId ) {
+            if (existingDiscount.length > 0 && obj.id === existingDiscount[i].productId) {
                return true;
             } else {
                prodToCreate.push(obj);
@@ -597,6 +600,11 @@ exports.handleBulkDiscount = async (req, res) => {
          );
       } else {
          // update existing discounts และสร้าง new discounts พร้อมกัน
+         // Validate dates | .getTime() จะ returns the number of milliseconds since January 1, 1970, 00:00:00 UTC
+         // if (isNaN(parsedStartDate.getTime()) || isNaN(parsedEndDate.getTime())) {
+         //    return res.status(400).json({ error: "Invalid date format" });
+         // }
+
          if (prodToUpdate.length > 0) {
             promises.push(
                prisma.discount.updateMany({

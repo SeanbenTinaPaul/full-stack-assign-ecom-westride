@@ -76,8 +76,8 @@ exports.changeRole = async (req, res) => {
 exports.createUserCart = async (req, res) => {
    try {
       const carts = req.body.carts;
-      // console.log('req.body carts->',req.body.carts);
-      console.log("carts->", carts); // [{id:, countCart:, price:, buyPriceNum:,promotion:,discounts: [ [Object] ]}, {}]
+      console.log("req.body carts->", req.body.carts);
+      console.log("carts->", carts); // [{id:, countCart:, price:, buyPriceNum:,preferDiscount,promotion:,discounts: [ [Object] ]}, {}]
       //1. check ว่า user มีข้อมมูลอยู่ในตาราง User หรือไม่
       const user = await prisma.user.findFirst({
          where: { id: Number(req.user.id) }
@@ -92,70 +92,101 @@ exports.createUserCart = async (req, res) => {
               WHERE "orderedById" = user.id
               );
           */
-      // await prisma.productOnCart.deleteMany({
-      //    where: {
-      //       //cart หมายถึง เอา productOnCart.cartId ซึ่งเท่ากับ Cart.id, เมื่อพบว่า Cart.orderedById เท่ากับ user.id
-      //       cart: { orderedById: user.id }
-      //    }
-      // });
-      // await prisma.cart.deleteMany({
-      //    where: {
-      //       orderedById: user.id
-      //    }
-      // });
-
-      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate
-      const today = new Date();
-      const validateDiscount = await prisma.discount.findMany({
+      await prisma.productOnCart.deleteMany({
          where: {
-            productId: {
-               in: carts.map((item) => item.id)
-            },
-            // isActive: true,
-            // startDate: {
-            //    lte: today
-            // },
-            // endDate: {
-            //    gte: today
-            // }
+            //cart หมายถึง เอา productOnCart.cartId ซึ่งเท่ากับ Cart.id, เมื่อพบว่า Cart.orderedById เท่ากับ user.id
+            cart: { orderedById: user.id }
          }
       });
-      console.log("validateDiscount->", validateDiscount);
-      if (validateDiscount.length > 0) {
-         console.log("validateDiscount->", validateDiscount);
-      }
+      await prisma.cart.deleteMany({
+         where: {
+            orderedById: user.id
+         }
+      });
+
+      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate
+      //ต้องการให้ promotion + discount ที่่อยู่ใน Cart + ProductOnCart up-to-date ตลอดเวลา
+      /*
+      1. discount expired → promotion
+      2. discount > promotion → discount
+      3. discount < promotion → promotion
+      4. promotion: null && discount: null → no promotion, no discount
+      */
+      // const prodPro = await prisma.product.findMany({
+      //    where: {
+      //       id: {
+      //          in: carts.map((item) => item.id)
+      //       }
+      //    },
+      //    select: {
+      //       id: true,
+      //       price: true,
+      //       promotion: true
+      //    }
+      // });
+      // const today = new Date();
+      // const availableDisc = await prisma.discount.findMany({
+      //    where: {
+      //       isActive: true,
+      //       startDate: { lte: today },
+      //       endDate: { gte: today },
+      //       productId: {
+      //          in: carts.map((item) => item.id)
+      //       }
+      //    },
+      //    select: {
+      //       id: true,
+      //       productId: true,
+      //       amount: true,
+      //       startDate: true,
+      //       endDate: true
+      //    }
+      // });
+      // console.log("prodPro->", prodPro);
+      // console.log("availableDiscount->", availableDisc);
+      //discount vs promotion
+      // if (availableDisc.length > 0) {
+      //    console.log("availableDiscount->", availableDisc);
+      //    for (let obj of carts) {
+      //       let discount = availableDisc.find((d) => d.productId === obj.id);
+      //       if (discount) {
+      //          item.discount = discount;
+      //       }
+      //    }
+      // }
+
       //3. เตรียมสินค้าใหม่สำหรับ insert ลงในตาราง ProductOnCart[]
       //req.body.cart ===[{},{},...]
       let products = carts.map((item) => ({
          productId: item.id,
          count: item.countCart,
          price: item.price,
-         buyPriceNum: item.buyPriceNum
-         // discount: item.discount //→ pending to add discount.....
+         buyPriceNum: item.buyPriceNum,
+         discount: item.preferDiscount
       }));
 
       //4. หาราคารวมของสินค้าในตะกร้า ลงในตาราง Cart
       let cartTotal = products.reduce((sum, item) => {
-         return sum + item.price * item.count;
+         return sum + item.buyPriceNum * item.count;
       }, 0);
 
       //5. Insert ข้อมูลลงในตาราง Cart
       //data: === INSERT INTO Cart (products, cartTotal, orderById) VALUES (products, cartTotal, orderById)
-      //products is ProductOnCart[] in Model Cart
-      // const newCart = await prisma.cart.create({
-      //    data: {
-      //       products: {
-      //          create: products //add products to ProductOnCart[]
-      //       },
-      //       cartTotal: cartTotal, //add to Cart.cartTotal
-      //       orderedById: user.id//add to Cart.orderedById
-      //    }
-      // });
+      // products is ProductOnCart[] in Model Cart
+      const newCart = await prisma.cart.create({
+         data: {
+            products: {
+               create: products //add products to ProductOnCart[]
+            },
+            cartTotal: cartTotal, //add to Cart.cartTotal
+            orderedById: user.id //add to Cart.orderedById
+         }
+      });
       res.status(200).json({
          success: true,
          message: "Add product to cart success",
-         productOnCart: products
-         // cart: newCart
+         productOnCart: products,
+         cart: newCart
       });
    } catch (err) {
       console.log(err);

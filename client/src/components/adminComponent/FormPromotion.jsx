@@ -314,12 +314,14 @@ function FormPromotion(props) {
                     .map((d) => {
                        // แปลง string เป็น Date object
                        const date = new Date(d.startDate);
-                       return date.toLocaleDateString("en-uk", {
-                          year: "numeric",
+                       return date.toLocaleString("en-uk", {
+                          timeZone: "Asia/Bangkok",
+                          day: "2-digit",
                           month: "short",
-                          day: "numeric",
+                          year: "numeric",
                           hour: "2-digit",
-                          minute: "2-digit"
+                          minute: "2-digit",
+                          hour12: true
                        });
                     })
                     .join(", ") // เพิ่ม join เพื่อแสดงผลเป็น string เดียว
@@ -370,12 +372,14 @@ function FormPromotion(props) {
                     .map((d) => {
                        // แปลง string เป็น Date object
                        const date = new Date(d.endDate);
-                       return date.toLocaleDateString("en-Uk", {
-                          year: "numeric",
+                       return date.toLocaleString("en-uk", {
+                          timeZone: "Asia/Bangkok",
+                          day: "2-digit",
                           month: "short",
-                          day: "numeric",
+                          year: "numeric",
                           hour: "2-digit",
-                          minute: "2-digit"
+                          minute: "2-digit",
+                          hour12: true
                        });
                     })
                     .join(", ") // เพิ่ม join เพื่อแสดงผลเป็น string เดียว

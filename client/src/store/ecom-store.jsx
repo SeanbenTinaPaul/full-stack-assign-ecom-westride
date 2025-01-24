@@ -152,7 +152,7 @@ const ecomStore = (set, get) => ({
    },
    actionLogin: async (form) => {
       //1. Send req with form to backend, path : http://localhost:5000/api/login
-      const res = await axios.post("http://localhost:5000/api/login", form);
+      const res = await axios.post(`${apiUrl}/api/login`, form);
 
       //2. เอา res.data ต่างๆ มา setState ให้ ecomStore().user และ ecomStore().token
       set({
