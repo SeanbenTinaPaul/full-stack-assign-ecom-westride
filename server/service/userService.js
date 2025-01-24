@@ -1,6 +1,5 @@
 const prisma = require("../config/prisma");
 
-
 //Feature/Button: "View All Users", "User Management", "Admin: View Users"
 exports.listUsers = async (req, res) => {
    try {
@@ -74,11 +73,11 @@ exports.changeRole = async (req, res) => {
 
 //ข้อมูลการสั่งซื้อในตะกร้าของ users
 //Feature/Button: "Add to Cart", "Update Cart", "Save Cart"
-exports.userCart = async (req, res) => {
+exports.createUserCart = async (req, res) => {
    try {
-      const carts  = req.body.carts;
+      const carts = req.body.carts;
       // console.log('req.body carts->',req.body.carts);
-      console.log('carts->',carts); // [{id:, countCart:, price:, buyPriceNum:,promotion:,discounts: [ [Object] ]}, {}]
+      console.log("carts->", carts); // [{id:, countCart:, price:, buyPriceNum:,promotion:,discounts: [ [Object] ]}, {}]
       //1. check ว่า user มีข้อมมูลอยู่ในตาราง User หรือไม่
       const user = await prisma.user.findFirst({
          where: { id: Number(req.user.id) }
@@ -93,28 +92,46 @@ exports.userCart = async (req, res) => {
               WHERE "orderedById" = user.id
               );
           */
-      await prisma.productOnCart.deleteMany({
-         where: {
-            //cart หมายถึง เอา productOnCart.cartId ซึ่งเท่ากับ Cart.id, เมื่อพบว่า Cart.orderedById เท่ากับ user.id
-            cart: { orderedById: user.id }
-         }
-      });
-      await prisma.cart.deleteMany({
-         where: {
-            orderedById: user.id
-         }
-      });
+      // await prisma.productOnCart.deleteMany({
+      //    where: {
+      //       //cart หมายถึง เอา productOnCart.cartId ซึ่งเท่ากับ Cart.id, เมื่อพบว่า Cart.orderedById เท่ากับ user.id
+      //       cart: { orderedById: user.id }
+      //    }
+      // });
+      // await prisma.cart.deleteMany({
+      //    where: {
+      //       orderedById: user.id
+      //    }
+      // });
 
-      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate 
+      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate
+      const today = new Date();
+      const validateDiscount = await prisma.discount.findMany({
+         where: {
+            productId: {
+               in: carts.map((item) => item.id)
+            },
+            // isActive: true,
+            // startDate: {
+            //    lte: today
+            // },
+            // endDate: {
+            //    gte: today
+            // }
+         }
+      });
+      console.log("validateDiscount->", validateDiscount);
+      if (validateDiscount.length > 0) {
+         console.log("validateDiscount->", validateDiscount);
+      }
       //3. เตรียมสินค้าใหม่สำหรับ insert ลงในตาราง ProductOnCart[]
       //req.body.cart ===[{},{},...]
       let products = carts.map((item) => ({
          productId: item.id,
          count: item.countCart,
          price: item.price,
-         buyPriceNum: item.buyPriceNum,
+         buyPriceNum: item.buyPriceNum
          // discount: item.discount //→ pending to add discount.....
-
       }));
 
       //4. หาราคารวมของสินค้าในตะกร้า ลงในตาราง Cart
@@ -125,20 +142,20 @@ exports.userCart = async (req, res) => {
       //5. Insert ข้อมูลลงในตาราง Cart
       //data: === INSERT INTO Cart (products, cartTotal, orderById) VALUES (products, cartTotal, orderById)
       //products is ProductOnCart[] in Model Cart
-      const newCart = await prisma.cart.create({
-         data: {
-            products: {
-               create: products //add products to ProductOnCart[]
-            },
-            cartTotal: cartTotal, //add to Cart.cartTotal
-            orderedById: user.id//add to Cart.orderedById
-         }
-      });
+      // const newCart = await prisma.cart.create({
+      //    data: {
+      //       products: {
+      //          create: products //add products to ProductOnCart[]
+      //       },
+      //       cartTotal: cartTotal, //add to Cart.cartTotal
+      //       orderedById: user.id//add to Cart.orderedById
+      //    }
+      // });
       res.status(200).json({
          success: true,
          message: "Add product to cart success",
-         productOnCart: products,
-         cart: newCart
+         productOnCart: products
+         // cart: newCart
       });
    } catch (err) {
       console.log(err);
@@ -148,7 +165,6 @@ exports.userCart = async (req, res) => {
       });
    }
 };
-
 
 //Feature/Button: "View Cart", "My Cart", "Cart Details"
 exports.getUserCart = async (req, res) => {
@@ -166,8 +182,8 @@ exports.getUserCart = async (req, res) => {
                include: {
                   // ProductOnCart join กับ Product ด้วย productId
                   product: {
-                     include:{
-                        discounts: true,
+                     include: {
+                        discounts: true
                      }
                   }
                }
@@ -176,13 +192,12 @@ exports.getUserCart = async (req, res) => {
       });
       //cal promotion vs discount และ to send res with ราคาสุทธิ
       //get promotion from table Product, join to Discount with productId
-     
 
       res.status(200).json({
          success: true,
          message: "This is your cart.",
          // Products: cart.products,
-         carts: cart,
+         carts: cart
          // "Total price": cart.cartTotal
       });
    } catch (err) {
@@ -227,7 +242,6 @@ exports.emptyCart = async (req, res) => {
    }
 };
 
-
 //Feature/Button: "Save Address", "Update Address", "Add/Edit Address"
 exports.saveAddress = async (req, res) => {
    try {
@@ -260,126 +274,124 @@ where: {
 */
 //Feature/Button: "Place Order", "Checkout", "Confirm Order"
 exports.saveOrder = async (req, res) => {
-    try {
-       //1. หา cart ของ user นั้นว่ามีหรือไม่
-       //products    ProductOnCart[]
-       // userCart จะดึง record แรก ทุกคอลัมน์จาก table 'Cart' orderedById เท่ากับ req.user.id และบางส่วนจาก 'ProductOnCart' ที่มี orderedById เท่ากับ req.user.id
-       const userCart = await prisma.cart.findFirst({
-          where: {
-             orderedById: Number(req.user.id)
-          },
-          include: {
-             products: {
-                select: {
-                   cartId: true,
-                   productId: true,
-                   count: true,
-                   price: true
-                }
-             }
-          }
-       });
- 
-       //2. ถ้าไม่มีให้ return 400
-       if (!userCart || userCart.products.length === 0)
-          return res
-             .status(400)
-             .json({ message: "Your cart is empty. Please add some product to a cart." });
- 
-       //3. Compare: product quantity in cart (userCart.products) vs  product quantity in stock (product.quantity)
-       let outStockProd = []; //เก็บ product ที่ไม่มี stock พอ
-       for (const item of userCart.products) {
-          const product = await prisma.product.findUnique({
-             where: { id: item.productId },
-             select: { quantity: true, title: true }
-          });
-          /*
+   try {
+      //1. หา cart ของ user นั้นว่ามีหรือไม่
+      //products    ProductOnCart[]
+      // userCart จะดึง record แรก ทุกคอลัมน์จาก table 'Cart' orderedById เท่ากับ req.user.id และบางส่วนจาก 'ProductOnCart' ที่มี orderedById เท่ากับ req.user.id
+      const userCart = await prisma.cart.findFirst({
+         where: {
+            orderedById: Number(req.user.id)
+         },
+         include: {
+            products: {
+               select: {
+                  cartId: true,
+                  productId: true,
+                  count: true,
+                  price: true
+               }
+            }
+         }
+      });
+
+      //2. ถ้าไม่มีให้ return 400
+      if (!userCart || userCart.products.length === 0)
+         return res
+            .status(400)
+            .json({ message: "Your cart is empty. Please add some product to a cart." });
+
+      //3. Compare: product quantity in cart (userCart.products) vs  product quantity in stock (product.quantity)
+      let outStockProd = []; //เก็บ product ที่ไม่มี stock พอ
+      for (const item of userCart.products) {
+         const product = await prisma.product.findUnique({
+            where: { id: item.productId },
+            select: { quantity: true, title: true }
+         });
+         /*
           item   { cartId: 15, productId: 5, count: 2, price: 40000 }
           product{ quantity: 1000, title: 'Core i9-11800K' }
           item   { cartId: 15, productId: 7, count: 10, price: 250 }
           product{ quantity: 10, title: 'ขาหมูเยอรมัน' }
           */
-          if (!product || item.count > product.quantity) {
-             outStockProd.push(product?.title || "product");
-          }
-       }
-       //4. if outStockProd.length > 0, return 400
-       if (outStockProd.length > 0) {
-          return res
-             .status(400)
-             .json({ message: `Sorry. Product: ${outStockProd.join()} out of stock.` });
-       }
- 
-       //5. create new Order
-       //products    ProductOnOrder[]
-       const order = await prisma.order.create({
-          data: {
-             products: {
-                create: userCart.products.map((item) => ({
-                   productId: item.productId,
-                   count: item.count,
-                   price: item.price
-                }))
-             },
-             //connect คือ create record: orderedById ในตาราง Order(ว่าง) ตาม User.id(มีอยู่แล้ว) 
-             /*
+         if (!product || item.count > product.quantity) {
+            outStockProd.push(product?.title || "product");
+         }
+      }
+      //4. if outStockProd.length > 0, return 400
+      if (outStockProd.length > 0) {
+         return res
+            .status(400)
+            .json({ message: `Sorry. Product: ${outStockProd.join()} out of stock.` });
+      }
+
+      //5. create new Order
+      //products    ProductOnOrder[]
+      const order = await prisma.order.create({
+         data: {
+            products: {
+               create: userCart.products.map((item) => ({
+                  productId: item.productId,
+                  count: item.count,
+                  price: item.price
+               }))
+            },
+            //connect คือ create record: orderedById ในตาราง Order(ว่าง) ตาม User.id(มีอยู่แล้ว)
+            /*
              INSERT INTO "Order" (orderedById, ...)
              VALUES ((SELECT id FROM "User" WHERE id = req.user.id), ...);
              */
-             orderedBy: {
-                connect: {
-                   id: Number(req.user.id)//=== id: userCart.orderedById
-                }
-             },
-             cartTotal: userCart.cartTotal // Ensure cartTotal is included here
-          }
-       });
+            orderedBy: {
+               connect: {
+                  id: Number(req.user.id) //=== id: userCart.orderedById
+               }
+            },
+            cartTotal: userCart.cartTotal // Ensure cartTotal is included here
+         }
+      });
 
-       //6. ลบข้อมูลในตาราง ProductOnCart และ Cart ทั้งหมด
-       /*
+      //6. ลบข้อมูลในตาราง ProductOnCart และ Cart ทั้งหมด
+      /*
        กระบวนการ:
        - ถ้า create ในตาราง Order แล้วก็ต้องลบในตาราง Cart และ ProductOnCart
        - ในตาราง Product ต้องลบจำนวนสินค้าที่สั่งออกไปจาก stock
        */
-       //6.1 เตรียมข้อมูลสำหรับ update จำนวนสินค้าในตาราง Product.sold และ Product.quantity
-       const updateProduct = userCart.products.map((item) => ({
-         where: { id:item.productId },
+      //6.1 เตรียมข้อมูลสำหรับ update จำนวนสินค้าในตาราง Product.sold และ Product.quantity
+      const updateProduct = userCart.products.map((item) => ({
+         where: { id: item.productId },
          data: {
-            sold: {increment: item.count},
-            quantity: {decrement: item.count}
+            sold: { increment: item.count },
+            quantity: { decrement: item.count }
          }
-       }))
-       //6.2 ส่ง updateProduct ไป update ในตาราง Product
-       //The key is to collect the promises in an array and then use Promise.all() to wait for all the promises to resolve.
-       // await Promise.all([promise1, promise2, ...]) | when promise = {..}
-       await Promise.all(
-         updateProduct.map((promise) => prisma.product.update(promise))
-       )
+      }));
+      //6.2 ส่ง updateProduct ไป update ในตาราง Product
+      //The key is to collect the promises in an array and then use Promise.all() to wait for all the promises to resolve.
+      // await Promise.all([promise1, promise2, ...]) | when promise = {..}
+      await Promise.all(updateProduct.map((promise) => prisma.product.update(promise)));
 
-       //6.3 ลบข้อมูลในตาราง ProductOnCart และ Cart ทั้งหมด
-       // ติด onDelete: Cascade ในตาราง ProductOnCart.cartId ไว้ → ถ้าลบ record ในตาราง Cart จะลบ record ในตาราง ProductOnCart ด้วย
-       await prisma.cart.deleteMany({
+      //6.3 ลบข้อมูลในตาราง ProductOnCart และ Cart ทั้งหมด
+      // ติด onDelete: Cascade ในตาราง ProductOnCart.cartId ไว้ → ถ้าลบ record ในตาราง Cart จะลบ record ในตาราง ProductOnCart ด้วย
+      await prisma.cart.deleteMany({
          where: { orderedById: Number(req.user.id) }
-       })
+      });
 
-       res.status(200).json({
-          success: true,
-          message: "save Order Success",
-          data: userCart,
-          updateProduct: updateProduct,
-          order: order
-       });
-       //7. records ในตาราง Order และ ProductOnOrder จะไม่ถูกลบ → ใช้เก็บ log การสั่งซื้อทั้งหมดของ users 
-    } catch (err) {
-       console.log(err);
-       res.status(500).json({
-          success: false,
-          message: "Error!!! Cannot save order."
-       });
-    }
- };
+      res.status(200).json({
+         success: true,
+         message: "save Order Success",
+         data: userCart,
+         updateProduct: updateProduct,
+         order: order
+      });
+      //7. records ในตาราง Order และ ProductOnOrder จะไม่ถูกลบ → ใช้เก็บ log การสั่งซื้อทั้งหมดของ users
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({
+         success: false,
+         message: "Error!!! Cannot save order."
+      });
+   }
+};
 
-//ข้อมูลประวัติการสั่งซื้อของ users 
+//ข้อมูลประวัติการสั่งซื้อของ users
 /*
 Order.products    ProductOnOrder[]
 ProductOnOrder.product   Product
@@ -389,14 +401,14 @@ exports.getOrder = async (req, res) => {
    try {
       const orders = await prisma.order.findMany({
          where: { orderedById: Number(req.user.id) },
-         include: { 
+         include: {
             products: {
                include: { product: true }
-            } 
+            }
          }
-      })
+      });
 
-      if(orders.length === 0) 
+      if (orders.length === 0)
          return res.status(400).json({ success: false, message: "No order found." });
 
       res.status(200).json({

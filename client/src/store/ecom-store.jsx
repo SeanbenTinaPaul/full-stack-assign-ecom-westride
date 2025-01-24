@@ -5,6 +5,9 @@ import { persist, createJSONStorage } from "zustand/middleware"; //ใช้เ�
 import { listCategory } from "../api/CategoryAuth.jsx";
 import { listProduct, seachFilterProd } from "../api/ProductAuth.jsx";
 import _, { update } from "lodash"; // for making unique el array
+import { binarySearchProdId } from "@/utilities/binarySearch.js";
+const apiUrl = import.meta.env.VITE_API_URL;
+
 //get is a function that allows you to retrieve the current state of the store.
 //set and get functions to update and retrieve the state of the ecomStore store in React components.
 const ecomStore = (set, get) => ({
@@ -17,19 +20,21 @@ const ecomStore = (set, get) => ({
    //to make carts display up-to-date(promotion or discount)
    //productData for 1 prod | ==={id(productId), buyPrice, buyPriceNum, promotion, preferDiscount} แต่ไม่มี countCart
    /*
-   list to do 
-   1. ไปรับ productData มาจาก CardProd.jsx เหมือน addToCart()
-   2. ไปเอา productData มาเปลี่ยนค่าใน carts ที่มี id ตรงกัน
-   3. แล้ว set ค่าใหม่ให้ carts
-   4. แล้ว synCartwithProducts() ใน addToCart() ให้มัน update ข้อมูลใหม่ให้กับ carts
+    list to do ☺☺☺
+    1. ไปรับ productData มาจาก CardProd.jsx เหมือน addToCart()
+    2. ไปเอา productData มาเปลี่ยนค่าใน carts ที่มี id ตรงกัน
+    3. แล้ว set ค่าใหม่ให้ carts
+    4. แล้ว synCartwithProducts() ใน addToCart() ให้มัน update ข้อมูลใหม่ให้กับ carts
    */
+   //  synCartwithProducts(productData) จะถูก called รัวๆที่ CardProd.jsx ตามจำนวนของ product ที่มีอยู่
    synCartwithProducts: (productData) => {
+      // console.log("syncPrice And Disc", productData);
       const carts = get().carts;
       const products = get().products; //key man → fetch products from backend
       // Update all cart items with latest product data
       const updateCarts = carts.map((cartItem) => {
          //เอา p เพราะใหม่กว่า แต่เก็บ countCart ของเดิมไว้
-         let latestProd = products.find((p) => p.id === cartItem.id);
+         let latestProd = binarySearchProdId(products, cartItem.id);
          return latestProd
             ? {
                  ...latestProd,
@@ -56,9 +61,9 @@ const ecomStore = (set, get) => ({
          }
          //เปลี่ยนค่า carts ใน localStorage
          set({ carts: updateCarts });
-         console.log("syncPrice And Disc", productData);
-         console.log("updateCarts", updateCarts);
-         console.log("synCart with Products", carts);
+         // console.log("syncPrice And Disc", productData);
+         // console.log("updateCarts", updateCarts);
+         // console.log("synCart with Products", carts);
       }
    },
 
@@ -66,8 +71,8 @@ const ecomStore = (set, get) => ({
    //productObj = 1 prod | ==={id(productId), buyPrice, buyPriceNum, promotion, avgRating}
    //productObj จริงๆ up-to-dateอยู่แล้ว แต่แค่รอให้ call addToCart(productData) ที่ CardProd.jsx ก่อน
    addToCart: (productObj) => {
-      console.log("addToCart productObj->", productObj);
-      /*list to edit
+      // console.log("addToCart productObj->", productObj);
+      /*list to edit ☺☺☺
       1. update productObj before add to updateCart
       2. uniqueCart should unique according to id 
       */
@@ -92,7 +97,7 @@ const ecomStore = (set, get) => ({
          newCarts = [...carts, { ...productObj, countCart: 1 }];
       }
       set({ carts: newCarts });
-      console.log("new carts", newCarts);
+      // console.log("new carts", newCarts);
       get().synCartwithProducts(productObj);
    },
    //update state wheter
@@ -165,7 +170,6 @@ const ecomStore = (set, get) => ({
       try {
          const res = await listCategory();
          set({ categories: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend  res.send()
-         get().syncCartsWithProducts(); // Auto-sync carts after products update
          return res;
       } catch (err) {
          console.log(err);
@@ -178,6 +182,7 @@ const ecomStore = (set, get) => ({
          const res = await listProduct(count);
          // console.log("getProduct response:", res.data);
          set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
+         get().syncCartsWithProducts(); // Auto-sync carts after products update
          return res; // Return the response
       } catch (err) {
          console.log(err);

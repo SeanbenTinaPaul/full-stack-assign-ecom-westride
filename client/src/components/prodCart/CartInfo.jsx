@@ -9,26 +9,21 @@ import { formatNumber } from "@/utilities/formatNumber";
 import { Badge } from "../ui/badge";
 
 function CartInfo(props) {
-   const { carts, adjustQuantity, removeCart, toTalPrice, synCartwithProducts, products } =
-      useEcomStore((state) => state);
+   const { carts, adjustQuantity, removeCart, toTalPrice } = useEcomStore((state) => state);
    //carts === [{ categoryId:, buyPriceNum:,countCart:,discounts:,promotion:, },{},..]
    console.log("carts in CartInfo", carts);
-
-//    useEffect(() => {
-//       synCartwithProducts();
-//       const interval = setInterval(() => {
-//          synCartwithProducts();
-//       }, 30000);
-
-//       return () => clearInterval(interval);
-//    }, [products]); // Re-run when products change
-
 
    // Safe discount amount getter
    const getDiscountAmount = (cart) => {
       //check if isAtive === true (not expired)
       //isAtive === true → can use discount
-      if (cart?.discounts?.[0]?.isActive) {
+      console.log('check cart sample',cart)
+      let today = new Date();
+      let startDate = new Date(cart?.discounts?.[0]?.startDate);
+      let endDate = new Date(cart?.discounts?.[0]?.endDate);
+      console.log(today, '' ,startDate,cart?.discounts?.[0]?.startDate  );
+      // console.log(today);
+      if (cart?.discounts?.[0]?.isActive && today < endDate && today >= startDate) {
          // console.log("carts?.discounts?.[0]?.amount", cart?.discounts?.[0]?.amount);
          return cart?.discounts?.[0]?.amount;
       }
@@ -87,7 +82,7 @@ function CartInfo(props) {
                         </div>
                         {/* badge+title+desc */}
                         <div className='block w-3/4'>
-                           {(cart?.promotion || getDiscountAmount()) && (
+                           {(cart?.promotion || getDiscountAmount(cart)) && (
                               <Badge className='bg-red-500 px-1'>
                                  -{renderPercentDiscount(cart)}%
                               </Badge>

@@ -11,6 +11,8 @@ import { Heart, ShoppingCart, Star, StarHalf } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { Link } from "react-router-dom";
 
+//-------------------------------------------------------------------
+
 function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
    const { addToCart, user,synCartwithProducts } = useEcomStore((state) => state);
    const [isFavorite, setIsFavorite] = useState(false);
@@ -68,7 +70,10 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
    const getDiscountAmount = () => {
       //check if isAtive === true (not expired)
       //isAtive === true → can use discount
-      if (prodObj?.discounts?.[0]?.isActive) {
+      let today = new Date();
+      let startDate = new Date(prodObj?.discounts?.[0]?.startDate);
+      let endDate = new Date(prodObj?.discounts?.[0]?.endDate);
+      if (prodObj?.discounts?.[0]?.isActive  && today < endDate && today >= startDate) {
          return prodObj?.discounts?.[0]?.amount;
       }
       return null;

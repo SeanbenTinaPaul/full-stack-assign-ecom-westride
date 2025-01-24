@@ -13,36 +13,46 @@ import { useToast } from "@/components/hooks/use-toast";
 import { ListChecks, Trash2 } from "lucide-react";
 
 function ListCheckout(props) {
-   const { carts, adjustQuantity, removeCart, user, token } = useEcomStore((state) => state);
+   const { carts, adjustQuantity, removeCart, user, token, products, getProduct } = useEcomStore(
+      (state) => state
+   );
    const [totalDiscount, setTotalDiscount] = useState(0);
    const [totalNet, setTotalNet] = useState(0);
    const [total, setTotal] = useState(0);
    const navigate = useNavigate();
-    const { toast } = useToast();
+   const { toast } = useToast();
 
    console.log(user);
-   console.log("carts in ListCheckout", {carts});
+   // console.log("carts in ListCheckout", { carts });
 
+   // Sync with products when carts or products change
+   useEffect(() => {
+      // Only fetch if needed (e.g., products array is empty)
+      if (!products.length) {
+         getProduct();
+      }
+   }, [products, getProduct]);
+
+   //send req to backend
    const handleCreateCart = async () => {
-      try{
-         const res = await createCartUser(token, {carts});
+      try {
+         const res = await createCartUser(token, { carts });
          console.log("res.data.cart", res.data.cart);
          console.log("res.data.productOnCart", res.data.productOnCart);
-         if(res.data.success){
+         if (res.data.success) {
             navigate("/purchase");
-         }else{
+         } else {
             console.log("error", res.data.message);
             toast({
                variant: "destructive",
                title: "error",
-               description: 'Adding to cart Not success',
+               description: "Adding to cart Not success"
             });
          }
-      }catch(err){
+      } catch (err) {
          console.log(err);
       }
-
-   }
+   };
 
    // Move howMuchDiscount outside useEffect and wrap in useCallback
    const howMuchDiscount = useCallback((cart) => {
@@ -57,6 +67,7 @@ function ListCheckout(props) {
       return 0;
    }, []); // Empty dependency array since getDiscountAmount is stable
 
+   // Calculate discounts whenever carts update
    useEffect(() => {
       let totalDisc = 0;
       let total = 0;
@@ -78,7 +89,10 @@ function ListCheckout(props) {
    const getDiscountAmount = (cart) => {
       //check if isAtive === true (not expired)
       //isAtive === true → can use discount
-      if (cart?.discounts?.[0]?.isActive) {
+      let today = new Date();
+      let startDate = new Date(cart?.discounts?.[0]?.startDate);
+      let endDate = new Date(cart?.discounts?.[0]?.endDate);
+      if (cart?.discounts?.[0]?.isActive && today < endDate && today >= startDate) {
          // console.log("carts?.discounts?.[0]?.amount", cart?.discounts?.[0]?.amount);
          return cart?.discounts?.[0]?.amount;
       }
@@ -139,7 +153,7 @@ function ListCheckout(props) {
                            </div>
                            {/* badge+title+desc */}
                            <div className='block w-3/4'>
-                              {(cart?.promotion || getDiscountAmount()) && (
+                              {(cart?.promotion || getDiscountAmount(cart)) && (
                                  <Badge className='bg-red-500 px-1'>
                                     -{renderPercentDiscount(cart)}%
                                  </Badge>
