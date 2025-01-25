@@ -104,14 +104,6 @@ exports.createUserCart = async (req, res) => {
          }
       });
 
-      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate
-      //ต้องการให้ promotion + discount ที่่อยู่ใน Cart + ProductOnCart up-to-date ตลอดเวลา
-      /*
-      1. discount expired → promotion
-      2. discount > promotion → discount
-      3. discount < promotion → promotion
-      4. promotion: null && discount: null → no promotion, no discount
-      */
       // const prodPro = await prisma.product.findMany({
       //    where: {
       //       id: {
@@ -196,7 +188,51 @@ exports.createUserCart = async (req, res) => {
       });
    }
 };
+//---------------------------------------------------------------------------
+//obj.product.discounts[0].isActive
+//obj.product.discounts[0].endDate
+//obj.product.discounts[0].amount
+//obj.product.promotion
+//obj.product.price
+const getDiscountAmount = (obj) => {
+   //check if isAtive === true (not expired)
+   //isAtive === true → can use discount
+    // Check if there are any discounts
+    if (!obj.product.discounts || obj.product.discounts.length === 0) {
+      return null;
+   }
+   let today = new Date();
+   let startDate = new Date(obj.product.discounts[0].startDate);
+   let endDate = new Date(obj.product.discounts[0].endDate);
+   const discount = obj.product.discounts[0];
+   console.log("today", today);
+   console.log("endDate", endDate);
+   if (discount.isActive && today >= startDate && today < endDate) {
+      return discount.amount;
+   }
+   return null;
+};
+const calBuyPriceNum = (obj) => {
+   const discountAmount = getDiscountAmount(obj);
+   let buyPriceNum = obj.product.price;
+   let preferDiscount = null;
 
+   if (obj.product.promotion > discountAmount) {
+      preferDiscount = obj.product.promotion;
+      buyPriceNum = obj.product.price * (1 - obj.product.promotion / 100);
+   } else if (obj.product.promotion < discountAmount) {
+      preferDiscount = discountAmount;
+      buyPriceNum = obj.product.price * (1 - discountAmount / 100);
+   }
+   // Update the object
+   obj.buyPriceNum = buyPriceNum;
+   obj.discount = preferDiscount;
+   // obj((prev) => ({
+   //    ...prev,
+   //    buyPriceNum: buyPriceNum,
+   //    discount: preferDiscount
+   // }));
+};
 //Feature/Button: "View Cart", "My Cart", "Cart Details"
 exports.getUserCart = async (req, res) => {
    try {
@@ -221,15 +257,41 @@ exports.getUserCart = async (req, res) => {
             }
          }
       });
+      if (!cart) {
+         return res.status(404).json({
+            success: false,
+            message: "Cart not found."
+         });
+      }
+      //need to validate promotion vs discount → discount needs: isActive, startDate, endDate
+      //ต้องการให้ promotion + discount ที่่อยู่ใน Cart + ProductOnCart up-to-date ตลอดเวลา
+      /*
+      1. discount expired → promotion
+      2. discount > promotion → discount
+      3. discount < promotion → promotion
+      4. promotion: null && discount: null → no promotion, no discount
+      */
+      //obj.product.discounts[0].isActive
+      //obj.product.promotion
+      //obj.product.price
+      let totalCartDiscount = 0;
+      let totalPriceNoDiscount = 0;
+      for (const obj of cart.products) {
+         calBuyPriceNum(obj);
+         totalCartDiscount += (obj.product.price * obj.count) - (obj.buyPriceNum * obj.count);
+         totalPriceNoDiscount += (obj.product.price * obj.count);
+      }
       //cal promotion vs discount และ to send res with ราคาสุทธิ
       //get promotion from table Product, join to Discount with productId
-
+      // res.send(cart);
       res.status(200).json({
          success: true,
          message: "This is your cart.",
-         // Products: cart.products,
-         carts: cart
-         // "Total price": cart.cartTotal
+         ProductOnCart: cart.products,
+         carts: cart,
+         "Total price": cart.cartTotal,
+         totalCartDiscount: totalCartDiscount,
+         totalPriceNoDiscount: totalPriceNoDiscount
       });
    } catch (err) {
       console.log(err);

@@ -140,7 +140,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
       <div>
          {/* {console.log("prodObj", prodObj)} */}
          {/* {console.log("productData", productData)} */}
-         <Card className='flex flex-col w-72 h-96 max-lg:w-36 max-lg:h-52 max-lg:relative '>
+         <Card className='flex flex-col w-72 h-96 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
             {/* Product Image+fav+badge */}
             <div className='relative h-52 max-lg:h-28'>
                <img

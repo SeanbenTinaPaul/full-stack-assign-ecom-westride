@@ -19,8 +19,8 @@ function Login() {
       password: ""
    });
    const handleOnchange = (event) => {
-      console.log(event);
-      console.log(event.target.name, event.target.value);
+      // console.log(event);
+      // console.log(event.target.name, event.target.value);
       setForm({
          ...form,
          [event.target.name]: event.target.value
@@ -31,7 +31,7 @@ function Login() {
       //Send to backend
       try {
          const res = await actionLogin(form); //call actionLogin() โดยส่ง form ไป
-         console.log("res-->", res);
+         // console.log("res-->", res);
 
          //redirect หน้าpage หลัง login ตาม payload.role
          const role = res.data.payload.role;

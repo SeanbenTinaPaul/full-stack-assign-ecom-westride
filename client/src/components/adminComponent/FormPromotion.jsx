@@ -625,7 +625,7 @@ function FormPromotion(props) {
             </CardContent>
          </Card>
          {/* Table*********** */}
-         {console.log("products to table", products)}
+         {/* {console.log("products to table", products)} */}
          <div className=''>
             <DataTable
                columns={columns}

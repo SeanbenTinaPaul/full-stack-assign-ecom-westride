@@ -17,12 +17,11 @@ function CartInfo(props) {
    const getDiscountAmount = (cart) => {
       //check if isAtive === true (not expired)
       //isAtive === true → can use discount
-      console.log('check cart sample',cart)
+      // console.log('check cart sample',cart)
       let today = new Date();
       let startDate = new Date(cart?.discounts?.[0]?.startDate);
       let endDate = new Date(cart?.discounts?.[0]?.endDate);
-      console.log(today, '' ,startDate,cart?.discounts?.[0]?.startDate  );
-      // console.log(today);
+      // console.log(today, '' ,startDate,cart?.discounts?.[0]?.startDate  );
       if (cart?.discounts?.[0]?.isActive && today < endDate && today >= startDate) {
          // console.log("carts?.discounts?.[0]?.amount", cart?.discounts?.[0]?.amount);
          return cart?.discounts?.[0]?.amount;

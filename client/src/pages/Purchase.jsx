@@ -1,8 +1,9 @@
+import CardPurchase from '@/components/prodCart/CardPurchase'
 import React from 'react'
 
 const Purchase = () => {
   return (
-    <div>Purchase</div>
+    <div><CardPurchase /></div>
   )
 }
 

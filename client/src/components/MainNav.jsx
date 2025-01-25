@@ -61,7 +61,7 @@ const MainNav = ({ isCollapsed }) => {
                ) : (
                   <div className='flex items-center pr-4 gap-2'>
                      <Slack />
-                     <span>LOGO</span>
+                     <span>Assignment</span>
                   </div>
                )}
             </h2>
