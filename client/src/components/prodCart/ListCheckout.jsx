@@ -171,23 +171,23 @@ function ListCheckout(props) {
                            onClick={() => handleRmCart(cart.id)}
                            className='cursor-pointer'
                         >
-                           <Trash2 className='w-4 hover:text-rose-500 hover:scale-125 transition duration-300' />
+                           <Trash2 className='w-4 drop-shadow-md hover:text-rose-500 hover:scale-125 transition duration-300' />
                         </div>
                      </div>
                      {/* row 2: quantity + price */}
                      <div className='flex justify-between items-center'>
                         {/* LEFT:quantity */}
-                        <div className='border rounded-md px-2 py-1'>
+                        <div className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
                            <button
                               onClick={() => adjustQuantity(cart.id, cart.countCart - 1)}
-                              className='px-1 w-6 shadow-sm font-semibold bg-gray-200 rounded-sm hover:bg-gray-400'
+                              className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
                            >
                               -
                            </button>
                            <span className='px-4 font-light text-xs'>{cart.countCart}</span>
                            <button
                               onClick={() => adjustQuantity(cart.id, cart.countCart + 1)}
-                              className='px-1 w-6 shadow-sm font-semibold bg-gray-200 rounded-sm hover:bg-gray-400'
+                              className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
                            >
                               +
                            </button>
@@ -201,7 +201,8 @@ function ListCheckout(props) {
                ))}
             </div>
             {/* rigt :total net price*/}
-            <div className='shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+            {/* w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)] */}
+            <div className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
                {/* className="bg-card p-2 mb-2 rounded-md shadow-md" */}
                <div className='flex justify-between p-2 mb-2 '>
                   <p>Total</p>

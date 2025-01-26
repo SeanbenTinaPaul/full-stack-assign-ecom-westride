@@ -38,7 +38,7 @@ const authItems = [
    }
 ];
 
-const MainNav = ({ isCollapsed }) => {
+const MainSidebar = ({ isCollapsed }) => {
    const sidebarWidth = isCollapsed ? "w-16" : "w-64";
    const {user,carts} = useEcomStore((state) => state);//for badge carts
 
@@ -132,7 +132,7 @@ const MainNav = ({ isCollapsed }) => {
    );
 };
 
-export default MainNav;
+export default MainSidebar;
 
 // import React from "react";
 // import { Link } from "react-router-dom";

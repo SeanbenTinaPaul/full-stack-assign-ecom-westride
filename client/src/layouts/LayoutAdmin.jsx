@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom"; //Outlet คือ component ที�
 import SidebarAdmin from "../components/adminComponent/SidebarAdmin";
 import HeaderAdmin from "../components/adminComponent/HeaderAdmin";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, ArrowLeftToLine, PanelLeftOpen, PanelLeftClose } from "lucide-react";
 
 const LayoutAdmin = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -19,6 +19,7 @@ Added margin left (ml-64 or ml-16) to the main content to offset the fixed sideb
          <SidebarAdmin isCollapsed={isSidebarCollapsed} />
          <div className={`flex-1 flex flex-col ${contentMargin} transition-all duration-300`}>
             <HeaderAdmin />
+            {/* Trigger Button */}
             <div className='fixed top-1 left-3 z-[60]'>
                <Button
                   className='bg-transparent border-none hover:bg-transparent '
@@ -26,7 +27,12 @@ Added margin left (ml-64 or ml-16) to the main content to offset the fixed sideb
                   size='icon'
                   onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                >
-                  <Menu className='h-4 w-4 text-white' />
+                  {isSidebarCollapsed ? (
+                     <PanelLeftOpen className='h-4 w-4 text-white transition-all duration-300' />
+                  ) : (
+                     <PanelLeftClose className='h-4 w-4 text-white transition-all duration-300' />
+                  )}
+                  {/* <ArrowLeftToLine className ={`${isSidebarCollapsed ? 'rotate-180' : '' } h-4 w-4 text-white`} /> */}
                </Button>
             </div>
             <main className='flex-1 p-6 bg-slate-100 overflow-y-auto pt-20'>

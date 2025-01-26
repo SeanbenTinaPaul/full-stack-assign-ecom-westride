@@ -1,32 +1,43 @@
-
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import MainNav from "../components/MainNav";
+import MainSidebar from "../components/MainSidebar";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import {
+   Menu,
+   ArrowLeftToLine,
+   ArrowRightToLine,
+   PanelLeftOpen,
+   PanelLeftClose
+} from "lucide-react";
 
 const Layout = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
    const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-64"; //to maintain content margin when fixed sidebar
 
    return (
-      <div className="min-h-screen flex">
-         <MainNav isCollapsed={isSidebarCollapsed} />
+      <div className='min-h-screen flex'>
+         <MainSidebar isCollapsed={isSidebarCollapsed} />
          <div className={`flex-1 flex flex-col ${contentMargin} transition-all duration-300`}>
-            <div className="fixed top-1 left-3 z-[60]">
-               <Button 
-                  className="bg-transparent border-none hover:bg-transparent "
-                  variant="outline" 
-                  size="icon"
+            <div className='fixed top-1 left-3 z-[60]'>
+               <Button
+                  className='bg-transparent border-none hover:bg-transparent '
+                  variant='outline'
+                  size='icon'
                   onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                >
                   {/* Trigger Button */}
-                  <Menu className="h-4 w-4 text-white" />
+                  {isSidebarCollapsed ? (
+                     <PanelLeftOpen className='h-4 w-4 text-white transition-all duration-300' />
+                  ) : (
+                     <PanelLeftClose className='h-4 w-4 text-white transition-all duration-300' />
+                  )}
+
+                  {/* <ArrowLeftToLine className ={`${isSidebarCollapsed ? 'rotate-180' : '' } h-4 w-4 text-white`} /> */}
                </Button>
             </div>
             {/* content space */}
-            <main className="flex-1 h-full p-6 bg-slate-100 overflow-y-auto pt-14">
-               {/* Outlet → Navlink in MainNav.jsx */}
+            <main className='flex-1 h-full p-6 bg-slate-100 overflow-y-auto pt-14'>
+               {/* Outlet → Navlink in MainSidebar.jsx */}
                <Outlet />
             </main>
          </div>
@@ -47,12 +58,12 @@ export default Layout;
 //    return (
 //       <div className="min-h-screen flex">
 //          <MainNav isCollapsed={isSidebarCollapsed} />
-         
+
 //          <div className="flex-1 flex flex-col">
 //             {/* Trigger Button */}
 //             <div className="fixed top-4 left-4 z-50">
-//                <Button 
-//                   variant="outline" 
+//                <Button
+//                   variant="outline"
 //                   size="icon"
 //                   onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
 //                >
@@ -90,8 +101,8 @@ export default Layout;
 //          <div className={`flex-1 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
 //             {/* Trigger Button */}
 //             <div className="fixed top-4 left-4 z-50">
-//                <Button 
-//                   variant="outline" 
+//                <Button
+//                   variant="outline"
 //                   size="icon"
 //                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
 //                >

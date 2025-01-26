@@ -1,3 +1,8 @@
+//3D inside input text : className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+//ลูกอมนูน : className='px-3 w-8 h-8 bg-gradient-to-b from-gray-200 to-gray-300 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+//เงา svg 'text-slate-900 drop-shadow-sm '
+//hover เปลี่ยนสีปุ่ม transition-colors duration-300
+
 //for syncing carts to DB
 /*model Cart {
    id          Int             @id @default(autoincrement())

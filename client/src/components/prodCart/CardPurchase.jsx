@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { getCartUser } from "@/api/userAuth";
+import { getCartUser, saveAddressUser } from "@/api/userAuth";
 import useEcomStore from "@/store/ecom-store";
 
 import { formatNumber } from "@/utilities/formatNumber";
 import { Button } from "../ui/button";
+import { useToast } from "@/components/hooks/use-toast";
 import ShippingFee from "@/utilities/ShippingFee";
-import { set } from "lodash";
 
 function CardPurchase(props) {
    const { token, carts } = useEcomStore((state) => state);
+   const { toast } = useToast();
    const [prodOnCartArr, setProdOnCartArr] = useState([]);
    const [cartTotal, setCartTotal] = useState(0);
    const [toTalDiscount, setTotalDiscount] = useState(0);
    const [noDisTotalPrice, setNoDisTotalPrice] = useState(0);
+   //address manage
+   const [address, setAddress] = useState({ address: "" });
+   const [isSaveAddress, setIsSaveAddress] = useState(false);
 
    useEffect(() => {
       const handleGetCartUser = async () => {
@@ -23,8 +27,8 @@ function CardPurchase(props) {
             //    console.log("res.data.cartTotal", res.data.cartTotal);
             setProdOnCartArr(res.data.ProductOnCart);
             setCartTotal(res.data["Total price"]);
-            setTotalDiscount(res.data.totalCartDiscount)
-            setNoDisTotalPrice(res.data.totalPriceNoDiscount)
+            setTotalDiscount(res.data.totalCartDiscount);
+            setNoDisTotalPrice(res.data.totalPriceNoDiscount);
          } catch (err) {
             console.log(err);
          }
@@ -32,20 +36,48 @@ function CardPurchase(props) {
       handleGetCartUser();
    }, [token]);
 
+   const handleSaveAddress = async () => {
+      if (address.address.trim() === "") {
+         toast({
+            variant: "destructive",
+            title: "Error!",
+            description: "Please enter address"
+         });
+         return;
+      }
+      try {
+         const res = await saveAddressUser(token, address);
+         console.log("res.data", res.data);
+      } catch (err) {
+         console.log(err);
+      }
+   };
    return (
       <div className='mx-auto'>
          <main className='flex justify-center flex-wrap gap-4'>
             {/* left :Address*/}
             <article className='w-1/2'>
-               <div className='p-4 rounded-md border shadow-md space-y-4 bg-slate-200'>
+               <div className='p-4 rounded-xl border shadow-md space-y-4 bg-card'>
                   <h1>Address</h1>
-                  <textarea className='w-full p-2 border rounded-lg h-24 ' />
-                  <Button className='w-full hover:bg-slate-500'>Save Address</Button>
+                  <textarea
+                     onChange={(e) => setAddress({ address: e.target.value.trim() })}
+                     //  placeholder='e.g. 123/4 หมู่ที่ 5 ถนนมิตรภาพ ต.แม่พริก อ.เมืองขอนแก่น จ.ขอนแก่น 40000'
+                     className='w-full p-2 h-24 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                  />
+                  <div className='disabled:cursor-not-allowed text-sm text-slate-400 w-full p-2 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                     e.g. 123/4 หมู่ที่ 5 ถนนมิตรภาพ ต.แม่พริก อ.เมืองขอนแก่น จ.ขอนแก่น 40000
+                  </div>
+                  <Button
+                     onClick={handleSaveAddress}
+                     className='w-full transition-all duration-300 hover:bg-slate-500 shadow-md '
+                  >
+                     Save Address
+                  </Button>
                </div>
             </article>
             {/* right:Summary */}
             <article className='w-1/2'>
-               <div className='p-4 rounded-md border shadow-md space-y-4 bg-slate-200'>
+               <div className='p-4 rounded-xl border shadow-md space-y-4 bg-card'>
                   <h1>Summary</h1>
                   {/* item list */}
                   {/* {console.log("prodOnCartArr", prodOnCartArr)} */}
@@ -71,7 +103,7 @@ function CardPurchase(props) {
                         <div className='flex items-center'>
                            <p className='line-through text-green-700 italic font-medium'>฿0.00</p>
                            <span>
-                              <ShippingFee className='inline w-5 font-extrabold text-green-600' />
+                              <ShippingFee className='inline w-5 font-extrabold text-green-600 ' />
                            </span>
                         </div>
                      </div>
@@ -87,7 +119,10 @@ function CardPurchase(props) {
                      </div>
                   </section>
                   <section>
-                     <Button className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-md hover:bg-fuchsia-700'>
+                     <Button
+                        variant='primary'
+                        className='w-full mt-4 bg-fuchsia-800 text-white py-2 rounded-md transition-colors duration-300 hover:bg-fuchsia-700 shadow-md'
+                     >
                         Purchase
                      </Button>
                   </section>

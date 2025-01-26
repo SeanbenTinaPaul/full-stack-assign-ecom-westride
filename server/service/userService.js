@@ -341,7 +341,8 @@ exports.saveAddress = async (req, res) => {
       const { address } = req.body;
       const addressUser = await prisma.user.update({
          where: { id: Number(req.user.id) },
-         data: { address: address }
+         data: { address: address.trim() },
+         select: { address: true, name: true, email: true, role: true, picture: true,id: true }
       });
       res.status(200).json({
          success: true,

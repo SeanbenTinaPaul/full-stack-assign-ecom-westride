@@ -18,3 +18,12 @@ export const getCartUser = async (token) => {
       }
    });
 };
+//res.json()
+export const saveAddressUser = async (token, addressObj) => {
+   // console.log("getCartUser");
+   return await axios.post(`${apiUrl}/api/user/address`, addressObj, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};

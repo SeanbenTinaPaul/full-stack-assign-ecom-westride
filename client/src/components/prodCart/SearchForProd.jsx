@@ -142,7 +142,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                value={textSearch}
                onChange={(e) => handleSearchText(e)}
                placeholder='e.g. รองเท้าเด็ก, core i7'
-               className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+               className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
             />
             <div>
                {/* {console.log('categories search',categories)} */}

@@ -1,8 +1,17 @@
 import axios from "axios";
 import React, { useState } from "react";
-import  { toast } from 'react-toastify'
+import { useToast } from "@/components/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
+// import { toast } from "react-toastify";//ใช้แสดงข้อความแจ้งเตือน (toast message) บนเว็บไซต์
+import useEcomStore from "../../store/ecom-store";
+import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
 
 const Register = () => {
+   const { toast } = useToast();
    const [form, setForm] = useState({
       email: "",
       password: "",
@@ -17,50 +26,92 @@ const Register = () => {
    };
    const handleSubmit = async (event) => {
       event.preventDefault(); //ป้องกันการ refresh
-      if (form.password !== form.confirmPassword) return alert("Password not match");
-      console.log(form);
+      if (form.password !== form.confirmPassword) {
+         toast({
+            variant: "destructive",
+            title: "Error!",
+            description: "Passwords do not match"
+         });
+         return;
+      }
 
       //Send to backend
       try {
-        const res = await axios.post('http://localhost:5000/api/register', form) 
-        console.log(res)
-        toast.success(res.data.message || 'Register Success')
+         const res = await axios.post("http://localhost:5000/api/register", form);
+         toast({
+            title: "Success",
+            description: res.data.message || "Register Success"
+         });
       } catch (err) {
-        const errMsg = err.response?.data?.message 
-        toast.error(errMsg || 'Register Fail')
-        console.log(err);
+         const errMsg = err.response?.data?.message;
+         toast({
+            variant: "destructive",
+            title: "Error!",
+            description: errMsg || "Register Failed"
+         });
       }
    };
    return (
-      <div className="flex flex-col items-center">
-         Register
-         <form
-            action=''
-            onSubmit={handleSubmit}
-         >
-            Email
-            <input
-               type='email'
-               name='email'
-               onChange={handleOnchange}
-               className='border text-gray-950'
-            />
-            Password
-            <input
-               type='text'
-               name='password'
-               onChange={handleOnchange}
-               className='border text-gray-950'
-            />
-            Confirm password
-            <input
-               type='text'
-               name='confirmPassword'
-               onChange={handleOnchange}
-               className='border text-gray-950'
-            />
-            <button className='bg-Primary-btn shadow-md rounded-md px-4 py-1 m-4'>Register</button>
-         </form>
+      <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+         <Card className='w-full max-w-md'>
+            <CardHeader className='space-y-6'>
+               <CardTitle>Register</CardTitle>
+               <CardDescription>
+                  {
+                     <div className='flex gap-2 items-center'>
+                        <Slack className='w-8 h-8 drop-shadow-md' />{" "}
+                        <span>Create a new account</span>
+                     </div>
+                  }
+               </CardDescription>
+            </CardHeader>
+            <CardContent>
+               <form
+                  onSubmit={handleSubmit}
+                  className='space-y-4'
+               >
+                  <div className='space-y-2'>
+                     <Label htmlFor='email'>Email</Label>
+                     <Input
+                        id='email'
+                        type='email'
+                        name='email'
+                        placeholder='Enter your email'
+                        onChange={handleOnchange}
+                        required
+                     />
+                  </div>
+                  <div className='space-y-2'>
+                     <Label htmlFor='password'>Password</Label>
+                     <Input
+                        id='password'
+                        type='password'
+                        name='password'
+                        placeholder='Enter your password'
+                        onChange={handleOnchange}
+                        required
+                     />
+                  </div>
+                  <div className='space-y-2'>
+                     <Label htmlFor='confirmPassword'>Confirm Password</Label>
+                     <Input
+                        id='confirmPassword'
+                        type='password'
+                        name='confirmPassword'
+                        placeholder='Confirm your password'
+                        onChange={handleOnchange}
+                        required
+                     />
+                  </div>
+                  <Button
+                     type='submit'
+                     className='w-full'
+                  >
+                     Register
+                  </Button>
+               </form>
+            </CardContent>
+         </Card>
       </div>
    );
 };

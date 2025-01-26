@@ -1,8 +1,13 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useToast } from "@/components/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
 // import { toast } from "react-toastify";//ใช้แสดงข้อความแจ้งเตือน (toast message) บนเว็บไซต์
-import useEcomStore from "../../store/ecom-store"; 
+import useEcomStore from "../../store/ecom-store";
 import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
 
 function Login() {
@@ -11,7 +16,7 @@ function Login() {
    const actionLogin = useEcomStore((state) => state.actionLogin); //ยังไม่ใช่การ call function actionLogin() นะ
 
    const user = useEcomStore((state) => state.user); //ลองดึงข้อมูล user(เดิมที่เก็บไว้) มาจาก hook (ไม่ใส่ก็ได้)
-   console.log('user->', user);
+   console.log("user->", user);
 
    //form สำหรับส่งไป backend ► const { email, password } = req.body
    const [form, setForm] = useState({
@@ -40,18 +45,18 @@ function Login() {
 
          //toast → มี popup เด้งแจ้งเตือน
          toast({
-            title: 'Welcome Back',
-            description: res.data.message || "Login Success",
-         })
+            title: "Welcome Back",
+            description: res.data.message || "Login Success"
+         });
          // toast.success(res.data.message || "Login Success");
       } catch (err) {
          console.log(err);
          const errMsg = err.response?.data?.message;
          toast({
-            variant: 'destructive',
-            title: 'Error!',
-            description: errMsg || "Login Failed",
-         })
+            variant: "destructive",
+            title: "Error!",
+            description: errMsg || "Login Failed"
+         });
          // toast.error(errMsg || "Login Failed");
       }
 
@@ -81,32 +86,58 @@ function Login() {
          navigate(-1); //กลับไป previous url
       }
    };
-   
+
    return (
-      <div className="flex flex-col items-center">
-         Login
-         <form
-            action=''
-            onSubmit={handleSubmit}
-         >
-            Email
-            <input
-               type='email'
-               name='email'
-               onChange={handleOnchange}
-               className='border text-gray-950'
-            />
-            Password
-            <input
-               type='text'
-               name='password'
-               onChange={handleOnchange}
-               className='border text-gray-950'
-            />
-            <button className='bg-Primary-btn shadow-md rounded-md px-4 py-1 m-4'>Login</button>
-         </form>
+      <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+         <Card className='w-full max-w-md'>
+            <CardHeader className='space-y-6'>
+               <CardTitle>Login</CardTitle>
+               <CardDescription>
+                  {
+                     <div className="flex gap-2 items-center">
+                        <Slack className="w-8 h-8 drop-shadow-md"/> <span>Enter your email and password to access your account</span>
+                     </div>
+                  }
+               </CardDescription>
+            </CardHeader>
+            <CardContent>
+               <form
+                  onSubmit={handleSubmit}
+                  className='space-y-4'
+               >
+                  <div className='space-y-2'>
+                     <Label htmlFor='email'>Email</Label>
+                     <Input
+                        id='email'
+                        type='email'
+                        name='email'
+                        placeholder='Enter your email'
+                        onChange={handleOnchange}
+                        required
+                     />
+                  </div>
+                  <div className='space-y-2'>
+                     <Label htmlFor='password'>Password</Label>
+                     <Input
+                        id='password'
+                        type='password'
+                        name='password'
+                        placeholder='Enter your password'
+                        onChange={handleOnchange}
+                        required
+                     />
+                  </div>
+                  <Button
+                     type='submit'
+                     className='w-full'
+                  >
+                     Login
+                  </Button>
+               </form>
+            </CardContent>
+         </Card>
       </div>
    );
-};
+}
 
 export default Login;
