@@ -1,10 +1,12 @@
-import ListCheckout from '@/components/prodCart/ListCheckout'
-import React from 'react'
+// import React from "react";
+// import ListCheckout from "@/components/userComponent/CartCheckout";
 
-const Cart = () => {
-  return (
-    <div className=''><ListCheckout /></div>
-  )
-}
+// const Cart = () => {
+//    return (
+//       <div className=''>
+//          <ListCheckout />
+//       </div>
+//    );
+// };
 
-export default Cart
+// export default Cart;

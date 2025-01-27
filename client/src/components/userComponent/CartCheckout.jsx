@@ -6,13 +6,13 @@ import { createCartUser } from "@/api/userAuth";
 import useEcomStore from "@/store/ecom-store";
 import { formatNumber } from "@/utilities/formatNumber";
 
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/hooks/use-toast";
 
 import { ListChecks, Trash2 } from "lucide-react";
 
-function ListCheckout(props) {
+function CartCheckout(props) {
    const { carts, adjustQuantity, removeCart, user, token, products, getProduct } = useEcomStore(
       (state) => state
    );
@@ -40,7 +40,7 @@ function ListCheckout(props) {
          console.log("res.data.cart", res.data.cart);
          console.log("res.data.productOnCart", res.data.productOnCart);
          if (res.data.success) {
-            navigate("/purchase");
+            navigate("/user/payment");
          } else {
             console.log("error", res.data.message);
             toast({
@@ -53,19 +53,34 @@ function ListCheckout(props) {
          console.log(err);
       }
    };
-
-   // Move howMuchDiscount outside useEffect and wrap in useCallback
-   const howMuchDiscount = useCallback((cart) => {
-      const discountAmount = getDiscountAmount(cart);
-      const price = cart.price * cart.countCart;
-
-      if (cart?.promotion > discountAmount) {
-         return price * (cart.promotion / 100);
-      } else if (cart?.promotion < discountAmount) {
-         return price * (discountAmount / 100);
+   // Safe discount amount getter
+   const getDiscountAmount = (cart) => {
+      //check if isAtive === true (not expired)
+      //isAtive === true → can use discount
+      let today = new Date();
+      let startDate = new Date(cart?.discounts?.[0]?.startDate);
+      let endDate = new Date(cart?.discounts?.[0]?.endDate);
+      if (cart?.discounts?.[0]?.isActive && today < endDate && today >= startDate) {
+         // console.log("carts?.discounts?.[0]?.amount", cart?.discounts?.[0]?.amount);
+         return cart?.discounts?.[0]?.amount;
       }
-      return 0;
-   }, []); // Empty dependency array since getDiscountAmount is stable
+      return null;
+   };
+   //move howMuchDiscount out of useEffect() and carts.forEach((cart) =>{..}) to prevent infinite render
+   const howMuchDiscount = useCallback(
+      (cart) => {
+         const discountAmount = getDiscountAmount(cart);
+         const price = cart.price * cart.countCart;
+
+         if (cart?.promotion > discountAmount) {
+            return price * (cart.promotion / 100);
+         } else if (cart?.promotion < discountAmount) {
+            return price * (discountAmount / 100);
+         }
+         return 0;
+      },
+      []
+   ); // Empty dependency array since getDiscountAmount is stable
 
    // Calculate discounts whenever carts update
    useEffect(() => {
@@ -85,19 +100,6 @@ function ListCheckout(props) {
       setTotalNet(totalNet);
    }, [carts, howMuchDiscount]);
 
-   // Safe discount amount getter
-   const getDiscountAmount = (cart) => {
-      //check if isAtive === true (not expired)
-      //isAtive === true → can use discount
-      let today = new Date();
-      let startDate = new Date(cart?.discounts?.[0]?.startDate);
-      let endDate = new Date(cart?.discounts?.[0]?.endDate);
-      if (cart?.discounts?.[0]?.isActive && today < endDate && today >= startDate) {
-         // console.log("carts?.discounts?.[0]?.amount", cart?.discounts?.[0]?.amount);
-         return cart?.discounts?.[0]?.amount;
-      }
-      return null;
-   };
    //cal promotion va discount price | หาเฉพาะจำนวนที่ไม่ต้องจ่าย
 
    //cal percent discount for badge
@@ -224,10 +226,10 @@ function ListCheckout(props) {
                className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-md hover:bg-fuchsia-700'
                onClick={handleCreateCart}
             >
-               Place Order
+               Checkout
             </Button>
          </Link>
-         <Link to={"/shop"}>
+         <Link to={"/user/shop"}>
             <Button
                variant='secondary'
                type='button'
@@ -240,6 +242,6 @@ function ListCheckout(props) {
    );
 }
 
-ListCheckout.propTypes = {};
+CartCheckout.propTypes = {};
 
-export default ListCheckout;
+export default CartCheckout;

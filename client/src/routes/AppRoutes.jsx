@@ -4,9 +4,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "../layouts/Layout";
 import Home from "../pages/Home";
 import Shop from "../pages/Shop";
-import Cart from "../pages/Cart";
+// import Cart from "../pages/Cart";
 import History from "../pages/History";
-import Purchase from "../pages/Purchase";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
@@ -21,14 +20,18 @@ import PromotionAdmin from "../pages/admin/Promotion";
 
 import LayoutUser from "../layouts/LayoutUser";
 import HomeUser from "../pages/user/HomeUser";
+import Payment from "../pages/user/PaymentUser";
 import { ProtectRouteUser } from "./ProtectRouteUser";
 import { ProtectRouteAdmin } from "./ProtectRouteAdmin";
+import ShopUser from "@/pages/user/ShopUser";
+import CartUser from "@/pages/user/CartUser";
+import HistoryUser from "@/pages/user/HistoryUser";
 
 //แบ่งหน้า: 1. public 2. private
 //กลุ่มหน้า public ▼
 //layout design webpage นี้: ให้มี nav 2 ที่ : Header nav และ Sidebar
 //http://localhost:5173/history ► เข้าสู่หน้า History.jsx
-// .jsx files in ../../src/pages folder 
+// .jsx files in ../../src/pages folder
 const router = createBrowserRouter([
    {
       path: "/", // → path แม่ตั้งต้น
@@ -38,9 +41,8 @@ const router = createBrowserRouter([
          //path ลูกเอาไป + path แม่ → '/' + 'shop' = '/shop'
          { index: true, element: <Home /> },
          { path: "shop", element: <Shop /> },
-         { path: "cart", element: <Cart /> },
+         // { path: "cart", element: <Cart /> },
          { path: "history", element: <History /> },
-         { path: "purchase", element: <Purchase /> },
          { path: "login", element: <Login /> },
          { path: "register", element: <Register /> }
       ]
@@ -64,7 +66,14 @@ const router = createBrowserRouter([
       //  element: <LayoutUser />,
       //ให้เรียก component ProtectRouteUser ก่อนถึงจะเรียก LayoutUserได ้
       element: <ProtectRouteUser element={<LayoutUser />} />,
-      children: [{ index: true, element: <HomeUser /> }]
+      children: [
+         { index: true, element: <HomeUser /> },
+         { path: "shop", element: <ShopUser /> },
+         //CartUser → ListCheckout
+         { path: "cart", element: <CartUser /> },
+         { path: "payment", element: <Payment /> },
+         { path: "history", element: <HistoryUser /> }
+      ]
    }
 ]);
 

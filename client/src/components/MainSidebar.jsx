@@ -18,11 +18,11 @@ const navItems = [
       url: "shop",
       icon: Store
    },
-   {
-      title: "Cart",
-      url: "cart",
-      icon: ShoppingCart
-   }
+   // {
+   //    title: "Cart",
+   //    url: "cart",
+   //    icon: ShoppingCart
+   // }
 ];
 
 const authItems = [
@@ -39,7 +39,7 @@ const authItems = [
 ];
 
 const MainSidebar = ({ isCollapsed }) => {
-   const sidebarWidth = isCollapsed ? "w-16" : "w-64";
+   const sidebarWidth = isCollapsed ? "w-16" : "w-56";
    const {user,carts} = useEcomStore((state) => state);//for badge carts
 
    return (

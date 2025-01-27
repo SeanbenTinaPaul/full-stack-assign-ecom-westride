@@ -2,16 +2,43 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { formatNumber } from "@/utilities/formatNumber";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/hooks/use-toast";
+import { createCartUser } from "@/api/userAuth";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 function CartInfo(props) {
-   const { carts, adjustQuantity, removeCart, toTalPrice } = useEcomStore((state) => state);
+   const {
+      token,
+      carts,
+      adjustQuantity,
+      removeCart,
+      toTalPrice,
+      updateStatusSaveToCart,
+      showLogoutConfirm,
+      setShowLogoutConfirm,
+      actionLogout
+   } = useEcomStore((state) => state);
    //carts === [{ categoryId:, buyPriceNum:,countCart:,discounts:,promotion:, },{},..]
-   // console.log("carts in CartInfo", carts);
+   const { toast } = useToast();
+   const [showDialog, setShowDialog] = useState(false); //for alert Confirm
+
+   console.log("carts in CartInfo", carts);
 
    // Safe discount amount getter
    const getDiscountAmount = (cart) => {
@@ -53,9 +80,33 @@ function CartInfo(props) {
    const handleRmCart = (prodId) => {
       removeCart(prodId);
    };
+   //send req to backend
+   const handleCreateCart = async () => {
+      try {
+         const res = await createCartUser(token, { carts });
+         console.log("res.data.cart", res.data.cart);
+         console.log("res.data.productOnCart", res.data.productOnCart);
+         if (res.data.success) {
+            toast({
+               title: "Your cart is now saved.",
+               description: "Feel free to browse more or come back later to complete your purchase."
+            });
+         } else {
+            console.log("error", res.data.message);
+            toast({
+               variant: "destructive",
+               title: "error",
+               description: "Adding to cart Not success"
+            });
+         }
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
    return (
       <div>
-         <h1 className='text-xl font-normal'>Cart</h1>
+         <h1 className='text-xl font-normal'>Preview Cart</h1>
          {/* Border */}
          <div className='bg-card border p-2 rounded-md shadow-md'>
             {/* card */}
@@ -133,12 +184,19 @@ function CartInfo(props) {
                <span className='font-bold '>฿{formatNumber(toTalPrice())}</span>
             </div>
             {/* btn */}
-            <Link to='/cart'>
-               <Button className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-md hover:bg-fuchsia-700'>
-                  Checkout
-               </Button>
-            </Link>
+            {/* <Link to='/user/cart'> */}
+            <Button
+               onClick={() => {
+                  updateStatusSaveToCart(true);
+                  handleCreateCart();
+               }}
+               className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-md hover:bg-fuchsia-700'
+            >
+               Place Order
+            </Button>
+            {/* </Link> */}
          </div>
+         {/* "Don't Lose Your Cart! Place Order Before Logging Out"  Lost them. | Place order*/}
       </div>
    );
 }

@@ -166,7 +166,7 @@ Would you like to use CSS variables for theming? Yes
 npx shadcn@latest add <component> เช่น  
 npx shadcn@latest add card
 สร้าง card.jsx ใน src/components/ui/card.jsx
-
+-----------------------------------------------------
 
 ส่งข้อมูลไปยัง backend (เข้าไปเปิดไฟล์ของ backend แล้ว >npm start ก่อน)
 >npm i axios
@@ -182,6 +182,7 @@ import 'react-toastify/dist/ReactToastify.css';
 ใช้ลง icon ร่วมกับ <NavLink>
 >npm install lucide-react
 
+npm i react-use
 npm i react-image-file-resizer
 npm i react-toastify
 npm i react-icons

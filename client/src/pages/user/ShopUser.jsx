@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 //component
 import CardProd from "@/components/prodCart/CardProd";
 import SearchForProd from "@/components/prodCart/SearchForProd";
-// import CartInfo from "@/components/userComponent/CartInfo";
+import CartInfo from "@/components/userComponent/CartInfo";
 //Global state
 import useEcomStore from "@/store/ecom-store";
 //component ui
 
-const Shop = () => {
+const ShopUser = () => {
    const { user,token, products, getProduct } = useEcomStore((state) => state);
    const [isFoundTextSearch, setIsFoundTextSearch] = useState(false);
    const [whatTextSearch, setWhatTextSearch] = useState("");
@@ -36,8 +36,8 @@ const Shop = () => {
                setWhatTextSearch={setWhatTextSearch}
             />
          </div>
-         {/* display products ${user? 'w-3/5': 'w-4/5'}*/}
-         <div className={`w-4/5 p-4 h-screen overflow-x-auto`}>
+         {/* display products */}
+         <div className={`${user? 'w-3/5': 'w-4/5'} p-4 h-screen overflow-x-auto`}>
             <p className='text-xl font-normal mb-4'>Products</p>
             {!isFoundTextSearch && whatTextSearch && (
                <div>
@@ -69,14 +69,14 @@ const Shop = () => {
 
          {/* cart */}
          {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
-         {/* {user && (
+         {user && (
 
          <div className='w-1/5 p-4 min-w-[250px] h-screen overflow-y-auto bg-slate-200'>
             <CartInfo />
          </div>
-         )} */}
+         )}
       </div>
    );
 };
 
-export default Shop;
+export default ShopUser;

@@ -52,7 +52,7 @@ const navItems = [
 ];
 
 const SidebarAdmin = ({ isCollapsed }) => {
-   const sidebarWidth = isCollapsed ? "w-16" : "w-64";
+   const sidebarWidth = isCollapsed ? "w-16" : "w-56";
    //Added fixed top-0 left-0 to the sidebar's root div to make unscrollable along with Category.jsx content
    //Added h-[calc(100vh-8.5rem)] to the ScrollArea to account for the header height
    //▼go to LayoutAdmin.jsx to set more...

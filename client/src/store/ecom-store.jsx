@@ -7,6 +7,7 @@ import { listProduct, seachFilterProd } from "../api/ProductAuth.jsx";
 import _, { update } from "lodash"; // for making unique el array
 import { binarySearchProdId } from "@/utilities/binarySearch.js";
 const apiUrl = import.meta.env.VITE_API_URL;
+import { useLocalStorage } from "react-use";
 
 //get is a function that allows you to retrieve the current state of the store.
 //set and get functions to update and retrieve the state of the ecomStore store in React components.
@@ -16,7 +17,21 @@ const ecomStore = (set, get) => ({
    categories: [],
    products: [],
    carts: [],
+   isSaveToCart: false,
+   savedCartCount: 0, //คอขวด carts.length
+   showLogoutConfirm: false,
+   isLoggingOut: false, //to check logout attempt
+   //to control logout confirmation dialog
 
+   updateStatusSaveToCart: (value) => {
+      if (value === true) {
+         //ทำคอขวด ไม่ให้ Badge ใน SidebarUser.jsx เอาค่า carts.length ไปใช้ได้ง่ายๆจนกว่าจะกด "Place Order" ที่ CartInfo.jsx
+         set({
+            isSaveToCart: true,
+            savedCartCount: get().carts.length //คอขวดคือ savedCartCount , อยากได้ carts.len มาเอาผ่าน state นี้
+         });
+      }
+   },
    //to make carts display up-to-date(promotion or discount)
    //productData for 1 prod | ==={id(productId), buyPrice, buyPriceNum, promotion, preferDiscount} แต่ไม่มี countCart
    /*
@@ -165,6 +180,48 @@ const ecomStore = (set, get) => ({
       //res ใช้รับสิ่งที่ส่ง(res) มาจาก backend
       return res;
    },
+   actionLogout: () => {
+      const state = get();
+      if (state.carts.length > 0 && !state.isSaveToCart && !state.isLoggingOut) {
+         // Show confirmation if cart not empty and not saved
+         set({
+            showLogoutConfirm: true,
+            isLoggingOut: true // Mark that this is a logout attempt
+         });
+      } else {
+         // Regular logout process → reset state
+         set({
+            user: null,
+            token: null,
+            categories: [],
+            products: [],
+            carts: [],
+            isSaveToCart: false,
+            savedCartCount: 0,
+            showLogoutConfirm: false,
+            isLoggingOut: false
+         },true);
+         localStorage.removeItem("ecom-store");
+         console.log(localStorage);
+      }
+   },
+   setShowLogoutConfirm: (show) =>
+      set({
+         showLogoutConfirm: show,
+         isLoggingOut: show // Reset when dialog is closed
+      }),
+
+   handleDirectLogout: () => {
+      set({}, true); // This clears everything including persisted state
+      // Add true as second parameter to replace state entirely
+      
+      localStorage.removeItem("ecom-store");
+      window.location.href = "/";
+      // const { removeItem } = useLocalStorage("ecom-store");
+      // removeItem();
+      // window.location.replace("/");
+   },
+
    //dropdown category
    getCategory: async () => {
       try {

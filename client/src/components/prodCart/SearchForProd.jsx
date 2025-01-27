@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 //Global state
 import useEcomStore from "@/store/ecom-store";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Check } from "lucide-react";
 

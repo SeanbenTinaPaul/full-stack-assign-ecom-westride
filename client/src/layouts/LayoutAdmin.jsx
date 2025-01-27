@@ -7,7 +7,7 @@ import { Menu, ArrowLeftToLine, PanelLeftOpen, PanelLeftClose } from "lucide-rea
 
 const LayoutAdmin = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-   const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-64"; //to maintain content margin when fixed sidebar
+   const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-56"; //to maintain content margin when fixed sidebar
    /*
 Add const contentMargin *in this file*
 DO it ▼ in SidebarAdmin.jsx ...

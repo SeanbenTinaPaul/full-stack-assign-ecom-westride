@@ -82,8 +82,8 @@ function Login() {
       if (role === "admin") {
          navigate("/admin");
       } else {
-         // navigate("/user");
-         navigate(-1); //กลับไป previous url
+         navigate("/user");
+         // navigate(-1); //กลับไป previous url
       }
    };
 

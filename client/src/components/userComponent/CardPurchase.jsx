@@ -1,10 +1,11 @@
+//parent → src\pages\user\PaymentUser.jsx 
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { getCartUser, saveAddressUser } from "@/api/userAuth";
 import useEcomStore from "@/store/ecom-store";
 
 import { formatNumber } from "@/utilities/formatNumber";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/hooks/use-toast";
 import ShippingFee from "@/utilities/ShippingFee";
 
@@ -23,7 +24,7 @@ function CardPurchase(props) {
       const handleGetCartUser = async () => {
          try {
             const res = await getCartUser(token);
-            console.log("res.data.carts getCartUser", res.data);
+            // console.log("res.data.carts getCartUser", res.data);
             //    console.log("res.data.cartTotal", res.data.cartTotal);
             setProdOnCartArr(res.data.ProductOnCart);
             setCartTotal(res.data["Total price"]);
@@ -47,6 +48,7 @@ function CardPurchase(props) {
       }
       try {
          const res = await saveAddressUser(token, address);
+         setIsSaveAddress(true);
          console.log("res.data", res.data);
       } catch (err) {
          console.log(err);
@@ -108,7 +110,11 @@ function CardPurchase(props) {
                         </div>
                      </div>
                      <div className='flex justify-between items-center'>
-                        <p>Discount</p>
+                        <p>Original Price</p>
+                        <p>฿{formatNumber(noDisTotalPrice)}</p>
+                     </div>
+                     <div className='flex justify-between items-center'>
+                        <p>Savings</p>
                         <p>-฿{formatNumber(toTalDiscount)}</p>
                      </div>
                   </section>
@@ -121,6 +127,7 @@ function CardPurchase(props) {
                   <section>
                      <Button
                         variant='primary'
+                        disabled={!isSaveAddress}
                         className='w-full mt-4 bg-fuchsia-800 text-white py-2 rounded-md transition-colors duration-300 hover:bg-fuchsia-700 shadow-md'
                      >
                         Purchase

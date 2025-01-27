@@ -12,7 +12,7 @@ import {
 
 const Layout = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-   const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-64"; //to maintain content margin when fixed sidebar
+   const contentMargin = isSidebarCollapsed ? "ml-16" : "ml-56"; //to maintain content margin when fixed sidebar
 
    return (
       <div className='min-h-screen flex'>

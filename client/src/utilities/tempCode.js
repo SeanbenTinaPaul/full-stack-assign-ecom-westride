@@ -3,6 +3,54 @@
 //เงา svg 'text-slate-900 drop-shadow-sm '
 //hover เปลี่ยนสีปุ่ม transition-colors duration-300
 
+/*
+Make carts.map((cart) in CartCheckout.jsx won't display or update the items until users click "Place Order" in CartInfo.jsx
+1. Create new state in ecom-store.jsx to track saved cart items
+2. Only update this state when "Place Order" is clicked 
+3. Use this state in CartCheckout.jsx instead of regular carts
+4. Connect saved cart state to CartCheckout display
+
+const ecomStore = (set, get) => ({
+  // ... existing state
+  carts: [], // For temporary cart
+  savedCarts: [], // For saved/placed orders
+  isSaveToCart: false,
+
+  updateStatusSaveToCart: (value) => {
+    if (value === true) {
+      set({
+        isSaveToCart: true,
+        savedCarts: [...get().carts] // Save current cart items
+      });
+    }
+  },
+});
+
+function CartCheckout(props) {
+  // Change from carts to savedCarts
+  const { savedCarts, adjustQuantity, removeCart, user, token, products, getProduct } = useEcomStore(
+    (state) => state
+  );
+
+  // ... other code
+
+  return (
+    <div className='bg-card p-4 rounded-md shadow-md'>
+    
+      <div>
+        <div>
+          {savedCarts.map((cart) => ( // Use savedCarts instead of carts
+            <div key={cart.id}>
+              {/* ... existing cart item display code */}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+*/
 //for syncing carts to DB
 /*model Cart {
    id          Int             @id @default(autoincrement())

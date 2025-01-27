@@ -10,11 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Star, StarHalf } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { Link } from "react-router-dom";
+import { use } from "react";
 
 //-------------------------------------------------------------------
 
-function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
-   const { addToCart, user,synCartwithProducts } = useEcomStore((state) => state);
+function CardProd({ prodObj }) {
+   const { addToCart, user, synCartwithProducts } = useEcomStore((state) => state);//getProduct from DB → set to carts in LocalStorage
    const [isFavorite, setIsFavorite] = useState(false);
    //to save price after discount + promotion → for further Checkout
    const [productData, setProductData] = useState(prodObj);
@@ -23,7 +24,6 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
       setIsFavorite(!isFavorite);
    };
 
-   
    //render star
    const renderStar = (rate) => {
       const stars = [];
@@ -73,7 +73,7 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
       let today = new Date();
       let startDate = new Date(prodObj?.discounts?.[0]?.startDate);
       let endDate = new Date(prodObj?.discounts?.[0]?.endDate);
-      if (prodObj?.discounts?.[0]?.isActive  && today < endDate && today >= startDate) {
+      if (prodObj?.discounts?.[0]?.isActive && today < endDate && today >= startDate) {
          return prodObj?.discounts?.[0]?.amount;
       }
       return null;
@@ -103,11 +103,15 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
             buyPriceNum: buyPriceNum,
             preferDiscount: preferDiscount
          }));
-
-         synCartwithProducts(productData);
+         // synCartwithProducts(productData);
       };
       calDiscountPrice();
    }, [prodObj]);
+
+   useEffect(() => {
+      // console.log("productData", productData)
+      synCartwithProducts(productData);
+   },[prodObj,setProductData]);
 
    //cal promotion va discount price
    const renderDiscountPrice = (price) => {
@@ -131,10 +135,6 @@ function CardProd({ rating = 4.5, promotion = 10, prodObj }) {
       }
       return null;
    };
-
-   // useEffect(() => {
-   //    console.log("productData", productData)
-   // },[])
 
    return (
       <div>
