@@ -76,13 +76,42 @@ exports.changeRole = async (req, res) => {
 exports.createUserCart = async (req, res) => {
    try {
       const carts = req.body.carts;
-      console.log("req.body carts->", req.body.carts);
+      // console.log("req.body carts->", req.body.carts);
       console.log("carts->", carts); // [{id:, countCart:, price:, buyPriceNum:,preferDiscount,promotion:,discounts: [ [Object] ]}, {}]
       //1. check ว่า user มีข้อมมูลอยู่ในตาราง User หรือไม่
       const user = await prisma.user.findFirst({
          where: { id: Number(req.user.id) }
       });
-
+      //3. Compare: product quantity in cart (userCart.products) vs  product quantity in stock (product.quantity)
+      let outStockProd = {}; //เก็บ product ที่ไม่มี stock พอ
+      for (const item of carts) {
+         const product = await prisma.product.findUnique({
+            where: { id: item.id },
+            select: { quantity: true, title: true }
+         });
+         /*
+          item   { cartId: 15, productId: 5, countCart: 2, price: 40000 }
+          product{ quantity: 1000, title: 'Core i9-11800K' }
+          item   { cartId: 15, productId: 7, countCart: 10, price: 250 }
+          product{ quantity: 10, title: 'ขาหมูเยอรมัน' }
+          */
+         if (!product || item.countCart > product.quantity) {
+            // outStockProd.push(`${product?.title || 'product'} Stock:${product.quantity}`);
+            outStockProd[product?.title] = product.quantity;
+         }
+      }
+      console.log("outStockProd->", outStockProd);
+      const outStockProdArr = Object.entries(outStockProd);
+      const outStockTitle = Object.keys(outStockProd);
+      //4. if outStockProd.length > 0, return 400
+      if (outStockProdArr.length > 0) {
+         return res
+            .status(400)
+            .json({ 
+               message: `Sorry. Product: ${outStockTitle} out of stock.`,
+               stock: outStockProdArr 
+            });
+      }
       //2. Delete old cart to INSERT new cart
       //table'ProductOnCart' เป็นตารางกลางระหว่าง 'Product' กับ 'Cart'
       /*
@@ -197,8 +226,8 @@ exports.createUserCart = async (req, res) => {
 const getDiscountAmount = (obj) => {
    //check if isAtive === true (not expired)
    //isAtive === true → can use discount
-    // Check if there are any discounts
-    if (!obj.product.discounts || obj.product.discounts.length === 0) {
+   // Check if there are any discounts
+   if (!obj.product.discounts || obj.product.discounts.length === 0) {
       return null;
    }
    let today = new Date();
@@ -278,8 +307,8 @@ exports.getUserCart = async (req, res) => {
       let totalPriceNoDiscount = 0;
       for (const obj of cart.products) {
          calBuyPriceNum(obj);
-         totalCartDiscount += (obj.product.price * obj.count) - (obj.buyPriceNum * obj.count);
-         totalPriceNoDiscount += (obj.product.price * obj.count);
+         totalCartDiscount += obj.product.price * obj.count - obj.buyPriceNum * obj.count;
+         totalPriceNoDiscount += obj.product.price * obj.count;
       }
       //cal promotion vs discount และ to send res with ราคาสุทธิ
       //get promotion from table Product, join to Discount with productId
@@ -342,7 +371,7 @@ exports.saveAddress = async (req, res) => {
       const addressUser = await prisma.user.update({
          where: { id: Number(req.user.id) },
          data: { address: address.trim() },
-         select: { address: true, name: true, email: true, role: true, picture: true,id: true }
+         select: { address: true, name: true, email: true, role: true, picture: true, id: true }
       });
       res.status(200).json({
          success: true,
@@ -369,14 +398,18 @@ where: {
 //Feature/Button: "Place Order", "Checkout", "Confirm Order"
 exports.saveOrder = async (req, res) => {
    try {
+      console.log("save order ->", req.body);
+      const { id, amount, currency, status } = req.body.paymentIntent;
+      // return res.status(200).json({ success: true, message: "Get to save Order" });
       //1. หา cart ของ user นั้นว่ามีหรือไม่
-      //products    ProductOnCart[]
-      // userCart จะดึง record แรก ทุกคอลัมน์จาก table 'Cart' orderedById เท่ากับ req.user.id และบางส่วนจาก 'ProductOnCart' ที่มี orderedById เท่ากับ req.user.id
+
+      // userCart จะดึง record แรก(ที่...) ทุกคอลัมน์จาก table 'Cart' และบางส่วนจาก 'ProductOnCart' ที่มี cartId กับ Cart.id
       const userCart = await prisma.cart.findFirst({
          where: {
             orderedById: Number(req.user.id)
          },
          include: {
+            //products    ProductOnCart[]
             products: {
                select: {
                   cartId: true,
@@ -419,9 +452,10 @@ exports.saveOrder = async (req, res) => {
       }
 
       //5. create new Order
-      //products    ProductOnOrder[]
+      const convertToTHBforDB = parseFloat(amount) / 100;
       const order = await prisma.order.create({
          data: {
+            //products    ProductOnOrder[] | create: method === data: for related table
             products: {
                create: userCart.products.map((item) => ({
                   productId: item.productId,
@@ -429,7 +463,7 @@ exports.saveOrder = async (req, res) => {
                   price: item.price
                }))
             },
-            //connect คือ create record: orderedById ในตาราง Order(ว่าง) ตาม User.id(มีอยู่แล้ว)
+            //connect คือไปดึง record ของ User.id(มีอยู่แล้ว) มาเติมใน record ตัวเอง
             /*
              INSERT INTO "Order" (orderedById, ...)
              VALUES ((SELECT id FROM "User" WHERE id = req.user.id), ...);
@@ -439,9 +473,18 @@ exports.saveOrder = async (req, res) => {
                   id: Number(req.user.id) //=== id: userCart.orderedById
                }
             },
-            cartTotal: userCart.cartTotal // Ensure cartTotal is included here
+            cartTotal: userCart.cartTotal, // Ensure cartTotal is included here
+            paymentId: id,
+            amount: convertToTHBforDB,
+            status: status,
+            currency: currency
+            // orderStatus: "Complete"
          }
       });
+      // paymentId   String
+      // amount      Float
+      // status      String
+      // currency    String
 
       //6. ลบข้อมูลในตาราง ProductOnCart และ Cart ทั้งหมด
       /*

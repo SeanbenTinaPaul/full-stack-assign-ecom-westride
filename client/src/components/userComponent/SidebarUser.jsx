@@ -78,12 +78,35 @@ function SidebarUser({ isCollapsed }) {
       updateStatusSaveToCart
    } = useEcomStore((state) => state); //for badge carts
 
-   const handleLogout = () => {
+   const handleLogout = (e) => {
+      e.preventDefault();//add this to achieve local storage key deletion
       setShowLogoutConfirm(false);
       // actionLogout();
       handleDirectLogout();
       navigate('/', { replace: true });
    };
+   const handleMainLogout = (e) => {
+      e.preventDefault();
+      if (carts.length > 0 && !isSaveToCart) {
+         setShowLogoutConfirm(true); // Show confirmation if cart not empty and not saved
+       } else {
+         actionLogout(); // Zustand action handles state + localStorage
+         navigate('/', { replace: true }); // Use React Router navigation
+       }
+     };
+   /*
+   e.preventDefault();
+                  const state = useEcomStore.getState();
+                  if (state.carts.length > 0 && !state.isSaveToCart) {
+                     // Show confirmation if cart not empty and not saved
+                     state.setShowLogoutConfirm(true);
+                  } else {
+                     // Regular logout process
+                     state.actionLogout();
+                     // Only navigate after proper logout
+                     window.location.href = "/";
+                  }
+   */
    const handleCreateCart = async () => {
       try {
          const res = await createCartUser(token, { carts });
@@ -156,9 +179,9 @@ function SidebarUser({ isCollapsed }) {
                      >
                         {item.title}
                      </span>
-                     {item.title === "Cart" && savedCartCount > 0 && user && isSaveToCart && (
+                     {item.title === "Cart" && carts.length > 0 && user && isSaveToCart && (
                         <Badge className='absolute right-1 z-50 ml-2 bg-red-500 text-white rounded-full px-2'>
-                           {savedCartCount}
+                           {carts.length}
                         </Badge>
                      )}
                   </NavLink>
@@ -169,19 +192,7 @@ function SidebarUser({ isCollapsed }) {
          <div className='p-2'>
             <button
                title='Log out user'
-               onClick={(e) => {
-                  e.preventDefault();
-                  const state = useEcomStore.getState();
-                  if (state.carts.length > 0 && !state.isSaveToCart) {
-                     // Show confirmation if cart not empty and not saved
-                     state.setShowLogoutConfirm(true);
-                  } else {
-                     // Regular logout process
-                     state.actionLogout();
-                     // Only navigate after proper logout
-                     window.location.href = "/";
-                  }
-               }}
+               onClick={(e) => handleMainLogout(e)}
                className={`w-full text-gray-300 px-3 py-2 hover:bg-slate-700 rounded flex items-center transition-all duration-300
       ${isCollapsed ? "justify-center" : "justify-start"}`}
             >
@@ -221,7 +232,7 @@ function SidebarUser({ isCollapsed }) {
                   <AlertDialogDescription>Place Order Before Logging Out</AlertDialogDescription>
                </AlertDialogHeader>
                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={handleLogout}>
+                  <AlertDialogCancel onClick={(e)=>handleLogout(e)}>
                      Lost them and log out
                   </AlertDialogCancel>
                   <AlertDialogAction

@@ -3,6 +3,41 @@
 //เงา svg 'text-slate-900 drop-shadow-sm '
 //hover เปลี่ยนสีปุ่ม transition-colors duration-300
 
+//If don't set redirect: "if_required"→ need to handle the redirects manually▼ redirect: null
+   if (payload.error) {
+   setMessage(payload.error.message);
+} else {
+   const { paymentIntent, error } = payload;
+
+   if (paymentIntent.status === "succeeded") {
+      // Payment was successful
+      // Redirect to your payment completion page
+      window.location.href = "/complete";
+   } else if (paymentIntent.status === "requires_action") {
+      // Payment method requires action
+      // Redirect to the appropriate URL to complete the authentication
+      window.location.href = paymentIntent.next_action.url;
+   } else {
+      // Payment failed
+      setMessage(error.message);
+   }
+  
+//----------------------------------------------------------------------------
+   let diffArray = (arr1, arr2) => {
+    let allArr = [...arr1, ...arr2];
+    //1) นับจำนวนซ้ำ
+    let allArrObj = allArr.reduce((acc, curr) => {
+      acc[curr] = (acc[curr] || 0) + 1;
+      return acc;
+    }, {});
+  
+    //2) กรองเอาเฉพาะ elements ที่ correspond to 'key':1
+    allArr = Object.keys(allArrObj).filter((key) => allArrObj[key] === 1);
+  
+    //3) cast each elements to Number and sort
+    return allArr.map((e) => Number(e)).sort((a, b) => a - b);
+  };
+  console.log(diffArray([1, 2, 3], [100, 2, 1, 10]));
 /*
 Make carts.map((cart) in CartCheckout.jsx won't display or update the items until users click "Place Order" in CartInfo.jsx
 1. Create new state in ecom-store.jsx to track saved cart items

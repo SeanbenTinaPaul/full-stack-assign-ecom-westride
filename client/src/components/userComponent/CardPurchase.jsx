@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/hooks/use-toast";
 import ShippingFee from "@/utilities/ShippingFee";
 
-function CardPurchase(props) {
+function CardPurchase({setIsSaveAddress, isSaveAddress}) {
    const { token, carts } = useEcomStore((state) => state);
    const { toast } = useToast();
    const [prodOnCartArr, setProdOnCartArr] = useState([]);
@@ -18,14 +18,15 @@ function CardPurchase(props) {
    const [noDisTotalPrice, setNoDisTotalPrice] = useState(0);
    //address manage
    const [address, setAddress] = useState({ address: "" });
-   const [isSaveAddress, setIsSaveAddress] = useState(false);
+   // const [isSaveAddress, setIsSaveAddress] = useState(false);
 
    useEffect(() => {
       const handleGetCartUser = async () => {
          try {
+            //Not suuposd to fetch carts record if call saveOrderUser() in CheckoutForm.jsx → Backend:saveOrder(){ prisma.cart.deleteMany()}
             const res = await getCartUser(token);
             // console.log("res.data.carts getCartUser", res.data);
-            //    console.log("res.data.cartTotal", res.data.cartTotal);
+            // console.log("res.data.cartTotal", res.data.cartTotal);
             setProdOnCartArr(res.data.ProductOnCart);
             setCartTotal(res.data["Total price"]);
             setTotalDiscount(res.data.totalCartDiscount);
@@ -55,7 +56,7 @@ function CardPurchase(props) {
       }
    };
    return (
-      <div className='mx-auto'>
+      <div className='mx-auto min-w-[600px]'>
          <main className='flex justify-center flex-wrap gap-4'>
             {/* left :Address*/}
             <article className='w-1/2'>
@@ -63,7 +64,7 @@ function CardPurchase(props) {
                   <h1>Address</h1>
                   <textarea
                      onChange={(e) => setAddress({ address: e.target.value.trim() })}
-                     //  placeholder='e.g. 123/4 หมู่ที่ 5 ถนนมิตรภาพ ต.แม่พริก อ.เมืองขอนแก่น จ.ขอนแก่น 40000'
+                     placeholder='Please enter address to display payment methods'
                      className='w-full p-2 h-24 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                   />
                   <div className='disabled:cursor-not-allowed text-sm text-slate-400 w-full p-2 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
@@ -124,7 +125,7 @@ function CardPurchase(props) {
                         <p>฿{formatNumber(cartTotal)}</p>
                      </div>
                   </section>
-                  <section>
+                  {/* <section>
                      <Button
                         variant='primary'
                         disabled={!isSaveAddress}
@@ -132,7 +133,7 @@ function CardPurchase(props) {
                      >
                         Purchase
                      </Button>
-                  </section>
+                  </section> */}
                </div>
             </article>
          </main>
@@ -140,6 +141,9 @@ function CardPurchase(props) {
    );
 }
 
-CardPurchase.propTypes = {};
+CardPurchase.propTypes = {
+   setIsSaveAddress: PropTypes.func.isRequired,
+   isSaveAddress: PropTypes.bool,
+};
 
 export default CardPurchase;

@@ -193,16 +193,14 @@ const ecomStore = (set, get) => ({
          set({
             user: null,
             token: null,
-            categories: [],
-            products: [],
             carts: [],
             isSaveToCart: false,
             savedCartCount: 0,
             showLogoutConfirm: false,
             isLoggingOut: false
-         },true);
-         localStorage.removeItem("ecom-store");
-         console.log(localStorage);
+         });
+         // localStorage.removeItem("ecom-store");
+         // console.log(localStorage);
       }
    },
    setShowLogoutConfirm: (show) =>
@@ -212,14 +210,22 @@ const ecomStore = (set, get) => ({
       }),
 
    handleDirectLogout: () => {
-      set({}, true); // This clears everything including persisted state
+      set({
+         user: null,
+         token: null,
+         carts: [],
+         isSaveToCart: false,
+         savedCartCount: 0,
+         showLogoutConfirm: false,
+         isLoggingOut: false
+      });
       // Add true as second parameter to replace state entirely
-      
-      localStorage.removeItem("ecom-store");
-      window.location.href = "/";
+
+      // localStorage.removeItem("ecom-store");
+      // window.location.href = "/";
+      // window.location.replace("/");
       // const { removeItem } = useLocalStorage("ecom-store");
       // removeItem();
-      // window.location.replace("/");
    },
 
    //dropdown category

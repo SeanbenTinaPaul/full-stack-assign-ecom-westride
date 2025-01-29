@@ -8,20 +8,21 @@ datasource db {
 }
 
 model User {
-  id             Int        @id @default(autoincrement())
-  email          String     @unique
+  id             Int          @id @default(autoincrement())
+  email          String       @unique
   password       String?
   name           String?
   picture        String?
-  role           String     @default("user")
-  enabled        Boolean    @default(true)
+  role           String       @default("user")
+  enabled        Boolean      @default(true)
   address        String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   carts          Cart[]
   orders         Order[]
   favorites      Favorite[] // เพิ่ม relation กับ Favorite
   productRatings Rating[] // เพิ่ม relation กับ Rating
+  userCoupons    UserCoupon[]
 }
 
 model Product {
@@ -57,6 +58,10 @@ model Order {
   orderedBy   User             @relation(fields: [orderedById], references: [id])
   products    ProductOnOrder[]
   ratings     Rating[] // เพิ่ม relation กับ Rating เพื่อตรวจสอบว่าสั่งซื้อแล้วหรือยัง
+  paymentId   String           @default("")
+  amount      Float            @default(0)
+  status      String           @default("")
+  currency    String           @default("thb")
 }
 
 model ProductOnOrder {
@@ -181,6 +186,35 @@ model Discount {
    * });
    */
   @@index([startDate, endDate]) // เพิ่ม index เพื่อการค้นหาที่เร็วขึ้น, but not create index record
+}
+
+// For managing coupons
+model Coupon {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  type        String       @default("FREE_SHIPPING") // For future coupon types
+  amount      Int // Number of available coupons
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdBy   String // Admin email
+  userCoupons UserCoupon[]
+}
+
+// For tracking which users have claimed which coupons
+model UserCoupon {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  coupon    Coupon    @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  couponId  Int
+  usedAt    DateTime? // null means claimed but not used yet
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, couponId]) // Prevent user from claiming same coupon twice
 }
 
 //  Brand

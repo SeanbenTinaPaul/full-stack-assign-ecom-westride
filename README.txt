@@ -9,10 +9,6 @@ https://code.visualstudio.com/download
 >npm install express morgan cors nodemon bcryptjs jsonwebtoken
 >npm install dotenv
 
-MySQL
-prisma
-Tam123456
-
 
 npm install prisma
 npx prisma init
@@ -21,7 +17,6 @@ npm install -g prisma (ลง CLI ไว้ auto relate table ด้วย >pris
 
 // Doc ใช้ในการสร้างและอัพเดตฐานข้อมูล
 npx prisma migrate dev --name ecom_weStride
-
 
 
 // update Scheme
@@ -40,7 +35,10 @@ npx prisma migrate dev --name ecom
 ดูตารางความสัมพันธ์แบบละเอียด
 >npx prisma studio
 
+Payment
+>npm install --save stripe
 
+XXXXXX
 ------------Client--------------
 npm create vite@latest
 - client
@@ -53,10 +51,6 @@ npm create vite@latest
 npm install axios
 
 
---------------------------
-MySQL
-prisma
-Tam123456
 -----------Server---------------
 npm init -y
 npm install express mongoose morgan body-parser cors nodemon socket.io
@@ -166,6 +160,9 @@ Would you like to use CSS variables for theming? Yes
 npx shadcn@latest add <component> เช่น  
 npx shadcn@latest add card
 สร้าง card.jsx ใน src/components/ui/card.jsx
+
+Payment -> Build a checkout page on the client
+>npm install --save @stripe/react-stripe-js @stripe/stripe-js
 -----------------------------------------------------
 
 ส่งข้อมูลไปยัง backend (เข้าไปเปิดไฟล์ของ backend แล้ว >npm start ก่อน)
@@ -194,7 +191,7 @@ npm install moment
 --------------------------
 
 
-
+XXXX
 ------------Client--------------
 npm create vite@latest
 - client
@@ -222,7 +219,7 @@ npm install moment
 npm install react-hook-form zod @hookform/resolvers zxcvbn
 
 --------------------------
-
+XXXXX
 
 
 

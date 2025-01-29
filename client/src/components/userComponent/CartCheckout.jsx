@@ -13,9 +13,16 @@ import { useToast } from "@/components/hooks/use-toast";
 import { ListChecks, Trash2 } from "lucide-react";
 
 function CartCheckout(props) {
-   const { carts, adjustQuantity, removeCart, user, token, products, getProduct } = useEcomStore(
-      (state) => state
-   );
+   const {
+      carts,
+      adjustQuantity,
+      removeCart,
+      user,
+      token,
+      products,
+      getProduct,
+      updateStatusSaveToCart
+   } = useEcomStore((state) => state);
    const [totalDiscount, setTotalDiscount] = useState(0);
    const [totalNet, setTotalNet] = useState(0);
    const [total, setTotal] = useState(0);
@@ -39,6 +46,7 @@ function CartCheckout(props) {
          const res = await createCartUser(token, { carts });
          console.log("res.data.cart", res.data.cart);
          console.log("res.data.productOnCart", res.data.productOnCart);
+         updateStatusSaveToCart(true);
          if (res.data.success) {
             navigate("/user/payment");
          } else {
@@ -67,20 +75,17 @@ function CartCheckout(props) {
       return null;
    };
    //move howMuchDiscount out of useEffect() and carts.forEach((cart) =>{..}) to prevent infinite render
-   const howMuchDiscount = useCallback(
-      (cart) => {
-         const discountAmount = getDiscountAmount(cart);
-         const price = cart.price * cart.countCart;
+   const howMuchDiscount = useCallback((cart) => {
+      const discountAmount = getDiscountAmount(cart);
+      const price = cart.price * cart.countCart;
 
-         if (cart?.promotion > discountAmount) {
-            return price * (cart.promotion / 100);
-         } else if (cart?.promotion < discountAmount) {
-            return price * (discountAmount / 100);
-         }
-         return 0;
-      },
-      []
-   ); // Empty dependency array since getDiscountAmount is stable
+      if (cart?.promotion > discountAmount) {
+         return price * (cart.promotion / 100);
+      } else if (cart?.promotion < discountAmount) {
+         return price * (discountAmount / 100);
+      }
+      return 0;
+   }, []); // Empty dependency array since getDiscountAmount is stable
 
    // Calculate discounts whenever carts update
    useEffect(() => {
@@ -204,26 +209,29 @@ function CartCheckout(props) {
             </div>
             {/* rigt :total net price*/}
             {/* w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)] */}
-            <div className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
-               {/* className="bg-card p-2 mb-2 rounded-md shadow-md" */}
-               <div className='flex justify-between p-2 mb-2 '>
-                  <p>Total</p>
-                  <p>-฿{formatNumber(total)}</p>
+            {carts.length > 0 && (
+               <div className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                  {/* className="bg-card p-2 mb-2 rounded-md shadow-md" */}
+                  <div className='flex justify-between p-2 mb-2 '>
+                     <p>Total</p>
+                     <p>฿{formatNumber(total)}</p>
+                  </div>
+                  <div className='flex justify-between  p-2 mb-2  '>
+                     <p>Discounts</p>
+                     <p>-฿{formatNumber(totalDiscount)}</p>
+                  </div>
+                  <div className='flex justify-between  p-2 mb-2  '>
+                     <p>Net Price</p>
+                     <p>฿{formatNumber(totalNet)}</p>
+                  </div>
                </div>
-               <div className='flex justify-between  p-2 mb-2  '>
-                  <p>Discounts</p>
-                  <p>-฿{formatNumber(totalDiscount)}</p>
-               </div>
-               <div className='flex justify-between  p-2 mb-2  '>
-                  <p>Net Price</p>
-                  <p>฿{formatNumber(totalNet)}</p>
-               </div>
-            </div>
+            )}
          </div>
+         {/* className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500' */}
          <Link>
             <Button
                variant='primary'
-               className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-md hover:bg-fuchsia-700'
+               className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-lg hover:bg-fuchsia-700 transition-all duration-300'
                onClick={handleCreateCart}
             >
                Checkout
@@ -233,7 +241,7 @@ function CartCheckout(props) {
             <Button
                variant='secondary'
                type='button'
-               className='w-full mt-4  py-2 shadow-md rounded-md bg-slate-50'
+               className='w-full mt-4  py-2 shadow-md rounded-lg bg-slate-50'
             >
                Continue Shopping
             </Button>
