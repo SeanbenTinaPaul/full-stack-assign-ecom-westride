@@ -5,7 +5,7 @@ import Layout from "../layouts/Layout";
 import Home from "../pages/Home";
 import Shop from "../pages/Shop";
 // import Cart from "../pages/Cart";
-import History from "../pages/History";
+
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
@@ -41,8 +41,6 @@ const router = createBrowserRouter([
          //path ลูกเอาไป + path แม่ → '/' + 'shop' = '/shop'
          { index: true, element: <Home /> },
          { path: "shop", element: <Shop /> },
-         // { path: "cart", element: <Cart /> },
-         { path: "history", element: <History /> },
          { path: "login", element: <Login /> },
          { path: "register", element: <Register /> }
       ]

@@ -12,7 +12,7 @@ expire date : 12/34
 security code : 567
 */
 export default function CheckoutForm({ isSaveAddress }) {
-   const { token } = useEcomStore((state) => state);
+   const { token, resetCartsAfterPurchas } = useEcomStore((state) => state);
    const stripe = useStripe();
    const elements = useElements();
    const [message, setMessage] = useState(null);
@@ -60,6 +60,7 @@ export default function CheckoutForm({ isSaveAddress }) {
          try {
             const res = await saveOrderUser(token, payload);
             console.log("res.data CheckoutForm", res.data);
+            // resetCartsAfterPurchas();
          } catch (err) {
             console.error(err);
             throw err; //to stop continue executing

@@ -22,7 +22,9 @@ const ecomStore = (set, get) => ({
    showLogoutConfirm: false,
    isLoggingOut: false, //to check logout attempt
    //to control logout confirmation dialog
-
+   resetCartsAfterPurchas: () => {
+      set({ carts: [] });
+   },
    updateStatusSaveToCart: (value) => {
       if (value === true) {
          //ทำคอขวด ไม่ให้ Badge ใน SidebarUser.jsx เอาค่า carts.length ไปใช้ได้ง่ายๆจนกว่าจะกด "Place Order" ที่ CartInfo.jsx
@@ -41,12 +43,13 @@ const ecomStore = (set, get) => ({
     3. แล้ว set ค่าใหม่ให้ carts
     4. แล้ว synCartwithProducts() ใน addToCart() ให้มัน update ข้อมูลใหม่ให้กับ carts
    */
-   //  synCartwithProducts(productData) จะถูก called รัวๆที่ CardProd.jsx ตามจำนวนของ product ที่มีอยู่
+   //  synCartwithProducts(productData) จะถูก called รัวๆที่ CardProd.jsx ตามจำนวนของ product ที่มีอยู่ | แก้ปัญหา carts คอขวดไม่อัปเดตถ้าไม่ call addTocart()
    synCartwithProducts: (productData) => {
+      //productData ==={buyPrice, buyPriceNum, preferDiscount,...}
       // console.log("syncPrice And Disc", productData);
       const carts = get().carts;
       const products = get().products; //key man → fetch products from backend
-      // Update all cart items with latest product data
+      // updateCarts === products(fresh from DB) + carts(from localStorage)
       const updateCarts = carts.map((cartItem) => {
          //เอา p เพราะใหม่กว่า แต่เก็บ countCart ของเดิมไว้
          let latestProd = binarySearchProdId(products, cartItem.id);
@@ -60,7 +63,7 @@ const ecomStore = (set, get) => ({
               }
             : cartItem;
       });
-
+      //productData → 1 prod obj
       if (productData) {
          //หา obj ใน carts ที่มี id ตรงกับ productData.id(ที่ส่งเข้ามาแต่ละชิ้น)
          let existIndex = updateCarts.findIndex((cartItem) => cartItem.id === productData?.id);
@@ -74,12 +77,12 @@ const ecomStore = (set, get) => ({
                preferDiscount: productData.preferDiscount
             };
          }
-         //เปลี่ยนค่า carts ใน localStorage
-         set({ carts: updateCarts });
-         // console.log("syncPrice And Disc", productData);
-         // console.log("updateCarts", updateCarts);
-         // console.log("synCart with Products", carts);
       }
+      //เปลี่ยนค่า carts ใน localStorage
+      set({ carts: updateCarts });
+      // console.log("syncPrice And Disc", productData);
+      // console.log("updateCarts", updateCarts);
+      // console.log("synCart with Products", carts);
    },
 
    //clik 'Add to cart' in CardProd.jsx to call this fn▼
@@ -245,7 +248,17 @@ const ecomStore = (set, get) => ({
          const res = await listProduct(count);
          // console.log("getProduct response:", res.data);
          set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
-         // get().syncCartsWithProducts(); // Auto-sync carts after products update
+
+         // const carts = get().carts;
+         // const products = get().products;
+         // for(const cartItem of carts) {
+         //    let latestProd = binarySearchProdId(products, cartItem?.id);
+         //    if (latestProd) {
+         //       console.log("latestProd", latestProd);
+         //       get().synCartwithProducts(latestProd);
+         //    }
+         // }
+         get().synCartwithProducts(); // Auto-sync carts after products update
          return res; // Return the response
       } catch (err) {
          console.log(err);

@@ -1,9 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import HistoryList from '@/components/userComponent/HistoryList'
 
 function HistoryUser(props) {
   return (
-    <div>HistoryUser</div>
+    <div><HistoryList /></div>
   )
 }
 

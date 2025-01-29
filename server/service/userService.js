@@ -108,7 +108,7 @@ exports.createUserCart = async (req, res) => {
          return res
             .status(400)
             .json({ 
-               message: `Sorry. Product: ${outStockTitle} out of stock.`,
+               message: `${outStockTitle} no longer in stock.`,
                stock: outStockProdArr 
             });
       }

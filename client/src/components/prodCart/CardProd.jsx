@@ -1,4 +1,4 @@
-//parent → Shop.jsx
+//parent → ShopUser.jsx
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { formatNumber } from "@/utilities/formatNumber";
@@ -111,7 +111,7 @@ function CardProd({ prodObj }) {
    useEffect(() => {
       // console.log("productData", productData)
       synCartwithProducts(productData);
-   },[prodObj,setProductData]);
+   },[prodObj,productData]);
 
    //cal promotion va discount price
    const renderDiscountPrice = (price) => {

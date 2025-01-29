@@ -32,14 +32,20 @@ function CartInfo(props) {
       updateStatusSaveToCart,
       showLogoutConfirm,
       setShowLogoutConfirm,
-      actionLogout
+      actionLogout,
+      getProduct,
+      products
    } = useEcomStore((state) => state);
    //carts === [{ categoryId:, buyPriceNum:,countCart:,discounts:,promotion:, },{},..]
    const { toast } = useToast();
    const [showDialog, setShowDialog] = useState(false); //for alert Confirm
 
-   console.log("carts in CartInfo", carts);
-
+   // console.log("carts in CartInfo", carts);
+   // Sync with products when carts or products change
+   const handleClickAddDelamount = () => {
+      getProduct();
+      // console.log("carts after click add", carts);
+   };
    // Safe discount amount getter
    const getDiscountAmount = (cart) => {
       //check if isAtive === true (not expired)
@@ -158,22 +164,34 @@ function CartInfo(props) {
                      {/* LEFT:quantity */}
                      <div className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
                         <button
-                           onClick={() => adjustQuantity(cart.id, cart.countCart - 1)}
+                           onClick={() => {
+                              adjustQuantity(cart.id, cart.countCart - 1);
+                              handleClickAddDelamount();
+                           }}
                            className='px-1 w-6 bg-gradient-to-b from-card to-gray-100 rounded-md shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
                         >
                            -
                         </button>
                         <span className='px-4 font-light text-xs'>{cart.countCart}</span>
                         <button
-                           onClick={() => adjustQuantity(cart.id, cart.countCart + 1)}
+                           disabled={cart.countCart >= cart.quantity}
+                           onClick={() => {
+                              adjustQuantity(cart.id, cart.countCart + 1);
+                              handleClickAddDelamount();
+                           }}
                            className='px-1 w-6 bg-gradient-to-b from-card to-gray-100 rounded-md shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
                         >
                            +
                         </button>
                      </div>
                      {/* RIGHT: price */}
-                     <div className='font-normal text-sm text-fuchsia-900'>
-                        ฿{formatNumber(cart.buyPriceNum * cart.countCart)}
+                     <div>
+                        {cart.countCart >= cart.quantity && (
+                           <p className='text-xs text-red-500'>level reached</p>
+                        )}
+                        <div className='font-normal text-sm text-fuchsia-900'>
+                           ฿{formatNumber(cart.buyPriceNum * cart.countCart)}
+                        </div>
                      </div>
                   </div>
                </div>
