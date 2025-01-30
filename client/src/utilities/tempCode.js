@@ -86,6 +86,309 @@ function CartCheckout(props) {
 }
 
 */
+
+//for shadcn table data OrderTable.jsx
+const columns = [
+  {
+     id: "selects",
+     header: ({ table }) => (
+        <Checkbox
+           checked={table.getIsAllPageRowsSelected()}
+           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        />
+     ),
+     cell: ({ row }) => (
+        <Checkbox
+           checked={row.getIsSelected()}
+           onCheckedChange={(value) => row.toggleSelected(!!value)}
+        />
+     )
+  },
+  {
+     accessorKey: "id",
+     header: ({ column }) => {
+        return (
+           <Button
+              variant='ghost'
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+           >
+              orderID
+              <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                 <svg
+                    className='w-4 h-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                 >
+                    <path
+                       strokeLinecap='round'
+                       strokeLinejoin='round'
+                       strokeWidth={2}
+                       d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                    />
+                 </svg>
+              </div>
+           </Button>
+        );
+     }
+  },
+  {
+     accessorKey: "cartTotal",
+     header: ({ column }) => {
+        return (
+           <Button
+              variant='ghost'
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+           >
+              Total(฿)
+              <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                 <svg
+                    className='w-4 h-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                 >
+                    <path
+                       strokeLinecap='round'
+                       strokeLinejoin='round'
+                       strokeWidth={2}
+                       d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                    />
+                 </svg>
+              </div>
+           </Button>
+        );
+     },
+     cell: ({ row }) => {
+        return formatNumber(row.original.cartTotal);
+     }
+  },
+  {
+     accessorKey: "orderedById",
+     header: ({ column }) => {
+        return (
+           <Button
+              variant='ghost'
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+           >
+              orderedById
+              <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                 <svg
+                    className='w-4 h-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                 >
+                    <path
+                       strokeLinecap='round'
+                       strokeLinejoin='round'
+                       strokeWidth={2}
+                       d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                    />
+                 </svg>
+              </div>
+           </Button>
+        );
+     }
+  },
+  {
+     accessorKey: "email",
+     header: ({ column }) => {
+        return (
+           <Button
+              variant='ghost'
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+           >
+              email
+              <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                 <svg
+                    className='w-4 h-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                 >
+                    <path
+                       strokeLinecap='round'
+                       strokeLinejoin='round'
+                       strokeWidth={2}
+                       d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                    />
+                 </svg>
+              </div>
+           </Button>
+        );
+     },
+     cell: ({ row }) => {
+        return row.original.orderedBy.email;
+     }
+  },
+  {
+     accessorKey: "createdAt",
+     header: ({ column }) => (
+        <Button
+           variant='ghost'
+           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+           createdAt
+           <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+              <svg
+                 className='w-4 h-4'
+                 xmlns='http://www.w3.org/2000/svg'
+                 fill='none'
+                 viewBox='0 0 24 24'
+                 stroke='currentColor'
+              >
+                 <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                 />
+              </svg>
+           </div>
+        </Button>
+     ),
+     sortingFn: (rowA, rowB) => {
+        // Get the first discount's startDate from each row
+        const dateA = rowA.original.createdAt ? new Date(rowA.original.createdAt) : new Date(0);
+        const dateB = rowB.original.createdAt ? new Date(rowB.original.createdAt) : new Date(0);
+        return dateA.getTime() - dateB.getTime();
+     },
+     cell: ({ row }) => {
+        const date = new Date(row.original.createdAt);
+        return date.toLocaleString("en-us", {
+           timeZone: "Asia/Bangkok"
+        });
+     }
+  },
+  {
+     accessorKey: "updatedAt",
+     header: ({ column }) => (
+        <Button
+           variant='ghost'
+           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+           updatedAt
+           <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+              <svg
+                 className='w-4 h-4'
+                 xmlns='http://www.w3.org/2000/svg'
+                 fill='none'
+                 viewBox='0 0 24 24'
+                 stroke='currentColor'
+              >
+                 <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                 />
+              </svg>
+           </div>
+        </Button>
+     ),
+     sortingFn: (rowA, rowB) => {
+        // Get the first discount's startDate from each row
+        const dateA = rowA.original.updatedAt ? new Date(rowA.original.updatedAt) : new Date(0);
+        const dateB = rowB.original.updatedAt ? new Date(rowB.original.updatedAt) : new Date(0);
+        return dateA.getTime() - dateB.getTime();
+     },
+     cell: ({ row }) => {
+        const date = new Date(row.original.updatedAt);
+        return date.toLocaleString("en-us", {
+           timeZone: "Asia/Bangkok"
+        });
+     }
+  },
+  {
+     accessorKey: "status",
+     header: ({ column }) => {
+        return (
+           <Button
+              variant='ghost'
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+           >
+              Payment status
+              <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                 <svg
+                    className='w-4 h-4'
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                 >
+                    <path
+                       strokeLinecap='round'
+                       strokeLinejoin='round'
+                       strokeWidth={2}
+                       d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                    />
+                 </svg>
+              </div>
+           </Button>
+        );
+     },
+     cell: ({ row }) => {
+        return row.original.status || "-";
+     }
+  },
+  {
+     accessorKey: "orderStatus",
+     header: ({ column }) => (
+        <Button
+           variant='ghost'
+           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+           orderStatus
+           <div className='w-full flex justify-center hover:text-fuchsia-700 hover:scale-125 active:rotate-180 transition-transform duration-200'>
+              <svg
+                 className='w-4 h-4'
+                 xmlns='http://www.w3.org/2000/svg'
+                 fill='none'
+                 viewBox='0 0 24 24'
+                 stroke='currentColor'
+              >
+                 <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                 />
+              </svg>
+           </div>
+        </Button>
+     ),
+     sortingFn: (rowA, rowB) => {
+        // Get status for each row
+        const statusOrder = {
+           Completed: 1,
+           "Not Process": 0
+        };
+        const statusA = rowA.origianl.orderStatus || "Not Process";
+        const statusB = rowB.origianl.orderStatus || "Not Process";
+        return statusOrder[statusA] - statusOrder[statusB];
+     },
+
+     cell: ({ row }) => {
+        const status = row.original.orderStatus;
+        return (
+           <span
+              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                 status === "Completed"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
+              }`}
+           >
+              {status || "Not Process"}
+           </span>
+        );
+     }
+  }
+];
 //for syncing carts to DB
 /*model Cart {
    id          Int             @id @default(autoincrement())

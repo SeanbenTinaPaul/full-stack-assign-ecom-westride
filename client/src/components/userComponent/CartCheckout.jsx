@@ -205,7 +205,7 @@ function CartCheckout({ isCollapsedContext }) {
                                        ฿{formatNumber(cart.price)}
                                     </p>
                                     <p className='font-normal text-base '>
-                                       ฿{formatNumber(cart.price - cart.buyPriceNum)}
+                                       ฿{formatNumber(cart.buyPriceNum)}
                                     </p>
                                  </div>
                               ) : (

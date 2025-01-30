@@ -415,7 +415,9 @@ exports.saveOrder = async (req, res) => {
                   cartId: true,
                   productId: true,
                   count: true,
-                  price: true
+                  price: true,
+                  buyPriceNum: true,
+                  discount: true   
                }
             }
          }
@@ -428,30 +430,30 @@ exports.saveOrder = async (req, res) => {
             .json({ message: "Your cart is empty. Please add some product to a cart." });
 
       //3. Compare: product quantity in cart (userCart.products) vs  product quantity in stock (product.quantity)
-      let outStockProd = []; //เก็บ product ที่ไม่มี stock พอ
-      for (const item of userCart.products) {
-         const product = await prisma.product.findUnique({
-            where: { id: item.productId },
-            select: { quantity: true, title: true }
-         });
-         /*
-          item   { cartId: 15, productId: 5, count: 2, price: 40000 }
-          product{ quantity: 1000, title: 'Core i9-11800K' }
-          item   { cartId: 15, productId: 7, count: 10, price: 250 }
-          product{ quantity: 10, title: 'ขาหมูเยอรมัน' }
-          */
-         if (!product || item.count > product.quantity) {
-            outStockProd.push(product?.title || "product");
-         }
-      }
-      //4. if outStockProd.length > 0, return 400
-      if (outStockProd.length > 0) {
-         return res
-            .status(400)
-            .json({ message: `Sorry. Product: ${outStockProd.join()} out of stock.` });
-      }
+      // let outStockProd = []; //เก็บ product ที่ไม่มี stock พอ
+      // for (const item of userCart.products) {
+      //    const product = await prisma.product.findUnique({
+      //       where: { id: item.productId },
+      //       select: { quantity: true, title: true }
+      //    });
+      //    /*
+      //     item   { cartId: 15, productId: 5, count: 2, price: 40000 }
+      //     product{ quantity: 1000, title: 'Core i9-11800K' }
+      //     item   { cartId: 15, productId: 7, count: 10, price: 250 }
+      //     product{ quantity: 10, title: 'ขาหมูเยอรมัน' }
+      //     */
+      //    if (!product || item.count > product.quantity) {
+      //       outStockProd.push(product?.title || "product");
+      //    }
+      // }
+      // //4. if outStockProd.length > 0, return 400
+      // if (outStockProd.length > 0) {
+      //    return res
+      //       .status(400)
+      //       .json({ message: `Sorry. Product: ${outStockProd.join()} out of stock.` });
+      // }
 
-      //5. create new Order
+      //5. create new record in table Order + ProductOnOrder
       const convertToTHBforDB = parseFloat(amount) / 100;
       const order = await prisma.order.create({
          data: {
@@ -460,7 +462,8 @@ exports.saveOrder = async (req, res) => {
                create: userCart.products.map((item) => ({
                   productId: item.productId,
                   count: item.count,
-                  price: item.price
+                  price: item.buyPriceNum,
+                  discount: item.discount
                }))
             },
             //connect คือไปดึง record ของ User.id(มีอยู่แล้ว) มาเติมใน record ตัวเอง
@@ -477,8 +480,8 @@ exports.saveOrder = async (req, res) => {
             paymentId: id,
             amount: convertToTHBforDB,
             status: status,
-            currency: currency
-            // orderStatus: "Complete"
+            currency: currency,
+            orderStatus: "Complete"
          }
       });
       // paymentId   String

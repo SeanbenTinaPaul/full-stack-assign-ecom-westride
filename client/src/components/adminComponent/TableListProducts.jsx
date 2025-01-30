@@ -16,9 +16,13 @@ function TableListProducts({ products, handleDel, isRerender }) {
    const { getProduct, token } = useEcomStore((state) => state);
    //initialize the sort col and order
    const [tableData, setTableData] = useState(products);
+   
+   //for flowbite table
    const [sortCol, setSortCol] = useState("id");
    const [sortOrder, setSortOrder] = useState("asc");
+
    const location = useLocation(); //to listen to location change
+
    console.log("prod in table", products); //products===[{images:[{url:..}],...}, {}]
    // console.log('data',data)
 

@@ -26,6 +26,7 @@ import { ProtectRouteAdmin } from "./ProtectRouteAdmin";
 import ShopUser from "@/pages/user/ShopUser";
 import CartUser from "@/pages/user/CartUser";
 import HistoryUser from "@/pages/user/HistoryUser";
+import UpdateOrder from "@/pages/admin/UpdateOrder";
 
 //แบ่งหน้า: 1. public 2. private
 //กลุ่มหน้า public ▼
@@ -55,7 +56,8 @@ const router = createBrowserRouter([
          { path: "product", element: <ProductAdmin /> },
          { path: "product/:id", element: <EditProdAdmin /> },
          { path: "manage", element: <ManageAdmin /> },
-         { path: "promotion", element: <PromotionAdmin /> }
+         { path: "promotion", element: <PromotionAdmin /> },
+         {path: "orders", element: <UpdateOrder/>}
       ]
       //then go to LayoutAdmin > SidebarAdmin → add these children to pages
    },

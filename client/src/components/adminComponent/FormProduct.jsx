@@ -190,31 +190,7 @@ function FormProduct() {
       const productToDel = products.find((obj) => obj.id === id);
       setProductToRemove(productToDel);
       setShowDialog(true);
-      /******** */
-      // toast.dismiss();
-      // Show the confirmation toast
-      // toast(
-      //    ({ closeToast }) => (
-      //       <div className='flex flex-col gap-2'>
-      //          <p className='text-Text-black'>Are you sure you want to delete this product?</p>
-      //          <div className='flex justify-end gap-4'>
-      //             <button
-      //                className='bg-Bg-warning py-1 px-2 text-gray-500 rounded-md'
-      //                onClick={() => confirmDelete(id, closeToast)}
-      //             >
-      //                Yes
-      //             </button>
-      //             <button
-      //                className='bg-Primary-btn py-1 px-2 text-white rounded-md'
-      //                onClick={closeToast}
-      //             >
-      //                No
-      //             </button>
-      //          </div>
-      //       </div>
-      //    ),
-      //    { autoClose: false } //no cooldown auto close
-      // );
+      
    };
    //if user click 'Yes' in Toastify confirm box
    const confirmDelete = async () => {

@@ -5,20 +5,22 @@ import { NavLink } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
    LayoutDashboard,
+   ChartPie,
    ChartNoAxesGantt,
    ChartBarStacked,
    PackagePlus,
    LogOut,
    Gem ,
    ArchiveRestore,
-   Grid2x2Plus  
+   Grid2x2Plus,
+   ClipboardCopy   
 } from "lucide-react";
 
 const navItems = [
    {
       title: "Dashboard",
       url: "/admin",
-      icon: LayoutDashboard,
+      icon: ChartPie ,
       end: true
    },
    {
@@ -26,11 +28,11 @@ const navItems = [
       url: "manage",
       icon: ChartNoAxesGantt
    },
-   {
-      title: "Brand Store",
-      url: "brand-store",
-      icon: ArchiveRestore 
-   },
+   // {
+   //    title: "Brand Store",
+   //    url: "brand-store",
+   //    icon: ArchiveRestore 
+   // },
    {
       title: "Category",
       url: "category",
@@ -40,6 +42,11 @@ const navItems = [
       title: "Product",
       url: "product",
       icon: PackagePlus
+   },
+   {
+      title: "Order status",
+      url: "orders",
+      icon: ClipboardCopy 
    },
    {
       title: "Promotion",

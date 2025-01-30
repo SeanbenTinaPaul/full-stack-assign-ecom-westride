@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import SidebarUser from "@/components/userComponent/SidebarUser";
+import HeaderUser from "@/components/userComponent/HeaderUser";
 
 const LayoutUser = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -11,6 +12,7 @@ const LayoutUser = () => {
       <div className='min-h-screen flex'>
          <SidebarUser isCollapsed={isSidebarCollapsed} />
          <div className={`flex-1 flex flex-col ${contentMargin} transition-all duration-300`}>
+            <HeaderUser />
             <div className='fixed top-1 left-3 z-[60]'>
                <Button
                   className='bg-transparent border-none hover:bg-transparent '

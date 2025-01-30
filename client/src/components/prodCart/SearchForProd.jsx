@@ -59,7 +59,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 
       if (isChecked) {
          updateCate = [...selectedCate, cateId];
-         //not use "category": selectedCate bc it will be updated nxet render
+         //not use {...prev, "category": selectedCate} bc selectedCate will be updated nxet render
          setSearchTerms((prev) => ({ ...prev, category: updateCate }));
       } else {
          //ถ้า unchecked → เอาเลข id นั้นมา filter ออกจาก [] ที่ใช้เก็บเลข id ตั้งแต่ render รอบก่อน

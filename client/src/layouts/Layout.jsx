@@ -9,6 +9,7 @@ import {
    PanelLeftOpen,
    PanelLeftClose
 } from "lucide-react";
+import Header from "@/components/Header";
 
 const Layout = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -18,6 +19,7 @@ const Layout = () => {
       <div className='min-h-screen flex'>
          <MainSidebar isCollapsed={isSidebarCollapsed} />
          <div className={`flex-1 flex flex-col ${contentMargin} transition-all duration-300`}>
+            <Header/>
             <div className='fixed top-1 left-3 z-[60]'>
                <Button
                   className='bg-transparent border-none hover:bg-transparent '

@@ -18,11 +18,11 @@ readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 /* 
 เขียนแบบกระจายออก (manual routing) → app.use('/api',..) mount '/api' เสร็จก็หายไป
 
-r==='product.js' ▼
+ r ==='product.js' ▼
 app.post("/api/product", productService.create); // POST /api/product
 app.delete("/api/product/:id", authCheck, productService.remove); // DELETE /api/product/:id
 ...
-r==='auth.js' ▼
+ r ==='auth.js' ▼
 app.post("/api/login", authService.logIn); // POST /api/login
 ...
 */
