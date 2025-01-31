@@ -87,6 +87,269 @@ function CartCheckout(props) {
 
 */
 
+//flowbite for OrderTable.jsx
+{/* ref table */}
+<Table className=' bg-card' >
+<Table.Head className=''>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("id")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         Order ID
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+
+   <Table.HeadCell
+      className='cursor-pointer'
+   >
+      <div className='flex items-center whitespace-nowrap'>User</div>
+   </Table.HeadCell>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("orderedById")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         User Id
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+   <Table.HeadCell className='cursor-pointer'>
+      <div className='flex items-center whitespace-nowrap'>address</div>
+   </Table.HeadCell>
+   <Table.HeadCell className='cursor-pointer'>
+      <div className='flex items-center whitespace-nowrap'>Products</div>
+   </Table.HeadCell>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("cartTotal")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         Net Total
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("createdAt")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         created At
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("updatedAt")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         updated At
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("status")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         Payment status
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+   <Table.HeadCell
+      className='cursor-pointer'
+      onClick={() => sortData("orderStatus")}
+   >
+      <div className='flex items-center whitespace-nowrap'>
+         Order status
+         <svg
+            className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+               sortCol === "id" && sortOrder === "asc" ? "rotate-180" : ""
+            }`}
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+         >
+            <path
+               strokeLinecap='round'
+               strokeLinejoin='round'
+               strokeWidth={2}
+               d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+            />
+         </svg>
+      </div>
+   </Table.HeadCell>
+   <Table.HeadCell className='cursor-pointer whitespace-nowrap '>
+      <div className='flex items-center'>Update order status</div>
+   </Table.HeadCell>
+</Table.Head>
+{/* Body */}
+<Table.Body className='divide-y border border-gray-100'>
+   {tableData?.map((order) => {
+      return (
+         <Table.Row
+            key={order.id}
+            className='bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-600'
+         >
+            <Table.Cell>{order?.id}</Table.Cell>
+            <Table.Cell>
+               <p>{order.orderedBy?.name}</p>
+               <p>{order.orderedBy?.email}</p>
+            </Table.Cell>
+            <Table.Cell>{order.orderedById}</Table.Cell>
+            <Table.Cell>{order.orderedBy?.address}</Table.Cell>
+            <Table.Cell>
+               {order.products?.map((prod, i) => (
+                  <div
+                     key={i}
+                     className='whitespace-nowrap'
+                  >
+                     <li>{prod.product?.title}</li>
+                     <p className='pl-5'>
+                        {prod?.count}x ฿{formatNumber(prod?.price)}
+                     </p>
+                  </div>
+               ))}
+            </Table.Cell>
+            <Table.Cell>฿{formatNumber(order?.cartTotal)}</Table.Cell>
+            <Table.Cell>
+               {new Date(order?.createdAt).toLocaleString("en-us", {
+                  timeZone: "Asia/Bangkok"
+               })}
+            </Table.Cell>
+            <Table.Cell>
+               {new Date(order?.updatedAt).toLocaleString("en-us", {
+                  timeZone: "Asia/Bangkok"
+               })}
+            </Table.Cell>
+            <Table.Cell>{order?.status || "not process"}</Table.Cell>
+            {/* <Table.Cell>{order.orderStatus}</Table.Cell> */}
+            <Table.Cell className='whitespace-nowrap'>
+               {
+                  <span
+                     className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        order?.orderStatus === "Completed"
+                           ? "bg-green-100 text-green-700"
+                           : order?.orderStatus === "Not Process"
+                           ? "bg-yellow-100 text-yellow-700"
+                           : "bg-red-100 text-red-700"
+                     }`}
+                  >
+                     {order?.orderStatus === "Completed"
+                        ? "Completed"
+                        : order?.orderStatus === "Not Process"
+                        ? "Not Process"
+                        : "Canceled"}
+                  </span>
+               }
+            </Table.Cell>
+            <Table.Cell>
+               <select
+                  onChange={(e) => handleUpdateStatus(order?.id, e.target.value)}
+                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-500 focus:border-yellow-500 block w-full p-2'
+               >
+                  <option value='Completed'>Completed</option>
+                  <option value='Not Process'>Not Process</option>
+                  <option value='Canceled'>Canceled</option>
+               </select>
+            </Table.Cell>
+         </Table.Row>
+      );
+   })}
+</Table.Body>
+</Table>
 //for shadcn table data OrderTable.jsx
 const columns = [
   {

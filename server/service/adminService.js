@@ -2,16 +2,16 @@ const prisma = require("../config/prisma");
 
 exports.changeOrderStatus = async (req, res) => {
    try {
-      const { orderId, orderStatus } = req.body;
-      const orderUpdate = await prisma.order.update({
-         where: { id: orderId },
+      const { orderIdArr, orderStatus } = req.body;
+      const countOrderUpdate = await prisma.order.updateMany({
+         where: { id: { in: orderIdArr } },
          data: { orderStatus: orderStatus }
       });
 
       res.status(200).json({
          success: true,
          message: "Change Order Status Success",
-         data: orderUpdate
+         data: countOrderUpdate
       });
    } catch (err) {
       console.log(err);

@@ -11,10 +11,14 @@ export const getOrdersAdmin = async (token) => {
    });
 };
 //res.json()
-export const updateOrderStatAdmin = async (token, orderInfo) => {
-   return await axios.put(`${apiUrl}/api/admin/order-status`, orderInfo, {
-      headers: {
-         Authorization: `Bearer ${token}`
+export const updateOrderStatAdmin = async (token, orderIdArr, orderStatus) => {
+   return await axios.put(
+      `${apiUrl}/api/admin/order-status`,
+      { orderIdArr, orderStatus },
+      {
+         headers: {
+            Authorization: `Bearer ${token}`
+         }
       }
-   });
+   );
 };
