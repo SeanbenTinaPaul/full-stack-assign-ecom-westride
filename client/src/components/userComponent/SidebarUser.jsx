@@ -179,7 +179,7 @@ function SidebarUser({ isCollapsed }) {
                      >
                         {item.title}
                      </span>
-                     {item.title === "Cart" && carts.length > 0 && user && isSaveToCart && (
+                     {item.title === "Cart" && carts.length > 0 && user &&  (
                         <Badge className='absolute right-1 z-50 ml-2 bg-red-500 text-white rounded-full px-2'>
                            {carts.length}
                         </Badge>

@@ -1,9 +1,21 @@
 //parent → PaymentMethod.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { reqCancelPayment } from "@/api/PaymentAuth";
 import { saveOrderUser } from "@/api/userAuth";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "@/components/ui/button";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Landmark } from "lucide-react";
 import "../../stripe.css";
 /*
@@ -11,12 +23,14 @@ card num : 4242 4242 4242 4242
 expire date : 12/34
 security code : 567
 */
-export default function CheckoutForm({ isSaveAddress }) {
+export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
    const { token, resetCartsAfterPurchas } = useEcomStore((state) => state);
+   const navigate = useNavigate();
    const stripe = useStripe();
    const elements = useElements();
    const [message, setMessage] = useState(null);
    const [isLoading, setIsLoading] = useState(false);
+   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -28,13 +42,13 @@ export default function CheckoutForm({ isSaveAddress }) {
       }
 
       setIsLoading(true);
-
+      //Cloud (status: complete)
       const payload = await stripe.confirmPayment({
          elements,
          //  confirmParams: {
          //     // Make sure to change this to your payment completion page
 
-         //     // return_url: "http://localhost:3000/complete",
+         //  return_url: "http://localhost:3000/complete",
          //  },
          redirect: "if_required" //telling Stripe to handle these redirects automatically, if necessary.
       });
@@ -55,12 +69,13 @@ export default function CheckoutForm({ isSaveAddress }) {
       if (payload.error) {
          setMessage(payload.error.message);
       } else {
-         //create Order in DB
+         //create Order record in DB
          console.log("payload purchase", payload);
          try {
             const res = await saveOrderUser(token, payload);
             console.log("res.data CheckoutForm", res.data);
-            // resetCartsAfterPurchas();
+            resetCartsAfterPurchas();
+            navigate("/user/history");
          } catch (err) {
             console.error(err);
             throw err; //to stop continue executing
@@ -70,43 +85,81 @@ export default function CheckoutForm({ isSaveAddress }) {
 
       setIsLoading(false);
    };
-
+   const handleCancelPurchase = async () => {
+    //   console.log("paymentIntentData", paymentIntentData);
+      try {
+         const res = await reqCancelPayment(token, paymentIntentData);
+        //  console.log("res.data reqCancelPayment", res.data);
+         setShowConfirmDialog(false);
+         navigate("/user/history");
+      } catch (err) {
+         console.log(err);
+      }
+   };
 
    const paymentElementOptions = {
       layout: "accordion"
    };
 
    return (
-      <form
-         id='payment-form'
-         onSubmit={handleSubmit}
-         className='bg-card p-4 rounded-xl shadow-md'
-      >
-         <PaymentElement
-            id='payment-element'
-            options={paymentElementOptions}
-            className=''
-         />
-         <Button
-            disabled={(isLoading || !stripe || !elements) && !isSaveAddress}
-            id='submit'
-            className='w-full mt-4 bg-fuchsia-800 text-white py-2 rounded-md transition-colors duration-300 hover:bg-fuchsia-700 shadow-md'
+      <div>
+         <form
+            id='payment-form'
+            onSubmit={handleSubmit}
+            className='bg-card p-4 rounded-xl shadow-md'
          >
-            <span id='button-text'>
-               {isLoading ? (
-                  <div
-                     className='w-4'
-                     id='spinner'
-                  >
-                     <Landmark className='w-4 animate-bounceScale' />
-                  </div>
-               ) : (
-                  "Purchase"
-               )}
-            </span>
-         </Button>
-         {/* Show any error or success messages */}
-         {message && <div id='payment-message'>{message}</div>}
-      </form>
+            <PaymentElement
+               id='payment-element'
+               options={paymentElementOptions}
+               className=''
+            />
+            <Button
+               disabled={(isLoading || !stripe || !elements) && !isSaveAddress}
+               id='submit'
+               className='w-full mt-4 bg-fuchsia-800 text-white py-2 rounded-xl transition-colors duration-300 hover:bg-fuchsia-700 shadow-md'
+            >
+               <span id='button-text'>
+                  {isLoading ? (
+                     <div
+                        className='w-4'
+                        id='spinner'
+                     >
+                        <Landmark className='w-4 animate-bounceScale' />
+                     </div>
+                  ) : (
+                     "Purchase"
+                  )}
+               </span>
+            </Button>
+            <Button
+               variant='secondary'
+               type='button'
+               //onClick={handleCancelPurchase}
+               onClick={() => setShowConfirmDialog(true)}
+               className='w-full mt-4 py-2 shadow-md rounded-xl bg-slate-50'
+            >
+               Cancel Purchase
+            </Button>
+            {/* Show any error or success messages */}
+            {message && <div id='payment-message'>{message}</div>}
+         </form>
+         <AlertDialog
+            open={showConfirmDialog}
+            onOpenChange={setShowConfirmDialog}
+         >
+            <AlertDialogContent>
+               <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure to cancel the purchase ?</AlertDialogTitle>
+                  <AlertDialogDescription>No cost or penalty. Your vouchers and cart items will be saved. Feel free to come back when you're ready.</AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                  <AlertDialogCancel onClick={handleCancelPurchase}>
+                  Confirm cancellation
+                  </AlertDialogCancel>
+                  <AlertDialogAction>Return to purchase</AlertDialogAction>
+               </AlertDialogFooter>
+            </AlertDialogContent>
+         </AlertDialog>
+      </div>
    );
 }

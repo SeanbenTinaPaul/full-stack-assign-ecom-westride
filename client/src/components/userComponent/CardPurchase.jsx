@@ -1,4 +1,4 @@
-//parent → src\pages\user\PaymentUser.jsx 
+//parent → src\pages\user\PaymentUser.jsx
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { getCartUser, saveAddressUser } from "@/api/userAuth";
@@ -8,8 +8,9 @@ import { formatNumber } from "@/utilities/formatNumber";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/hooks/use-toast";
 import ShippingFee from "@/utilities/ShippingFee";
+import { MapPinHouse,ShoppingBasket  } from "lucide-react";
 
-function CardPurchase({setIsSaveAddress, isSaveAddress}) {
+function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
    const { token, carts } = useEcomStore((state) => state);
    const { toast } = useToast();
    const [prodOnCartArr, setProdOnCartArr] = useState([]);
@@ -56,12 +57,15 @@ function CardPurchase({setIsSaveAddress, isSaveAddress}) {
       }
    };
    return (
-      <div className='mx-auto min-w-[600px]'>
+      <div className='mx-auto min-w-[600px] pt-6'>
          <main className='flex justify-center flex-wrap gap-4'>
             {/* left :Address*/}
             <article className='w-1/2'>
                <div className='p-4 rounded-xl border shadow-md space-y-4 bg-card'>
-                  <h1>Address</h1>
+                  <div className='flex items-center gap-2'>
+                     <MapPinHouse className='drop-shadow-sm'size={20} />
+                     <p className="text-lg text-slate-700 font-sans font-semibold">Address</p>
+                  </div>
                   <textarea
                      onChange={(e) => setAddress({ address: e.target.value.trim() })}
                      placeholder='Please enter address to display payment methods'
@@ -72,7 +76,7 @@ function CardPurchase({setIsSaveAddress, isSaveAddress}) {
                   </div>
                   <Button
                      onClick={handleSaveAddress}
-                     className='w-full transition-all duration-300 hover:bg-slate-500 shadow-md '
+                     className='w-full rounded-xl transition-all duration-300 hover:bg-slate-500 shadow-md '
                   >
                      Save Address
                   </Button>
@@ -81,7 +85,10 @@ function CardPurchase({setIsSaveAddress, isSaveAddress}) {
             {/* right:Summary */}
             <article className='w-1/2'>
                <div className='p-4 rounded-xl border shadow-md space-y-4 bg-card'>
-                  <h1>Summary</h1>
+                  <div className="flex items-center gap-2">
+                     <ShoppingBasket className='drop-shadow-sm ' size={20} />
+                     <p className="text-lg text-slate-700 font-sans font-semibold">Summary</p>
+                  </div>
                   {/* item list */}
                   {/* {console.log("prodOnCartArr", prodOnCartArr)} */}
                   {prodOnCartArr?.map((obj) => (
@@ -143,7 +150,7 @@ function CardPurchase({setIsSaveAddress, isSaveAddress}) {
 
 CardPurchase.propTypes = {
    setIsSaveAddress: PropTypes.func.isRequired,
-   isSaveAddress: PropTypes.bool,
+   isSaveAddress: PropTypes.bool
 };
 
 export default CardPurchase;

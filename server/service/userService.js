@@ -105,12 +105,10 @@ exports.createUserCart = async (req, res) => {
       const outStockTitle = Object.keys(outStockProd);
       //4. if outStockProd.length > 0, return 400
       if (outStockProdArr.length > 0) {
-         return res
-            .status(400)
-            .json({ 
-               message: `${outStockTitle} no longer in stock.`,
-               stock: outStockProdArr 
-            });
+         return res.status(400).json({
+            message: `${outStockTitle} no longer in stock.`,
+            stock: outStockProdArr
+         });
       }
       //2. Delete old cart to INSERT new cart
       //table'ProductOnCart' เป็นตารางกลางระหว่าง 'Product' กับ 'Cart'
@@ -417,7 +415,7 @@ exports.saveOrder = async (req, res) => {
                   count: true,
                   price: true,
                   buyPriceNum: true,
-                  discount: true   
+                  discount: true
                }
             }
          }
@@ -463,7 +461,7 @@ exports.saveOrder = async (req, res) => {
                   productId: item.productId,
                   count: item.count,
                   price: item.buyPriceNum,
-                  discount: item.discount
+                  discount: item.price*item.discount/100
                }))
             },
             //connect คือไปดึง record ของ User.id(มีอยู่แล้ว) มาเติมใน record ตัวเอง
@@ -481,7 +479,7 @@ exports.saveOrder = async (req, res) => {
             amount: convertToTHBforDB,
             status: status,
             currency: currency,
-            orderStatus: "Complete"
+            orderStatus: "Completed"
          }
       });
       // paymentId   String
@@ -541,6 +539,7 @@ exports.getOrder = async (req, res) => {
    try {
       const orders = await prisma.order.findMany({
          where: { orderedById: Number(req.user.id) },
+         orderBy: { createdAt: "desc" },
          include: {
             products: {
                include: { product: true }

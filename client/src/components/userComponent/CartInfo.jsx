@@ -111,10 +111,9 @@ function CartInfo(props) {
    };
 
    return (
-      <div>
-         <h1 className='text-xl font-normal'>Preview Cart</h1>
+      <div className="h-full w-full bg-card p-4 rounded-xl shadow-md">
          {/* Border */}
-         <div className='bg-card border p-2 rounded-md shadow-md'>
+         <main className='bg-card p-2 rounded-lg overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
             {/* card */}
             {carts.map((cart) => (
                <div
@@ -122,10 +121,10 @@ function CartInfo(props) {
                   className='bg-card p-2 mb-2 rounded-md shadow-md '
                >
                   {/* row 1 : img + title+ desc+badge+trash*/}
-                  <div className='flex justify-between mb-2 '>
+                  <article className='flex justify-between mb-2 '>
                      {/*  left :img + title+ desc+badge*/}
                      <div className='flex gap-2 items-center  w-full'>
-                        <div className=' relative flex-shrink-0  text-center items-center aspect-square w-16 h-16 object-cover border-2 border-white bg-gray-300 rounded-md overflow-hidden'>
+                        <section className=' relative flex-shrink-0  text-center items-center aspect-square w-16 h-16 object-cover border-2 border-white bg-gray-300 rounded-md overflow-hidden'>
                            {cart.images?.[0] ? (
                               <img
                                  src={cart.images?.[0]?.url}
@@ -135,9 +134,9 @@ function CartInfo(props) {
                            ) : (
                               "No image"
                            )}
-                        </div>
+                        </section>
                         {/* badge+title+desc */}
-                        <div className='block w-3/4'>
+                        <section className='block w-3/4'>
                            {(cart?.promotion || getDiscountAmount(cart)) && (
                               <Badge className='bg-red-500 px-1'>
                                  -{renderPercentDiscount(cart)}%
@@ -149,20 +148,20 @@ function CartInfo(props) {
                            <p className='text-xs whitespace-normal break-words'>
                               {cart.description}
                            </p>
-                        </div>
+                        </section>
                      </div>
                      {/* right : trash*/}
-                     <div
+                     <section
                         onClick={() => handleRmCart(cart.id)}
                         className='cursor-pointer'
                      >
                         <Trash2 className='w-4 drop-shadow-md hover:text-rose-500 hover:scale-125 transition duration-300' />
-                     </div>
-                  </div>
+                     </section>
+                  </article>
                   {/* row 2: quantity + price */}
-                  <div className='flex justify-between items-center'>
+                  <article className='flex justify-between items-center'>
                      {/* LEFT:quantity */}
-                     <div className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                     <section className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
                         <button
                            onClick={() => {
                               adjustQuantity(cart.id, cart.countCart - 1);
@@ -183,24 +182,24 @@ function CartInfo(props) {
                         >
                            +
                         </button>
-                     </div>
+                     </section>
                      {/* RIGHT: price */}
-                     <div>
+                     <section>
                         {cart.countCart >= cart.quantity && (
                            <p className='text-xs text-red-500'>level reached</p>
                         )}
                         <div className='font-normal text-sm text-fuchsia-900'>
                            ฿{formatNumber(cart.buyPriceNum * cart.countCart)}
                         </div>
-                     </div>
-                  </div>
+                     </section>
+                  </article>
                </div>
             ))}
             {/* Total */}
-            <div className='flex justify-between px-2'>
+            <article className='flex justify-between px-2'>
                <span className='font-bold'>Total</span>
                <span className='font-bold '>฿{formatNumber(toTalPrice())}</span>
-            </div>
+            </article>
             {/* btn */}
             {/* <Link to='/user/cart'> */}
             <Button
@@ -208,12 +207,12 @@ function CartInfo(props) {
                   updateStatusSaveToCart(true);
                   handleCreateCart();
                }}
-               className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-md hover:bg-fuchsia-700'
+               className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
             >
                Place Order
             </Button>
             {/* </Link> */}
-         </div>
+         </main>
          {/* "Don't Lose Your Cart! Place Order Before Logging Out"  Lost them. | Place order*/}
       </div>
    );

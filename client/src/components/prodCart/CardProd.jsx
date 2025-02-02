@@ -227,7 +227,7 @@ function CardProd({ prodObj }) {
                   ) : (
                      <Button
                         onClick={() => addToCart(productData)}
-                        className='w-full max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'
+                        className='w-full rounded-xl max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'
                      >
                         <ShoppingCart className='w-4 h-4 mr-2 max-lg:mr-0 ' />
                         <span className='inline max-lg:hidden'>Add to cart</span>

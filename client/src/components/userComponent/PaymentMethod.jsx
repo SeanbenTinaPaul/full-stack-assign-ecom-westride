@@ -17,6 +17,7 @@ function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {
    //เก็บ clientSecret from res.data.clientSecret
    const { token } = useEcomStore((state) => state);
    const [clientSecret, setClientSecret] = useState("");
+   const [paymentIntentData, setPaymentIntentData] = useState(null);
    // console.log("token from PaymentMethod", token);
    const appearance = {
       theme: "stripe",
@@ -31,11 +32,13 @@ function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {
       const createPaymentIntent = async () => {
          try {
             if (isSaveAddress) {
-               //Save transaction in cloud ONLY
+               //Save transaction in cloud ONLY (status : incomplete)
+               //await stripe.paymentIntents.create()
                const res = await createPaymentUser(token);
                console.log("res.data createPaymentUser", res.data);
                //key man to display <Elements> is clientSecret must be → ${id}_secret_${secret}
                setClientSecret(res.data.clientSecret);
+               setPaymentIntentData(res.data.paymentIntent);
             }
          } catch (err) {
             console.error("Error creating payment intent", err);
@@ -53,7 +56,10 @@ function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {
                options={{ clientSecret, appearance, loader }}
                stripe={stripePromise}
             >
-               <CheckoutForm isSaveAddress={isSaveAddress} />
+               <CheckoutForm
+                  isSaveAddress={isSaveAddress}
+                  paymentIntentData={paymentIntentData}
+               />
             </Elements>
          )}
       </div>

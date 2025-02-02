@@ -28,7 +28,7 @@ router.post("/product", authCheck, adminCheck, create);
 router.patch("/product/:id", authCheck, adminCheck, update);
 router.delete("/product/:id", authCheck, adminCheck, remove); //delete only a single product
 router.post("/bulk-discount", authCheck, adminCheck, handleBulkDiscount);
-router.post("/favorite-prod", favoriteProduct);
+router.post("/favorite-prod", favoriteProduct);//pending...
 //read
 router.post("/productby", listBy);
 router.post("/search/filters", searchFilters);

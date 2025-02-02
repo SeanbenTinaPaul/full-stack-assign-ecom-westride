@@ -6,9 +6,9 @@ import CartInfo from "@/components/userComponent/CartInfo";
 //Global state
 import useEcomStore from "@/store/ecom-store";
 //component ui
-
+import { View,PackageSearch } from 'lucide-react';
 const ShopUser = () => {
-   const { user,token, products, getProduct } = useEcomStore((state) => state);
+   const { user, token, products, getProduct } = useEcomStore((state) => state);
    const [isFoundTextSearch, setIsFoundTextSearch] = useState(false);
    const [whatTextSearch, setWhatTextSearch] = useState("");
 
@@ -26,32 +26,39 @@ const ShopUser = () => {
    return (
       // Added min-w-[...] to prevent sections from becoming too narrow
       //To make dev responsive → rm "min-w-[...px]" from all div
-      <div className='flex min-h-screen w-full overflow-x-auto'>
+      <main className='flex min-h-screen w-full overflow-x-auto'>
          {/* search bar */}
          {/* To make dev responsive → rm "min-w-[...px]" from all div */}
-         <div className='w-1/5 p-4 min-w-[200px] h-screen bg-slate-200 '>
+         <article className='w-1/5 min-w-[200px] h-screen flex flex-col bg-[#E5E5E5] '>
+            <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-card  shadow-md '>
+               <PackageSearch className='drop-shadow-sm' />
+               <h1 className='text-xl text-slate-700 font-sans font-semibold drop-shadow-sm'>
+                  Search product
+               </h1>
+            </div>
             <SearchForProd
                setIsFoundTextSearch={setIsFoundTextSearch}
                // isFoundTextSearch={isFoundTextSearch}
                setWhatTextSearch={setWhatTextSearch}
             />
-         </div>
+         </article>
          {/* display products */}
-         <div className={`${user? 'w-3/5': 'w-4/5'} p-4 h-screen overflow-x-auto`}>
-            <p className='text-xl font-normal mb-4'>Products</p>
+         <article className={`${user ? "w-3/5" : "w-4/5"} p-4 h-screen overflow-x-auto`}>
+            <div className='bg-slate-700 p-6 rounded-xl mb-4 flex items-center shadow-md'>
+               <p className='text-2xl font-sans font-bold  text-slate-50'>Products</p>
+            </div>
             {!isFoundTextSearch && whatTextSearch && (
-               <div>
+               <section>
                   <p className='text-muted-foreground font-light mb-4'>
                      No Product found with "{whatTextSearch}"
                   </p>
                   <p className='text-accent-foreground from-accent-foreground font-semibold'>
                      We think you might like these products
                   </p>
-               </div>
+               </section>
             )}
             {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
-            <div className='flex flex-wrap min-w-[300px] justify-center gap-4 max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
-               
+            <section className='shadow-md bg-slate-50 pt-10 rounded-xl flex flex-wrap min-w-[300px] justify-center gap-4 max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
                {/* {console.log("products", products)} */}
                {Array.isArray(products) ? (
                   products.map((obj) => (
@@ -64,18 +71,23 @@ const ShopUser = () => {
                   <p>No products available</p>
                )}
                {/* display products */}
-            </div>
-         </div>
+            </section>
+         </article>
 
          {/* cart */}
          {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
          {user && (
-
-         <div className='w-1/5 p-4 min-w-[250px] h-screen overflow-y-auto bg-slate-200'>
-            <CartInfo />
-         </div>
+            <article className='w-1/5 p-4 min-w-[280px] h-screen overflow-y-auto bg-[#E5E5E5]'>
+               <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-card  shadow-md '>
+                  <View className='drop-shadow-sm 'size={22} />
+                  <h1 className='text-xl text-slate-700 font-sans font-semibold drop-shadow-sm'>
+                  Preview Cart
+                  </h1>
+               </div>
+               <CartInfo />
+            </article>
          )}
-      </div>
+      </main>
    );
 };
 

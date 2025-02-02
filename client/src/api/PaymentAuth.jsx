@@ -13,3 +13,18 @@ export const createPaymentUser = async (token) => {
       }
    );
 };
+export const reqCancelPayment = async (token, paymentIntentData) => {
+   return await axios.post(`${apiUrl}/api/user/cancel-payment-intent`, paymentIntentData, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   })
+};
+//pending...
+export const reqRefund = async (token, orderId) => {
+   return await axios.post(`${apiUrl}/api/user/refund-payment`, {orderId}, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   })
+}

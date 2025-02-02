@@ -131,17 +131,16 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    };
 
    return (
-      <div>
-         <h1 className='text-xl font-normal mb-4'>Search product</h1>
+      <div className="h-full w-full bg-card p-4 rounded-xl">
          <form
             onSubmit={(e) => handleSumitSearchText(e)}
-            className='flex flex-col gap-2'
+            className='flex flex-col gap-2 '
          >
             <input
                type='text'
                value={textSearch}
                onChange={(e) => handleSearchText(e)}
-               placeholder='e.g. รองเท้าเด็ก, core i7'
+               placeholder='e.g. ขาหมู, core i7'
                className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
             />
             <div>
@@ -213,7 +212,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
             </div>
             <Button
                type='submit'
-               className='hover:bg-slate-500'
+               className='hover:bg-slate-500 w-full rounded-xl shadow-md transition-all duration-300'
             >
                Search
             </Button>
@@ -221,11 +220,12 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                variant='secondary'
                type='button'
                onClick={handleReset}
+               className ='w-full shadow-md rounded-xl bg-slate-50'
             >
                Reset
             </Button>
          </form>
-         <hr />
+         
       </div>
    );
 }

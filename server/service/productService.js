@@ -651,19 +651,24 @@ exports.handleBulkDiscount = async (req, res) => {
    }
 };
 
-//for toggle isActive promotion and discount of prod
-//not complete yet...
+//for toggle isActive seasonal discount of prod
+//pending...
+/*
+Need req.body:
+1. productId
+2. status (true or false)
+*/
 const changeStatusDiscount = async (req, res) => {
    try {
-      const { id, enabled } = req.body;
-      const user = await prisma.user.update({
-         where: { id: Number(id) },
-         data: { enabled: enabled }
+      const { productIdArr, status } = req.body;
+      const result = await prisma.discount.updateMany({
+         where: { productId: {in: productIdArr} },
+         data: { isActive: status }
       });
 
       res.status(200).json({
          success: true,
-         message: `Update userID: ${id} status to ${enabled}.`
+         message: `Update userID: ${productIdArr} status to ${status}.`
       });
    } catch (err) {
       console.log(err);
@@ -673,7 +678,8 @@ const changeStatusDiscount = async (req, res) => {
       });
    }
 };
-//not complete yet...
+
+//pending...
 exports.favoriteProduct = async (req, res) => {
    const { productId, id } = req.body;
    try {

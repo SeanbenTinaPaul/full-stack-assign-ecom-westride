@@ -31,7 +31,7 @@ const LayoutUser = () => {
                </Button>
             </div>
             {/* content space */}
-            <main className='flex-1 h-full p-6 bg-slate-100 overflow-y-auto pt-14'>
+            <main className='flex-1 h-full p-6  bg-[#E5E5E5] pt-14'>
                {/* Outlet → Navlink in MainSidebar.jsx */}
                {/* / Pass through context instead of props */}
                <Outlet context={isSidebarCollapsed}/>

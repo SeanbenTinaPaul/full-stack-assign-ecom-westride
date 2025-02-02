@@ -29,7 +29,7 @@ function CartCheckout({ isCollapsedContext }) {
    const navigate = useNavigate();
    const { toast } = useToast();
    const [scrolledToBottom, setScrolledToBottom] = useState(false);
-   const sidebarWidth = isCollapsedContext ? "6rem" : "16rem";
+   // const sidebarWidth = isCollapsedContext ? "6rem" : "16rem"; //for moving last <main>
 
    // console.log(user);
    // console.log("carts in ListCheckout", { carts });
@@ -151,21 +151,21 @@ function CartCheckout({ isCollapsedContext }) {
 
    return (
       // max-[1286px]:pb-[calc(100vh-25rem)] max-[1504px]:pb-[calc(100vh-20rem)] max-[1920px]:pb-[calc(100vh-25rem)]
-      <div className='bg-card min-h-screen relative ml-14 max-md:pb-[calc(100vh-20rem)] max-lg:pb-[calc(100vh-25rem)] max-xl:pb-[calc(100vh-25rem)] max-2xl:pb-[calc(100vh-25rem)] max-[1920px]:pb-[calc(100vh-25rem)] pb-[calc(100vh-40rem)] '>
+      <div className='flex flex-col min-h-screen relative ml-14 pb-[calc(100vh-40rem)] max-md:pb-[calc(100vh-20rem)] max-lg:pb-[calc(100vh-25rem)] max-xl:pb-[calc(100vh-25rem)] max-2xl:pb-[calc(100vh-25rem)] max-[1920px]:pb-[calc(100vh-25rem)]'>
          {/* header */}
-         <div className='flex p-4'>
-            <ListChecks size={24} />
-            <p>Product List: {carts.length}</p>
+         <div className='flex p-4 mt-6 mb-4 bg-slate-700 gap-2 items-center rounded-xl shadow-md'>
+            <ListChecks size={24} className="text-card"/>
+            <p className='text-lg font-semibold text-card'>Product List: {carts.length}</p>
          </div>
 
          {/* list */}
-         <main className='px-4'>
+         <main className='p-10 h-full rounded-xl shadow-md bg-card'>
             {/* left */}
             <div>
                {carts.map((cart) => (
                   <div
                      key={cart.id}
-                     className='bg-card p-3 mb-2 rounded-md shadow-md '
+                     className='bg-card p-3 mb-2 rounded-xl shadow-md '
                   >
                      {/* row 1 : img + title+ desc+badge+trash*/}
                      <article className='flex justify-between mb-2 items-start '>
@@ -267,18 +267,15 @@ function CartCheckout({ isCollapsedContext }) {
          {/* w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)] */}
          <main
             className={`
-               fixed bottom-0 left-16 right-4 
-               bg-white/90 backdrop-blur-md transition-all duration-500 ease-in-out 
+               fixed bottom-0 ${isCollapsedContext ? 'left-24':'left-64'} right-4 
+               bg-white/80 backdrop-blur-md transition-all duration-500 ease-in-out 
                shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]
                p-4 rounded-t-xl transform
                ${scrolledToBottom ? "translate-y-0" : "translate-y-10 hover:translate-y-0"}
             `}
-            style={{
-               left: sidebarWidth // Dynamically set left position
-            }}
          >
             {carts.length > 0 && (
-               <article className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+               <article className='w-full overflow-hidden border-transparent p-2 rounded-xl transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)]  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
                   {/* className="bg-card p-2 mb-2 rounded-md shadow-md" */}
                   <section className='flex justify-between p-2 mb-2 '>
                      <p>Total</p>
@@ -298,7 +295,7 @@ function CartCheckout({ isCollapsedContext }) {
             <Link>
                <Button
                   variant='primary'
-                  className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-lg hover:bg-fuchsia-700 transition-all duration-300'
+                  className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
                   onClick={handleCreateCart}
                >
                   Checkout
@@ -308,7 +305,7 @@ function CartCheckout({ isCollapsedContext }) {
                <Button
                   variant='secondary'
                   type='button'
-                  className='w-full mt-4  py-2 shadow-md rounded-lg bg-slate-50'
+                  className='w-full mt-4  py-2 shadow-md rounded-xl bg-slate-50'
                >
                   Continue Shopping
                </Button>

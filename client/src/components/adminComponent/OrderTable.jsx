@@ -6,12 +6,15 @@ import { Table } from "flowbite-react";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/components/hooks/use-toast";
 import { formatNumber } from "@/utilities/formatNumber";
 import { FileCheck } from "lucide-react";
+import { forEach } from "lodash";
 
 function OrderTable(props) {
    const { token } = useEcomStore((state) => state);
    //    const [orderArr, setOrderArr] = useState([]);
+   const { toast } = useToast();
    //for flowbite table
    const [currentPage, setCurrentPage] = useState(1);
    const [searchTerm, setSearchTerm] = useState("");
@@ -27,7 +30,7 @@ function OrderTable(props) {
       const fetchOrders = async () => {
          try {
             const res = await getOrdersAdmin(token);
-            console.log("OrderTable res.data", res.data.data);
+            // console.log("OrderTable res.data", res.data.data);
             // setOrderArr(res.data.data);
             setTableData(res.data.data);
          } catch (err) {
@@ -36,17 +39,16 @@ function OrderTable(props) {
          }
       };
       fetchOrders();
-   }, [token,setSelectedRows,setIsTriggerRender,isTriggerRender]);
-
+   }, [token, setSelectedRows, setIsTriggerRender, isTriggerRender]);
 
    // Sort fuction
    const sortData = (col) => {
       const sortedData = [...tableData].sort((a, b) => {
          if (col === "orderStatus") {
             const statusOrder = {
-               Completed: 2,
+               "Completed": 2,
                "Not Process": 1,
-               Canceled: 0
+               "Refunded": 0
             };
 
             // Get status values, default to "Not Process" if undefined
@@ -101,14 +103,23 @@ function OrderTable(props) {
    // bulk status update API
    const handleBulkUpdate = async () => {
       if (selectedRows.length > 0) {
-         console.log("id, status", selectedRows, selectedStatus);
-        try {
+         //  console.log("id, status", selectedRows, selectedStatus);
+         try {
             const res = await updateOrderStatAdmin(token, selectedRows, selectedStatus);
-            console.log(res);
-        } catch(err){
+            // console.log(res);
+            toast({
+               title: "Success",
+               description: `${res.data.message}`
+            });
+         } catch (err) {
             console.log(err);
+            toast({
+               variant: "destructive",
+               title: "Error!",
+               description: "Failed to update order status"
+            });
             throw err;
-        }
+         }
          setSelectedRows([]); // Clear selection after update
          setIsTriggerRender(!isTriggerRender);
       }
@@ -142,7 +153,7 @@ function OrderTable(props) {
                >
                   <option value='Completed'>Completed</option>
                   <option value='Not Process'>Not Process</option>
-                  <option value='Canceled'>Canceled</option>
+                  <option value='Canceled'>Refunded</option>
                </select>
                <Button
                   onClick={handleBulkUpdate}
@@ -175,7 +186,7 @@ function OrderTable(props) {
                               <input
                                  type='checkbox'
                                  checked={selectedRows.length === filteredData?.length}
-                                 onChange={(e)=>handleSelectAll(e)}
+                                 onChange={(e) => handleSelectAll(e)}
                                  className='w-4 h-4 text-slate-900 shadow bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none'
                               />
                            </div>
@@ -414,12 +425,12 @@ function OrderTable(props) {
                                  >
                                     <div>{prod.product?.title}</div>
                                     <div className='pl-5'>
-                                       {prod?.count}x ฿{prod?.price}
+                                       {prod?.count}x ฿{formatNumber(prod?.price)}
                                     </div>
                                  </div>
                               ))}
                            </td>
-                           <td className='px-6 py-4'>฿{item.cartTotal}</td>
+                           <td className='px-6 py-4'>฿{formatNumber(item.cartTotal)}</td>
                            <td className='px-6 py-4'>
                               {new Date(item.createdAt).toLocaleString("en-us", {
                                  timeZone: "Asia/Bangkok"

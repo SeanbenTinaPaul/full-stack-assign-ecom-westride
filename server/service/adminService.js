@@ -10,7 +10,7 @@ exports.changeOrderStatus = async (req, res) => {
 
       res.status(200).json({
          success: true,
-         message: "Change Order Status Success",
+         message: `${countOrderUpdate.count} order(s) successfully updated to - ${orderStatus} -`,
          data: countOrderUpdate
       });
    } catch (err) {

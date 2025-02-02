@@ -44,35 +44,37 @@ model Product {
   favorites   Favorite[] // เพิ่ม relation กับ Favorite
   ratings     Rating[] // เพิ่ม relation กับ Rating
   avgRating   Float? // เพิ่มฟิลด์เก็บค่าเฉลี่ย rating
-  // brandId     Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
-  // brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
+  brandId     Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
+  brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
 }
 
 model Order {
-  id          Int              @id @default(autoincrement())
-  cartTotal   Float
-  orderStatus String           @default("Not Process")
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  orderedById Int
-  orderedBy   User             @relation(fields: [orderedById], references: [id])
-  products    ProductOnOrder[]
-  ratings     Rating[] // เพิ่ม relation กับ Rating เพื่อตรวจสอบว่าสั่งซื้อแล้วหรือยัง
-  paymentId   String           @default("")
-  amount      Float            @default(0)
-  status      String           @default("")
-  currency    String           @default("thb")
+  id           Int              @id @default(autoincrement())
+  cartTotal    Float
+  orderStatus  String           @default("Not Process")
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  orderedById  Int
+  orderedBy    User             @relation(fields: [orderedById], references: [id])
+  products     ProductOnOrder[]
+  ratings      Rating[] // เพิ่ม relation กับ Rating เพื่อตรวจสอบว่าสั่งซื้อแล้วหรือยัง
+  paymentId    String           @default("")
+  amount       Float            @default(0)
+  status       String           @default("")
+  currency     String           @default("thb")
+  refundAmount Float?           @default(0)
 }
 
 model ProductOnOrder {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  orderId   Int
-  count     Int
-  price     Float
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  discount  Float? // เพิ่มฟิลด์เก็บส่วนลดที่ได้ ณ เวลาที่สั่งซื้อ
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  orderId    Int
+  count      Int
+  price      Float
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  discount   Float? // เพิ่มฟิลด์เก็บส่วนลดที่ได้ ณ เวลาที่สั่งซื้อ
+  isRefunded Boolean? @default(false)
 }
 
 model Category {
@@ -120,8 +122,8 @@ model Image {
   updatedAt  DateTime @updatedAt
   productId  Int?
   product    Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  // brandId    Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
-  // brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId    Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
 }
 
 //  Favorite feature
@@ -218,12 +220,12 @@ model UserCoupon {
 }
 
 //  Brand
-// model Brand {
-//   id          Int       @id @default(autoincrement())
-//   title       String    @unique // ชื่อแบรนด์ต้องไม่ซ้ำกัน
-//   description String?
-//   images      Image[] // ใช้โมเดล Image เดิมสำหรับเก็บรูปภาพแบรนด์
-//   products    Product[] // relation กับสินค้า
-//   createdAt   DateTime  @default(now())
-//   updatedAt   DateTime  @updatedAt
-// }
+model Brand {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique // ชื่อแบรนด์ต้องไม่ซ้ำกัน
+  description String?
+  images      Image[] // ใช้โมเดล Image เดิมสำหรับเก็บรูปภาพแบรนด์
+  products    Product[] // relation กับสินค้า
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

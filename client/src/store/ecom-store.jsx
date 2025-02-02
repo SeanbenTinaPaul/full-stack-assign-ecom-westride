@@ -183,35 +183,6 @@ const ecomStore = (set, get) => ({
       //res ใช้รับสิ่งที่ส่ง(res) มาจาก backend
       return res;
    },
-   actionLogout: () => {
-      const state = get();
-      if (state.carts.length > 0 && !state.isSaveToCart && !state.isLoggingOut) {
-         // Show confirmation if cart not empty and not saved
-         set({
-            showLogoutConfirm: true,
-            isLoggingOut: true // Mark that this is a logout attempt
-         });
-      } else {
-         // Regular logout process → reset state
-         set({
-            user: null,
-            token: null,
-            carts: [],
-            isSaveToCart: false,
-            savedCartCount: 0,
-            showLogoutConfirm: false,
-            isLoggingOut: false
-         });
-         // localStorage.removeItem("ecom-store");
-         // console.log(localStorage);
-      }
-   },
-   setShowLogoutConfirm: (show) =>
-      set({
-         showLogoutConfirm: show,
-         isLoggingOut: show // Reset when dialog is closed
-      }),
-
    handleDirectLogout: () => {
       set({
          user: null,
@@ -223,13 +194,27 @@ const ecomStore = (set, get) => ({
          isLoggingOut: false
       });
       // Add true as second parameter to replace state entirely
-
-      // localStorage.removeItem("ecom-store");
-      // window.location.href = "/";
-      // window.location.replace("/");
-      // const { removeItem } = useLocalStorage("ecom-store");
-      // removeItem();
    },
+   actionLogout: () => {
+      const state = get();
+      if (state.carts.length > 0 && !state.isSaveToCart && !state.isLoggingOut) {
+         // Show confirmation if cart not empty and not saved
+         set({
+            showLogoutConfirm: true,
+            isLoggingOut: true // Mark that this is a logout attempt
+         });
+      } else {
+         // Regular logout process → reset state
+         get().handleDirectLogout();
+         // localStorage.removeItem("ecom-store");
+         // console.log(localStorage);
+      }
+   },
+   setShowLogoutConfirm: (show) =>
+      set({
+         showLogoutConfirm: show,
+         isLoggingOut: show // Reset when dialog is closed
+      }),
 
    //dropdown category
    getCategory: async () => {

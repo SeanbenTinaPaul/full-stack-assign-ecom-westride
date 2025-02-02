@@ -1,7 +1,7 @@
 //parent→ LayoutAdmin.jsx
 
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
    LayoutDashboard,
@@ -10,17 +10,17 @@ import {
    ChartBarStacked,
    PackagePlus,
    LogOut,
-   Gem ,
+   Gem,
    ArchiveRestore,
    Grid2x2Plus,
-   ClipboardCopy   
+   ClipboardCopy
 } from "lucide-react";
-
+import useEcomStore from "@/store/ecom-store";
 const navItems = [
    {
       title: "Dashboard",
       url: "/admin",
-      icon: ChartPie ,
+      icon: ChartPie,
       end: true
    },
    {
@@ -31,12 +31,12 @@ const navItems = [
    // {
    //    title: "Brand Store",
    //    url: "brand-store",
-   //    icon: ArchiveRestore 
+   //    icon: ArchiveRestore
    // },
    {
       title: "Category",
       url: "category",
-      icon: Grid2x2Plus 
+      icon: Grid2x2Plus
    },
    {
       title: "Product",
@@ -46,12 +46,12 @@ const navItems = [
    {
       title: "Order status",
       url: "orders",
-      icon: ClipboardCopy 
+      icon: ClipboardCopy
    },
    {
       title: "Promotion",
       url: "promotion",
-      icon: Gem 
+      icon: Gem
       //1. Create a new page: Promotion.jsx → pages/admin
       //2. Create a new component: FormPromotion.jsx → components/adminComponent
       //3. go to AppRoutes.jsx to add a new route
@@ -59,6 +59,13 @@ const navItems = [
 ];
 
 const SidebarAdmin = ({ isCollapsed }) => {
+   const { handleDirectLogout } = useEcomStore((state) => state);
+   const navigate = useNavigate();
+   const handleLogout = (e) => {
+      e.preventDefault();
+      handleDirectLogout();
+      navigate('/', { replace: true });
+   };
    const sidebarWidth = isCollapsed ? "w-16" : "w-56";
    //Added fixed top-0 left-0 to the sidebar's root div to make unscrollable along with Category.jsx content
    //Added h-[calc(100vh-8.5rem)] to the ScrollArea to account for the header height
@@ -115,11 +122,12 @@ const SidebarAdmin = ({ isCollapsed }) => {
          {/* ONLY for Log out  */}
          <div className='p-2'>
             <NavLink
-            // redirect to 'http://localhost:5173/' when click
+               // redirect to 'http://localhost:5173/' when click
                to={"/"}
                end={true}
             >
                <button
+                  onClick={(e) => handleLogout(e)}
                   className={`w-full text-gray-300 px-3 py-2 hover:bg-slate-700 rounded flex items-center transition-all duration-300
                ${isCollapsed ? "justify-center" : "justify-start"}`}
                >

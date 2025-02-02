@@ -1,3 +1,4 @@
+//parent → LayoutUser.jsx
 import React from 'react'
 import PropTypes from 'prop-types'
 import HistoryList from '@/components/userComponent/HistoryList'
