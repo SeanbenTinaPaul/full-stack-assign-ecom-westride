@@ -62,7 +62,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
 
    return (
       <div className="w-full">
-         <div className='relative sm:rounded-lg rounded-xl border bg-card text-card-foreground shadow '>
+         <div className='relative sm:rounded-lg rounded-xl border bg-card text-card-foreground shadow-md '>
             <Table>
                <Table.Head>
                   <Table.HeadCell

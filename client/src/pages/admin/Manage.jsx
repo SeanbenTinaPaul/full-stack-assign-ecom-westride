@@ -1,10 +1,15 @@
 //for listing users
 import React from "react";
+import TableUsersAdmin from "@/components/adminComponent/TableUersAdmin";
 
 const ManageAdmin = () => {
    return (
       <div>
-         <div>Manage</div>
+         <div className='flex mt-6 mb-4 p-3 items-center rounded-xl gap-2 bg-slate-700 shadow-md'>
+            {/* <FileCheck size={20} className="text-card"/> */}
+            <p className='text-xl font-medium text-card'>User Management</p>
+         </div>
+         <div><TableUsersAdmin /></div>
       </div>
    );
 };

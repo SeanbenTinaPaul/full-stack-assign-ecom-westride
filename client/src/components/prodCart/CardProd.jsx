@@ -182,7 +182,7 @@ function CardProd({ prodObj }) {
                      <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p>
                   </div>
                   <p className='text-sm text-gray-500 max-lg:hidden truncate'>
-                     {prodObj.description}
+                     sold {prodObj.sold}
                   </p>
                </CardHeader>
 

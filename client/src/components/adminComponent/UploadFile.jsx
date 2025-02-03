@@ -366,7 +366,7 @@ function UploadFile({ inputForm, setInputForm, cancelImg, setCancelImg }) {
                name='images'
                ref={fileInputRef} // Attach the ref to the file input
                multiple //ให้สามารถเลือกไฟล์มากกว่า 1
-               className='form-control bg-transparent block w-32 text-sm text-transparent rounded-lg file:rounded-lg '
+               className='form-control bg-transparent block w-32 text-sm text-transparent rounded-xl file:rounded-xl '
                onChange={handleOnChange}
             />
             <span className='text-sm text-gray-500'>

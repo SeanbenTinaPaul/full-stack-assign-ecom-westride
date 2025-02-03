@@ -536,12 +536,15 @@ function FormPromotion(props) {
       }
    };
    return (
-      <div className='p-6 space-y-6'>
+      <div className='pt-6 space-y-6'>
+         <div className='w-full flex  mb-4 p-3 items-center rounded-xl gap-2 bg-card shadow-md'>
+            <h1 className='text-xl font-medium text-slate-700'>Promotion Management</h1>
+         </div>
          <Card>
             <CardHeader>
                <CardTitle className='flex items-center gap-2'>
                   <Percent className='w-5 h-5' />
-                  Bulk Discount Management
+                  Bulk Discount
                </CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>

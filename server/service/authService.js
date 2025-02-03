@@ -51,11 +51,11 @@ exports.logIn = async (req, res) => {
       });
 
       //if (!user || !user.enabled)
-      if (!user) return res.status(400).json({ message: "User not found or Not enabled ╬" });
+      if (!user) return res.status(400).json({ message: "User not found" });
 
       //2. check password
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Password is incorrect555 ╬" });
+      if (!isMatch) return res.status(400).json({ message: "Password incorrect 555" });
 
       //3. create payload
       const payload = {

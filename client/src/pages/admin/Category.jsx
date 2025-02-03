@@ -1,13 +1,18 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import FormCategory from '../../components/adminComponent/FormCategory'
+import React from "react";
+import PropTypes from "prop-types";
+import FormCategory from "../../components/adminComponent/FormCategory";
 
 const CategoryAdmin = () => {
-  return (
-    <div><FormCategory /></div>
-  )
-}
+   return (
+      <div className="">
+         <div className='max-w-3xl flex mt-6 mb-4 p-3 items-center rounded-xl gap-2 bg-slate-700 shadow-md'>
+            <h1 className='text-xl font-medium text-card'>Category Management</h1>
+         </div>
+         <FormCategory />
+      </div>
+   );
+};
 
-CategoryAdmin.propTypes = {}
+CategoryAdmin.propTypes = {};
 
-export default CategoryAdmin
+export default CategoryAdmin;

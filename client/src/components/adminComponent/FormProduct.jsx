@@ -225,11 +225,9 @@ function FormProduct() {
          <div>
             <form
                onSubmit={handleSubmit}
-               className='p-6 space-y-6 max-w-3xl mx-auto'
+               className=' space-y-6 max-w-3xl'
             >
-               <h1 className='text-2xl font-bold mb-6'>Product Management</h1>
-
-               <Card className='shadow-lg'>
+               <Card className='shadow-md max-w-3xl'>
                   <CardHeader>
                      <CardTitle className='flex items-center gap-2'>
                         <Package className='w-5 h-5' />
@@ -240,7 +238,7 @@ function FormProduct() {
                      <div className='space-y-2'>
                         <label className='flex items-center gap-2 text-sm font-medium'>
                            <Package2 className='w-4 h-4' />
-                           Product Name
+                           Product Title
                         </label>
                         <input
                            type='text'
@@ -248,7 +246,7 @@ function FormProduct() {
                            value={inputForm.title}
                            placeholder='e.g. จานเมลามีน, HP Laptop'
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            // className='w-full shadow-[0_0_10px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent'
                            required
                         />
@@ -264,13 +262,13 @@ function FormProduct() {
                            value={inputForm.description}
                            placeholder='e.g. มีสีฟ้าหวาน, อุปกรณ์'
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                         />
                      </div>
                   </CardContent>
                </Card>
 
-               <Card className='shadow-lg'>
+               <Card className='shadow-md max-w-3xl'>
                   <CardHeader>
                      <CardTitle className='flex items-center gap-2'>
                         <FolderOpen className='w-5 h-5' />
@@ -291,7 +289,7 @@ function FormProduct() {
                               value={inputForm.price}
                               placeholder='e.g. 5000, 99.50'
                               onChange={handleOnchange}
-                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                               required
                            />
                         </div>
@@ -307,7 +305,7 @@ function FormProduct() {
                               value={inputForm.quantity}
                               placeholder='e.g. 150'
                               onChange={handleOnchange}
-                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                               required
                            />
                         </div>
@@ -327,7 +325,7 @@ function FormProduct() {
                            value={inputForm.categoryId.toString()}
                            onValueChange={handleCategoryChange}
                         >
-                           <SelectTrigger className='w-full'>
+                           <SelectTrigger className='w-full rounded-xl'>
                               <SelectValue placeholder='Select category'>
                                  {
                                     categories.find(
@@ -365,7 +363,7 @@ function FormProduct() {
 
                <Button
                   type='submit'
-                  className='w-full md:w-auto bg-fuchsia-800 hover:bg-fuchsia-700'
+                  className='w-52 mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
                   disabled={loading}
                >
                   {loading ? (
@@ -400,7 +398,7 @@ function FormProduct() {
                   </AlertDialogFooter>
                </AlertDialogContent>
             </AlertDialog>
-            <div className='mt-4 p-6 max-w-full max-h-[80vh] mx-auto overflow-hidden overflow-y-auto overflow-x-auto'>
+            <div className='mt-4 pt-6 max-w-full max-h-[80vh] mx-auto overflow-hidden overflow-y-auto overflow-x-auto'>
                <TableListProducts
                   products={products}
                   handleDel={handleDel}
@@ -408,124 +406,6 @@ function FormProduct() {
                />
             </div>
          </div>
-         {/* ****** ลบ toastify */}
-         {/* <ToastContainer />
-         <div className='container mx-auto p-4 gap-4 bg-Dropdown-option-night shadow-md rounded-md'>
-            <form
-               action=''
-               // onSubmit ต้องไว้ที่ <form> เพื่อให้เรียก handleSubmit() ถ้าจะไว้ตรง <btn> ให้ใช้ onClick
-               onSubmit={handleSubmit}
-            >
-               <h1>Product Management</h1>
-               <label
-                  htmlFor='title'
-                  className='block font-medium'
-               >
-                  Product Name
-               </label>
-               <input
-                  type='text'
-                  className='border my-1 rounded-md placeholder:text-gray-400'
-                  name='title' //โผล่ใน event.target.name
-                  value={inputForm.title} ////โผล่ใน event.target.value
-                  placeholder='e.g. ขาหมูเยอรมัน, HP Laptop...'
-                  onChange={handleOnchange}
-                  required
-               />
-               <label
-                  htmlFor='description'
-                  className='block font-medium'
-               >
-                  Description
-               </label>
-               <input
-                  type='text'
-                  className='border my-1 rounded-md placeholder:text-gray-400'
-                  name='description'
-                  value={inputForm.description}
-                  placeholder='e.g. คู่มือทำอาหาร, อุปกรณ์เครื่องใช้ไฟฟ้า...'
-                  onChange={handleOnchange}
-               />
-               <label
-                  htmlFor='price'
-                  className='block font-medium'
-               >
-                  Price {"(฿)"}
-               </label>
-               <input
-                  type='number'
-                  step='0.01' //ให้เติมทศนิยมได้ 2 ตัว |='any'ได้ทุกตัว
-                  className='border my-1 rounded-md placeholder:text-gray-400'
-                  name='price'
-                  value={inputForm.price}
-                  placeholder='e.g. 5000, 99.50'
-                  onChange={handleOnchange}
-                  required
-               />
-               <label
-                  htmlFor='quantity'
-                  className='block font-medium'
-               >
-                  Quantity
-               </label>
-               <input
-                  type='number'
-                  className='border my-1 rounded-md placeholder:text-gray-400'
-                  name='quantity'
-                  value={inputForm.quantity}
-                  placeholder='e.g. 150'
-                  onChange={handleOnchange}
-                  required
-               />
-               <br />
-               <select
-                  name='categoryId'
-                  value={inputForm.categoryId}
-                  id=''
-                  className='border my-1 rounded-md'
-                  onChange={handleOnchange}
-                  required
-               >
-                  <option
-                     value={""}
-                     disabled
-                  >
-                     Select category
-                  </option>
-                  {categories.map((item, i) => (
-                     <option
-                        key={i}
-                        value={item.id}
-                     >
-                        {item.name}
-                     </option>
-                  ))}
-               </select>
-               {/* upload img file */}
-         {/* <UploadFile
-                  inputForm={inputForm}
-                  setInputForm={setInputForm}
-               />
-               <button className='bg-fuchsia-800 hover:bg-fuchsia-700 transition-colors duration-300 ease-in-out text-white font-bold py-2 px-4 rounded-md shadow-md'>
-                  {loading ? (
-                     <div className='flex items-center gap-2'>
-                        <HardDriveUpload className='w-4 animate-bounceScale' />{" "}
-                        <span>Adding..</span>
-                     </div>
-                  ) : (
-                     "Add Product"
-                  )}
-               </button>
-            </form>
-         </div> */}
-         {/* table of all products */}
-         {/* <div className='mt-4'>
-            <TableListProducts
-               products={products}
-               handleDel={handleDel}
-               isRerender={isRerender}
-            />
-         </div>  */}
       </div>
    );
 }

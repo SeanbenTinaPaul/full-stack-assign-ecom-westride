@@ -22,3 +22,23 @@ export const updateOrderStatAdmin = async (token, orderIdArr, orderStatus) => {
       }
    );
 };
+
+export const getAllUserAdmin = async (token) => {
+   return await axios.get(`${apiUrl}/api/admin/all-users`, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};
+export const changeUserStatusAdmin = async (token, userIdArr, userEnabled, userRole) => {
+   return await axios.post(
+      `${apiUrl}/api/admin/change-status`,
+      { userIdArr, userEnabled, userRole },
+      {
+         headers: {
+            Authorization: `Bearer ${token}`
+         }
+      }
+   );
+};
+

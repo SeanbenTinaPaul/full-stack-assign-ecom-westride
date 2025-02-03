@@ -68,7 +68,7 @@ exports.reqRefund = async (req, res) => {
    try {
       // Create a Date object for 3 days ago in UTC
       const now = new Date();
-      const threeDaysInMs = 7 * 24 * 60 * 60 * 1000;
+      const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
       const expiredDate = new Date(now.getTime() - threeDaysInMs);
       // Query will automatically handle timezone conversion
       const orderData = await prisma.order.findFirst({
@@ -115,7 +115,8 @@ exports.reqRefund = async (req, res) => {
             where: { id: orderData.id },
             data: {
                orderStatus: "Refunded",
-               refundAmount: amountInBahtforCloud/100
+               //have to parseInt() since 'stripe.refunds' needs integer refund amount
+               refundAmount: parseInt(amountInBahtforCloud/100)
             }
          });
          //2. update ProductOnOrder

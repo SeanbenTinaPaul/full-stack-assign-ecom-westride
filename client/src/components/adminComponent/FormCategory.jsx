@@ -186,9 +186,8 @@ function FormCategory() {
    // };
    return (
       <div>
-         <div className='p-6 space-y-6 max-w-3xl mx-auto'>
-            <h1 className='text-2xl font-bold mb-6'>Category Management</h1>
-            <Card className='w-full max-w-2xl mx-auto'>
+         <div className='w-full space-y-6 max-w-3xl  '>
+            <Card className='w-full max-w-3xl rounded-xl'>
                <CardHeader>
                   <CardTitle className='flex items-center gap-2'>
                      <PackagePlus className='w-5 h-5' />
@@ -209,14 +208,14 @@ function FormCategory() {
                      />
                      <Button
                         type='submit'
-                        className='bg-fuchsia-800 hover:bg-fuchsia-700'
+                        className=' hover:bg-slate-500 rounded-xl transition-all duration-300 ease-in-out'
                      >
                         Add Category
                      </Button>
                   </form>
                </CardContent>
             </Card>
-            <Card className='w-full max-w-2xl mx-auto'>
+            <Card className='w-full max-w-3xl rounded-xl'>
                <CardHeader>
                   <CardTitle className='flex items-center gap-2'>
                      <FileText className='w-4 h-4' />
@@ -229,8 +228,8 @@ function FormCategory() {
                         <thead className='text-xs uppercase bg-gray-50'>
                            <tr>
                               <th className='px-6 py-3'>ID</th>
-                              <th className='px-6 py-3'>Name</th>
-                              <th className='px-6 py-3 text-right'>Action</th>
+                              <th className='px-6 py-3'>Category title</th>
+                              <th className='px-6 py-3 text-right'>Remove</th>
                            </tr>
                         </thead>
                         <tbody>

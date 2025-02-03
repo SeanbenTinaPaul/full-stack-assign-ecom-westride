@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check } from "lucide-react";
+import { Check, Boxes, DollarSign } from "lucide-react";
 
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
@@ -131,7 +131,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    };
 
    return (
-      <div className="h-full w-full bg-card p-4 rounded-xl">
+      <div className='h-full w-full bg-card p-4 rounded-xl'>
          <form
             onSubmit={(e) => handleSumitSearchText(e)}
             className='flex flex-col gap-2 '
@@ -141,11 +141,14 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                value={textSearch}
                onChange={(e) => handleSearchText(e)}
                placeholder='e.g. ขาหมู, core i7'
-               className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+               className='w-full mb-4 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
             />
-            <div>
+            <div className='mb-4'>
                {/* {console.log('categories search',categories)} */}
-               <h1>Category</h1>
+               <div className='flex gap-2 items-center mb-2'>
+                  <Boxes size={20} className='text-slate-700' />
+                  <h1 className='text-lg font-semibold text-slate-700'>Category</h1>
+               </div>
                <div>
                   {categories.map((obj) => (
                      <div
@@ -178,7 +181,10 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
             </div>
             <div>
                {/* Price range */}
-               <h1>Price</h1>
+               <div className='flex gap-2 items-center mb-2'>
+                  <DollarSign size={20} className='text-slate-700'/>
+                  <h1 className='text-lg font-semibold text-slate-700'>Price</h1>
+               </div>
                <div>
                   <div className='flex justify-between '>
                      <span className='text-xs'>{formatNumber(priceRange[0])}</span>
@@ -220,12 +226,11 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                variant='secondary'
                type='button'
                onClick={handleReset}
-               className ='w-full shadow-md rounded-xl bg-slate-50'
+               className='w-full shadow-md rounded-xl bg-slate-50'
             >
                Reset
             </Button>
          </form>
-         
       </div>
    );
 }

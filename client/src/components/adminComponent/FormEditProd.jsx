@@ -5,12 +5,7 @@ import { useParams, useNavigate } from "react-router-dom"; //to get id from url 
 //Global state
 import useEcomStore from "../../store/ecom-store";
 //API
-import {
-   createProduct,
-   readProduct,
-   updateProduct,
-   delProduct
-} from "../../api/ProductAuth";
+import { createProduct, readProduct, updateProduct, delProduct } from "../../api/ProductAuth";
 //icons
 import {
    Package,
@@ -115,7 +110,14 @@ function FormEditProd() {
       //if user did not select category and click 'update Product' ► won't let to submit, using return to stop
       for (let key in inputForm) {
          if (!inputForm[key] || inputForm[key] === "") {
-            if (key === "description" || key === "sold" || key === "images" || key ==="avgRating" || key ==="promotion") continue; //empty description can be allowed
+            if (
+               key === "description" ||
+               key === "sold" ||
+               key === "images" ||
+               key === "avgRating" ||
+               key === "promotion"
+            )
+               continue; //empty description can be allowed
             if (key === "categoryId") {
                setAlert(
                   <Alert variant='destructive'>
@@ -198,28 +200,30 @@ function FormEditProd() {
       <div>
          <form
             onSubmit={handleSubmit}
-            className='p-6 space-y-6 max-w-3xl mx-auto'
+            className='p-6 space-y-6 max-w-3xl'
          >
-            <h1 className='text-2xl font-bold mb-6'>Edit Product</h1>
+            <div className='max-w-3xl flex mt-6 mb-4 p-3 items-center rounded-xl gap-2 bg-card shadow-md'>
+               <h1 className='text-xl font-medium text-slate-700'>Edit Product Details</h1>
+            </div>
             <Card className='shadow-lg'>
                <CardHeader>
                   <CardTitle className='flex items-center gap-2'>
                      <Package className='w-5 h-5' />
-                     ข้อมูลพื้นฐาน
+                     Basic Information
                   </CardTitle>
                </CardHeader>
                <CardContent className='space-y-4'>
                   <div className='space-y-2'>
                      <label className='flex item-center gap-2 text-sm font-medium'>
                         <Package2 className='w-4 h-4' />
-                        Product Name
+                        Product Title
                      </label>
                      <input
                         type='text'
                         name='title'
                         value={inputForm.title}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                         required
                      />
                   </div>
@@ -232,7 +236,7 @@ function FormEditProd() {
                         name='description'
                         value={inputForm.description}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                      />
                   </div>
                </CardContent>
@@ -241,7 +245,7 @@ function FormEditProd() {
                <CardHeader>
                   <CardTitle className='flex items-center gap-2'>
                      <FolderOpen className='w-5 h-5' />
-                     รายละเอียดสินค้า
+                     Product Details
                   </CardTitle>
                </CardHeader>
                <CardContent className='space-y-4'>
@@ -257,7 +261,7 @@ function FormEditProd() {
                            name='price'
                            value={inputForm.price}
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            required
                         />
                      </div>
@@ -272,7 +276,7 @@ function FormEditProd() {
                            name='quantity'
                            value={inputForm.quantity}
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            required
                         />
                      </div>
@@ -288,7 +292,7 @@ function FormEditProd() {
                         value={inputForm.categoryId.toString()}
                         onValueChange={handleCategoryChange}
                      >
-                        <SelectTrigger className='w-full'>
+                        <SelectTrigger className='w-full rounded-xl'>
                            <SelectValue placeholder='Select category'>
                               {
                                  categories.find(
@@ -328,7 +332,7 @@ function FormEditProd() {
             <div className='flex gap-4'>
                <Button
                   type='submit'
-                  className='bg-fuchsia-800 hover:bg-fuchsia-700'
+                  className='bg-fuchsia-800 rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
                   disabled={loading}
                >
                   {loading ? (
@@ -345,6 +349,7 @@ function FormEditProd() {
                   type='button'
                   variant='outline'
                   onClick={handleCancel}
+                  className='rounded-xl'
                >
                   Cancel
                </Button>
@@ -353,6 +358,7 @@ function FormEditProd() {
                   type='button'
                   variant='destructive'
                   onClick={() => setShowDeleteDialog(true)}
+                  className='rounded-xl'
                >
                   Delete Product
                </Button>
@@ -380,118 +386,6 @@ function FormEditProd() {
             </AlertDialogContent>
          </AlertDialog>
       </div>
-
-      // <div>
-      //    <div className='container mx-auto p-4 gap-4 bg-Dropdown-option-night shadow-md rounded-md'>
-      //       <form
-      //          action=''
-      //          onSubmit={handleSubmit}
-      //       >
-      //          <h1>Product Management</h1>
-      //          <label
-      //             htmlFor='title'
-      //             className='block font-medium'
-      //          >
-      //             Product Name
-      //          </label>
-      //          <input
-      //             type='text'
-      //             className='border my-1 rounded-md placeholder:text-gray-400'
-      //             name='title' //โผล่ใน event.target.name
-      //             value={inputForm.title} ////โผล่ใน event.target.value
-      //             placeholder='e.g. ขาหมูเยอรมัน, HP Laptop...'
-      //             onChange={handleOnchange}
-      //          />
-      //          <label
-      //             htmlFor='description'
-      //             className='block font-medium'
-      //          >
-      //             Description
-      //          </label>
-      //          <input
-      //             type='text'
-      //             className='border my-1 rounded-md placeholder:text-gray-400'
-      //             name='description'
-      //             value={inputForm.description}
-      //             placeholder='e.g. คู่มือทำอาหาร, อุปกรณ์เครื่องใช้ไฟฟ้า...'
-      //             onChange={handleOnchange}
-      //          />
-      //          <label
-      //             htmlFor='price'
-      //             className='block font-medium'
-      //          >
-      //             Price {"(฿)"}
-      //          </label>
-      //          <input
-      //             type='number'
-      //             step='0.01' //ให้เติมทศนิยมได้ 2 ตัว |='any'ได้ทุกตัว
-      //             className='border my-1 rounded-md placeholder:text-gray-400'
-      //             name='price'
-      //             value={inputForm.price}
-      //             placeholder='e.g. 5000, 99.50'
-      //             onChange={handleOnchange}
-      //          />
-      //          <label
-      //             htmlFor='quantity'
-      //             className='block font-medium'
-      //          >
-      //             Quantity
-      //          </label>
-      //          <input
-      //             type='number'
-      //             className='border my-1 rounded-md placeholder:text-gray-400'
-      //             name='quantity'
-      //             value={inputForm.quantity}
-      //             placeholder='e.g. 150'
-      //             onChange={handleOnchange}
-      //          />
-      //          <br />
-      //          <select
-      //             name='categoryId'
-      //             value={inputForm.categoryId}
-      //             id=''
-      //             className='border my-1 rounded-md duration-300 ease-in-out'
-      //             onChange={handleOnchange}
-      //             required
-      //          >
-      //             <option
-      //                value={""}
-      //                disabled
-      //             >
-      //                Select category
-      //             </option>
-      //             {categories.map((item, i) => (
-      //                <option
-      //                   key={i}
-      //                   value={item.id}
-      //                >
-      //                   {item.name}
-      //                </option>
-      //             ))}
-      //          </select>
-
-      //          <div></div>
-      //          {/* upload img file */}
-      //          <UploadFile
-      //             inputForm={inputForm}
-      //             setInputForm={setInputForm}
-      //          />
-      //          <button
-      //             className='bg-fuchsia-800 hover:bg-fuchsia-700 transition-colors duration-300 ease-in-out text-white font-bold py-2 px-4 rounded-md shadow-md'
-      //             disabled={loading}
-      //          >
-      //             {loading ? (
-      //                <div className='flex items-center gap-2'>
-      //                   <HardDriveUpload className='w-4 animate-bounceScale' />{" "}
-      //                   <span>Updating..</span>
-      //                </div>
-      //             ) : (
-      //                "Update Product"
-      //             )}
-      //          </button>
-      //       </form>
-      //    </div>
-      // </div>
    );
 }
 //UploadFile is called first, then FormProduct

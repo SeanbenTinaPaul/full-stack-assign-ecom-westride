@@ -1,13 +1,20 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import OrderTable from '@/components/adminComponent/OrderTable'
+import React from "react";
+import PropTypes from "prop-types";
+import OrderTable from "@/components/adminComponent/OrderTable";
+import {FileCheck} from 'lucide-react'
 
 function UpdateOrder(props) {
-  return (
-    <div><OrderTable /></div>
-  )
+   return (
+      <div >
+         <div className='flex mt-6 mb-4 p-3 items-center rounded-xl gap-2 bg-slate-700 shadow-md'>
+            {/* <FileCheck size={20} className="text-card"/> */}
+            <p className='text-xl font-medium text-card'>Update order status</p>
+         </div>
+         <OrderTable />
+      </div>
+   );
 }
 
-UpdateOrder.propTypes = {}
+UpdateOrder.propTypes = {};
 
-export default UpdateOrder
+export default UpdateOrder;

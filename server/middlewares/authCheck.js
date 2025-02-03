@@ -14,7 +14,7 @@ exports.authCheck = async (req, res, next) => {
       const token = bearerToken.split(" ")[1];
       //decoded ► payload info + expiration
       const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-      console.log("decoded-->", decoded);//{id:, email:, role:'admin', iat:, exp:}
+      console.log("decoded-->", decoded); //{id:, email:, role:'admin', iat:, exp:}
       req.user = decoded; //สร้าง key 'user' ใน req และเก็บ decoded ไว้
       console.log("req.user-->", req.user);
 
@@ -24,12 +24,13 @@ exports.authCheck = async (req, res, next) => {
          }
       });
       console.log("user-->", user);
-      
-      if (!user.enabled)
+
+      if (!user.enabled) {
          return res.status(400).json({
             success: false,
             message: "† This User is Disabled by Admin †"
          });
+      }
 
       next();
    } catch (err) {
@@ -51,11 +52,12 @@ exports.adminCheck = async (req, res, next) => {
          }
       });
 
-      if (!adminUser || adminUser.role !== "admin")
+      if (!adminUser || adminUser.role !== "admin" || !adminUser.enabled) {
          return res.status(403).json({
             success: false,
             message: "Admin Resource! Access Denied"
          });
+      }
 
       next();
    } catch (err) {

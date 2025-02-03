@@ -38,7 +38,7 @@ function HistoryList(props) {
          }
       };
       fetchOrderList(token);
-   }, [token, setSelectedOrderId, showConfirmDialog, toast]);
+   }, [token, setSelectedOrderId, setShowConfirmDialog, toast]);
 
    const handleRefund = async (orderId) => {
       try {
@@ -83,7 +83,7 @@ function HistoryList(props) {
                   <header className='flex justify-between'>
                      <div className='mb-2'>
                         <p className='text-sm font-semibold'>Order date</p>
-                        <p className='text-xs'>
+                        <p className='font-light text-xs'>
                            {new Date(order.createdAt).toLocaleString("en-uk", {
                               timeZone: "Asia/Bangkok",
                               hour12: true
@@ -129,24 +129,27 @@ function HistoryList(props) {
                      {order.orderStatus === "Completed" ? (
                         <div className='w-full'>
                            {new Date().getTime() - new Date(order.createdAt).getTime() <=
-                           7 * 24 * 60 * 60 * 1000 ? (
-                              <Button
-                                 variant='secondary'
-                                 type='button'
-                                 className='mt-4 py-2 shadow-md rounded-xl bg-slate-50'
-                                 onClick={() => {
-                                    setSelectedOrderId(order.id);
-                                    setShowConfirmDialog(true);
-                                 }}
-                              >
-                                 Refund My Order
-                              </Button>
+                           3 * 24 * 60 * 60 * 1000 ? (
+                              <div className="flex gap-2 items-center mt-4 ">
+                                 <Button
+                                    variant='secondary'
+                                    type='button'
+                                    className=' py-2 shadow-md rounded-xl bg-slate-50'
+                                    onClick={() => {
+                                       setSelectedOrderId(order.id);
+                                       setShowConfirmDialog(true);
+                                    }}
+                                 >
+                                    Refund My Order
+                                 </Button>
+                                 <p className="font-light text-xs text-gray-500">(3-day guarantee)</p>
+                              </div>
                            ) : (
                               <div className='w-full text-sm text-gray-500'>Refunding expired</div>
                            )}
                         </div>
                      ) : order.orderStatus === "Refunded" ? (
-                        <div className='w-full text-sm text-gray-500'>
+                        <div className=' w-fit font-light text-sm text-gray-500 whitespace-nowrap'>
                            You got ฿{formatNumber(order?.refundAmount)} back (
                            {new Date(order?.updatedAt).toLocaleString("en-uk", {
                               timeZone: "Asia/Bangkok",
@@ -157,9 +160,9 @@ function HistoryList(props) {
                      ) : (
                         ""
                      )}
-                     <div className='w-full flex flex-col items-end'>
-                        <p className='font-semibold'>Net Total</p>
-                        <p>฿{formatNumber(order.cartTotal)}</p>
+                     <div className='w-fit flex flex-col items-end'>
+                        <p className='font-normal whitespace-nowrap'>Net Total</p>
+                        <p className="font-medium">฿{formatNumber(order.cartTotal)}</p>
                      </div>
                   </footer>
                </article>
@@ -171,10 +174,16 @@ function HistoryList(props) {
                <AlertDialogContent>
                   <AlertDialogHeader>
                      <AlertDialogTitle>Are you sure to refund your order ?</AlertDialogTitle>
-                     <AlertDialogDescription>
-                        <p>Please note that a <strong>5%</strong> fee applies to refunds, and we trust you to return the products to us.</p>
-                        <p>( We know that we don't have a delivery tracking. So, just pretend that we have it. )</p>
-                        <p>If you're sure, we'll process your refund.</p>
+                     <AlertDialogDescription className='space-y-3'>
+                        <div>
+                           Please note that a <strong>5%</strong> fee applies to refunds, and we
+                           trust you to return the products to us.
+                        </div>
+                        <div>
+                           ( We know that we don't have a delivery tracking. So, just pretend that
+                           we have it. )
+                        </div>
+                        <div>If you're sure, we'll process your refund.</div>
                      </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

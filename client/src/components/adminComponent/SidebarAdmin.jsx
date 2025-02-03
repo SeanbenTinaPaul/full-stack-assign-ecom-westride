@@ -24,7 +24,7 @@ const navItems = [
       end: true
    },
    {
-      title: "Manage",
+      title: "Manage users",
       url: "manage",
       icon: ChartNoAxesGantt
    },

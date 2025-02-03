@@ -5,6 +5,9 @@ import FormProduct from "../../components/adminComponent/FormProduct";
 const ProductAdmin = () => {
    return (
       <div>
+         <div className='max-w-3xl flex mt-6 mb-4  p-3 items-center rounded-xl gap-2 bg-slate-700 shadow-md'>
+            <h1 className='text-xl font-medium text-card'>Product Management</h1>
+         </div>
          <FormProduct />
       </div>
    );
