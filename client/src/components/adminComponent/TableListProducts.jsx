@@ -10,13 +10,14 @@ import { Link, useLocation } from "react-router-dom";
 import ImgProdInTableList from "./ImgProdInTableList";
 
 import useEcomStore from "../../store/ecom-store";
+import { formatNumber } from "@/utilities/formatNumber";
 
 //props.products=[{},{},..] → data from DB with cloudinary URL
 function TableListProducts({ products, handleDel, isRerender }) {
    const { getProduct, token } = useEcomStore((state) => state);
    //initialize the sort col and order
    const [tableData, setTableData] = useState(products);
-   
+
    //for flowbite table
    const [sortCol, setSortCol] = useState("id");
    const [sortOrder, setSortOrder] = useState("asc");
@@ -46,7 +47,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
          }
       };
       fetchProduct();
-   }, [getProduct,location, isRerender]);
+   }, [getProduct, location, isRerender]);
 
    //function to sort table data
    const sortData = (col) => {
@@ -61,7 +62,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
    };
 
    return (
-      <div className="w-full">
+      <div className='w-full'>
          <div className='relative sm:rounded-lg rounded-xl border bg-card text-card-foreground shadow-md '>
             <Table>
                <Table.Head>
@@ -312,12 +313,32 @@ function TableListProducts({ products, handleDel, isRerender }) {
                         </Table.Cell>
                         <Table.Cell className='whitespace-nowrap'>{row.title}</Table.Cell>
                         <Table.Cell>{row.categoryId}</Table.Cell>
-                        <Table.Cell>{row.price}</Table.Cell>
+                        <Table.Cell>{formatNumber(row.price)}</Table.Cell>
                         <Table.Cell>{row.quantity}</Table.Cell>
                         <Table.Cell>{row.sold}</Table.Cell>
                         <Table.Cell>{row.description}</Table.Cell>
-                        <Table.Cell>{row.createdAt}</Table.Cell>
-                        <Table.Cell>{row.updatedAt}</Table.Cell>
+                        <Table.Cell className="whitespace-nowrap">
+                           {new Date(row.createdAt).toLocaleString("en-uk", {
+                              timeZone: "Asia/Bangkok",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true
+                           })}
+                        </Table.Cell>
+                        <Table.Cell className='whitespace-nowrap'>
+                           {new Date(row.updatedAt).toLocaleString("en-uk", {
+                              timeZone: "Asia/Bangkok",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true
+                           })}
+                        </Table.Cell>
                         <Table.Cell>
                            <p
                               className='cursor-pointer'
@@ -352,7 +373,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
 TableListProducts.propTypes = {
    products: PropTypes.array,
    handleDel: PropTypes.func,
-   isRerender: PropTypes.bool,
+   isRerender: PropTypes.bool
 };
 
 export default TableListProducts;

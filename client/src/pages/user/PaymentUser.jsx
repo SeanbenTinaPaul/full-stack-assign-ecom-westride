@@ -5,7 +5,7 @@ import PaymentMethod from "@/components/userComponent/PaymentMethod";
 const Payment = () => {
    const [isSaveAddress, setIsSaveAddress] = useState(false);
    const [isShowCreditCard, setIsShowCreditCard] = useState(false);
-   
+
    return (
       <div className='relative min-h-screen w-full'>
          {/* Credit Card Info Box */}
@@ -20,13 +20,46 @@ const Payment = () => {
                   Hover me for Dummy Credit Card ▼
                </p>
                {isShowCreditCard && (
-                  <div className='space-y-1 text-sm '>
-                     <p>Card num : 4242 4242 4242 4242</p>
-                     <p className='text-gray-600'>Expire date : 12/34</p>
-                     <p>Security code : 567</p>
-                     <p className='text-gray-600'>Country : Thailand </p>
+                  <main className='space-y-2 text-sm '>
+                     <section className='font-medium'>For Card</section>
+                     <p>
+                        Card num : <strong>4242 4242 4242 4242</strong>
+                     </p>
+                     <p className='text-gray-600'>
+                        Expire date : <strong>12/34</strong>
+                     </p>
+                     <p>
+                        Security code : <strong>567</strong>
+                     </p>
+                     <p className='text-gray-600'>
+                        Country : <strong>Thailand</strong>
+                     </p>
                      <p className='text-gray-500'>more info : docs.stripe.com/testing </p>
-                  </div>
+                     <hr />
+                     <section className='font-medium'>
+                        For PromptPay <span className='text-xs'>(no mobile needed)</span>
+                     </section>
+                     <div className='text-gray-600'>
+                        Email :{" "}
+                        <span>
+                           <strong>any_email@mail.com</strong>
+                        </span>
+                     </div>
+                     <p>
+                        click '<strong>Purchase</strong>'
+                     </p>
+                     <div className='text-gray-600 '>
+                        click{" "}
+                        <span className='bg-slate-50 p-1 border rounded-sm shadow'>
+                           Simulate scan
+                        </span>
+                     </div>
+                     <div className="mt-4">
+                        click
+                        <span className="p-1  rounded-sm shadow bg-purple-500 text-white">AUTHORIZE TEST PAYMENT</span>
+                     </div>
+                     <p className='text-gray-600'>close the browser tab</p>
+                  </main>
                )}
             </div>
          </div>

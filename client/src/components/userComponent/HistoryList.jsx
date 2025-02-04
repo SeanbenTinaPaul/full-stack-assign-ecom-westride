@@ -23,7 +23,7 @@ function HistoryList(props) {
    const { token } = useEcomStore((state) => state);
    const [orderList, setOrderList] = useState([]);
    const [selectedOrderId, setSelectedOrderId] = useState(null);
-   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+   const [showConfirmDialog, setShowConfirmDialog] = useState(false); //for AlertDialog
    const { toast } = useToast();
 
    useEffect(() => {
@@ -86,6 +86,11 @@ function HistoryList(props) {
                         <p className='font-light text-xs'>
                            {new Date(order.createdAt).toLocaleString("en-uk", {
                               timeZone: "Asia/Bangkok",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
                               hour12: true
                            })}
                         </p>
@@ -130,7 +135,7 @@ function HistoryList(props) {
                         <div className='w-full'>
                            {new Date().getTime() - new Date(order.createdAt).getTime() <=
                            3 * 24 * 60 * 60 * 1000 ? (
-                              <div className="flex gap-2 items-center mt-4 ">
+                              <div className='flex gap-2 items-center mt-4 '>
                                  <Button
                                     variant='secondary'
                                     type='button'
@@ -142,7 +147,9 @@ function HistoryList(props) {
                                  >
                                     Refund My Order
                                  </Button>
-                                 <p className="font-light text-xs text-gray-500">(3-day guarantee)</p>
+                                 <p className='font-light text-xs text-gray-500'>
+                                    (3-day guarantee)
+                                 </p>
                               </div>
                            ) : (
                               <div className='w-full text-sm text-gray-500'>Refunding expired</div>
@@ -153,6 +160,11 @@ function HistoryList(props) {
                            You got ฿{formatNumber(order?.refundAmount)} back (
                            {new Date(order?.updatedAt).toLocaleString("en-uk", {
                               timeZone: "Asia/Bangkok",
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
                               hour12: true
                            })}
                            )
@@ -162,7 +174,7 @@ function HistoryList(props) {
                      )}
                      <div className='w-fit flex flex-col items-end'>
                         <p className='font-normal whitespace-nowrap'>Net Total</p>
-                        <p className="font-medium">฿{formatNumber(order.cartTotal)}</p>
+                        <p className='font-medium'>฿{formatNumber(order.cartTotal)}</p>
                      </div>
                   </footer>
                </article>

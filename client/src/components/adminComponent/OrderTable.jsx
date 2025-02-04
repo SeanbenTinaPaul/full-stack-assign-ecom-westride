@@ -141,7 +141,7 @@ function OrderTable(props) {
                <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:ring-offset-0 focus:outline-none p-2'
+                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none p-2'
                >
                   <option value='Completed'>Completed</option>
                   <option value='Not Process'>Not Process</option>
@@ -149,7 +149,7 @@ function OrderTable(props) {
                </select>
                <Button
                   onClick={handleBulkUpdate}
-                  className='text-white  hover:bg-fuchsia-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-slate-500 dark:hover:bg-slate-600 focus:outline-none dark:focus:ring-slate-700'
+                  className=' hover:bg-fuchsia-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-xl text-sm px-4 py-2 dark:bg-slate-500 dark:hover:bg-slate-600 focus:outline-none dark:focus:ring-slate-700'
                   disabled={selectedRows.length === 0}
                >
                   Update order status ({selectedRows.length} selected)
@@ -433,13 +433,25 @@ function OrderTable(props) {
                            </td>
                            <td className='px-6 py-4'>฿{formatNumber(item.cartTotal)}</td>
                            <td className='px-6 py-4'>
-                              {new Date(item.createdAt).toLocaleString("en-us", {
-                                 timeZone: "Asia/Bangkok"
+                              {new Date(item.createdAt).toLocaleString("en-uk", {
+                                 timeZone: "Asia/Bangkok",
+                                 day: "2-digit",
+                                 month: "short",
+                                 year: "numeric",
+                                 hour: "2-digit",
+                                 minute: "2-digit",
+                                 hour12: true
                               })}
                            </td>
                            <td className='px-6 py-4'>
-                              {new Date(item.updatedAt).toLocaleString("en-us", {
-                                 timeZone: "Asia/Bangkok"
+                              {new Date(item.updatedAt).toLocaleString("en-uk", {
+                                 timeZone: "Asia/Bangkok",
+                                 day: "2-digit",
+                                 month: "short",
+                                 year: "numeric",
+                                 hour: "2-digit",
+                                 minute: "2-digit",
+                                 hour12: true
                               })}
                            </td>
                            <td className='px-6 py-4'>{item.status || "not process"}</td>

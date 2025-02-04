@@ -1,7 +1,7 @@
 const prisma = require("../config/prisma");
 const cloudinary = require("cloudinary").v2; // import { v2 as cloudinary } from 'cloudinary';
 
-exports.create = async (req, res) => {
+exports.createProd = async (req, res) => {
    try {
       const { title, description, price, quantity, categoryId, images } = req.body;
       // console.log('req.body.images->', images)
@@ -39,13 +39,13 @@ exports.create = async (req, res) => {
    }
 };
 
-exports.list = async (req, res) => {
+exports.listProd = async (req, res) => {
    // console.log("req to list", req);
    // console.log("req.user to list", req.user);//undefined when NO <token> sent in req.header
    try {
       //auto check and update expired seasonal discount everytime frontend fetch product
       //use UTC time
-      const now = new Date(); 
+      const now = new Date();
       const expiredDiscounts = await prisma.discount.findMany({
          where: {
             endDate: { lt: now }, //if endDate gte now → not expired
@@ -103,7 +103,7 @@ exports.list = async (req, res) => {
 };
 
 //อ่านข้อมูลเดียว ตาม id
-exports.read = async (req, res) => {
+exports.readAprod = async (req, res) => {
    console.log("req.user to read", req.user);
    try {
       //findFirst === SELECT * from TableName WHERE id = ?
@@ -147,7 +147,7 @@ const product = await prisma.product.update({
 });
 */
 //update → ไป copy try ของ create มา → เปลี่ยน .create เป็น .update
-exports.update = async (req, res) => {
+exports.updateProd = async (req, res) => {
    try {
       //req.body === inputForm → form in Frontend
       const { title, description, price, quantity, categoryId, images } = req.body;
@@ -238,7 +238,7 @@ exports.update = async (req, res) => {
 
 //del a product in db
 //ต้อง Del รูปทั้งใน table 'Image' และใน cloud ด้วย
-exports.remove = async (req, res) => {
+exports.removeProd = async (req, res) => {
    try {
       const { id } = req.params;
       //for sending res.title to frontend
@@ -303,9 +303,9 @@ exports.remove = async (req, res) => {
 };
 
 //ใช้แสดงสินค้าเรียงตามความนิยม
-exports.listBy = async (req, res) => {
+exports.displayProdBy = async (req, res) => {
    try {
-      //ต้องการ req 3 อย่าง: sort<เรียงอะไร?>, order<มากไปน้อย?>, limitฒ<จำนวนที่ต้องการ?>
+      //ต้องการ req 3 อย่าง: sort<เรียงอะไร?>, order<มากไปน้อย?>, limit<จำนวนที่ต้องการ?>
       const { sort, order, limit } = req.body;
       const products = await prisma.product.findMany({
          take: limit,
@@ -658,11 +658,12 @@ Need req.body:
 1. productId
 2. status (true or false)
 */
-const changeStatusDiscount = async (req, res) => {
+//pending...
+exports.changeStatusDiscount = async (req, res) => {
    try {
       const { productIdArr, status } = req.body;
       const result = await prisma.discount.updateMany({
-         where: { productId: {in: productIdArr} },
+         where: { productId: { in: productIdArr } },
          data: { isActive: status }
       });
 
@@ -679,46 +680,3 @@ const changeStatusDiscount = async (req, res) => {
    }
 };
 
-//pending...
-exports.favoriteProduct = async (req, res) => {
-   const { productId, id } = req.body;
-   try {
-      const { productId } = req.body;
-      const user = await prisma.user.findUnique({
-         where: { email: req.user.email },
-         include: {
-            favorites: true
-         }
-      });
-      if (!user) return res.status(404).json({ message: "User not found" });
-      const product = await prisma.product.findUnique({
-         where: { id: productId }
-      });
-      if (!product) return res.status(404).json({ message: "Product not found" });
-      const isFavorite = user.favorites.some((fav) => fav.id === productId);
-      if (isFavorite) {
-         await prisma.user.update({
-            where: { email: req.user.email },
-            data: {
-               favorites: {
-                  disconnect: { id: productId }
-               }
-            }
-         });
-         return res.status(200).json({ message: "Product removed from favorites" });
-      } else {
-         await prisma.user.update({
-            where: { email: req.user.email },
-            data: {
-               favorites: {
-                  connect: { id: productId }
-               }
-            }
-         });
-         return res.status(200).json({ message: "Product added to favorites" });
-      }
-   } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Server Error" });
-   }
-};

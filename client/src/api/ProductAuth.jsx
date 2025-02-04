@@ -93,5 +93,5 @@ export const bulkDiscount = async (token, form) => {
 
 //backend res.send()
 export const seachFilterProd = async (filter) => {
-   return await axios.post(`${apiUrl}/api/search/filters`, filter);
+   return await axios.post(`${apiUrl}/api/search-filters`, filter);
 };

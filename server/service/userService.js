@@ -327,9 +327,9 @@ exports.saveOrder = async (req, res) => {
    try {
       console.log("save order ->", req.body);
       const { id, amount, currency, status } = req.body.paymentIntent;
-      // return res.status(200).json({ success: true, message: "Get to save Order" });
+      if(status !== 'succeeded') return res.status(400).json({message: "Error!!! Payment failed."});
+      
       //1. หา cart ของ user นั้นว่ามีหรือไม่
-
       // userCart จะดึง record แรก(ที่...) ทุกคอลัมน์จาก table 'Cart' และบางส่วนจาก 'ProductOnCart' ที่มี cartId กับ Cart.id
       const userCart = await prisma.cart.findFirst({
          where: {
@@ -355,7 +355,7 @@ exports.saveOrder = async (req, res) => {
          return res
             .status(400)
             .json({ message: "Your cart is empty. Please add some product to a cart." });
-
+          
       //3. Compare: product quantity in cart (userCart.products) vs  product quantity in stock (product.quantity)
       // let outStockProd = []; //เก็บ product ที่ไม่มี stock พอ
       // for (const item of userCart.products) {
@@ -491,5 +491,53 @@ exports.getOrder = async (req, res) => {
          message: "Get to getOrder Error",
          error: err.message
       });
+   }
+};
+
+//pending...
+exports.favoriteProduct = async (req, res) => {
+   const { productId } = req.body;
+   const { id } = req.user;
+   try {
+      const user = await prisma.user.findUnique({
+         where: { id: id },
+         include: {
+            //favorites Favorite[]
+            favorites: true
+         }
+      });
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      const product = await prisma.product.findUnique({
+         where: { id: productId }
+      });
+      if (!product) return res.status(404).json({ message: "Product not found" });
+      //some() return true or false
+      const isFavorite = user.favorites.some((fav) => fav.productId === productId);
+      if (isFavorite) {
+         await prisma.user.update({
+            where: { id: id },
+            data: {
+               favorites: {
+                  //use disconnect: instead of delete: to aviod rm product from DB
+                  disconnect: { productId: productId }
+               }
+            }
+         });
+         return res.status(200).json({ message: `${product.title} removed from favorites` });
+      } else {
+         await prisma.user.update({
+            where: { id: id },
+            data: {
+               favorites: {
+                  connect: { productId: productId }
+               }
+            }
+         });
+         return res.status(200).json({ message: `${product.title} added to favorites` });
+      }
+   } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Server Error" });
    }
 };

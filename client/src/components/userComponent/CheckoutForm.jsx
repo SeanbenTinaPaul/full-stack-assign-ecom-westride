@@ -6,6 +6,7 @@ import { reqCancelPayment } from "@/api/PaymentAuth";
 import { saveOrderUser } from "@/api/userAuth";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/hooks/use-toast";
 import {
    AlertDialog,
    AlertDialogAction,
@@ -26,6 +27,7 @@ security code : 567
 export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
    const { token, resetCartsAfterPurchas } = useEcomStore((state) => state);
    const navigate = useNavigate();
+   const { toast } = useToast();
    const stripe = useStripe();
    const elements = useElements();
    const [message, setMessage] = useState(null);
@@ -42,7 +44,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
       }
 
       setIsLoading(true);
-      //Cloud (status: complete)
+      //Cloud (status: 'succeeded') || ('incomplete') if payload.paymentIntent.status !== "succeeded"
       const payload = await stripe.confirmPayment({
          elements,
          //  confirmParams: {
@@ -59,6 +61,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
         → .amount
         → .id
         → .currency
+        → .status
       */
 
       // This point will only be reached if there is an immediate error when
@@ -66,9 +69,26 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
       // your `return_url`. For some payment methods like iDEAL, your customer will
       // be redirected to an intermediate site first to authorize the payment, then
       // redirected to the `return_url`.
-      if (payload.error) {
+      console.log("payload", payload);
+      if (payload.paymentIntent.status !== "succeeded") {
+         console.log("payment staus wrong", payload.paymentIntent.status);
+         toast({
+            variant: "destructive",
+            title: "Error!",
+            description: "Payment Failed"
+         });
+         setIsLoading(false);
+         return;
+      } else if (payload.error) {
          setMessage(payload.error.message);
-      } else {
+         toast({
+            variant: "destructive",
+            title: "Error!",
+            description: payload.error.message
+         });
+         setIsLoading(false);
+         return;
+      } else if (payload.paymentIntent.status === "succeeded") {
          //create Order record in DB
          console.log("payload purchase", payload);
          try {
@@ -80,16 +100,16 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
             console.error(err);
             throw err; //to stop continue executing
          }
-         //  setMessage("An unexpected error occurred.");
       }
 
       setIsLoading(false);
    };
+   
    const handleCancelPurchase = async () => {
-    //   console.log("paymentIntentData", paymentIntentData);
+      //   console.log("paymentIntentData", paymentIntentData);
       try {
          const res = await reqCancelPayment(token, paymentIntentData);
-        //  console.log("res.data reqCancelPayment", res.data);
+         //  console.log("res.data reqCancelPayment", res.data);
          setShowConfirmDialog(false);
          navigate("/user/history");
       } catch (err) {
@@ -150,11 +170,14 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
             <AlertDialogContent>
                <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure to cancel the purchase ?</AlertDialogTitle>
-                  <AlertDialogDescription>No cost or penalty. Your vouchers and cart items will be saved. Feel free to come back when you're ready.</AlertDialogDescription>
+                  <AlertDialogDescription>
+                     No cost or penalty. Your vouchers and cart items will be saved. Feel free to
+                     come back when you're ready.
+                  </AlertDialogDescription>
                </AlertDialogHeader>
                <AlertDialogFooter>
                   <AlertDialogCancel onClick={handleCancelPurchase}>
-                  Confirm cancellation
+                     Confirm cancellation
                   </AlertDialogCancel>
                   <AlertDialogAction>Return to purchase</AlertDialogAction>
                </AlertDialogFooter>

@@ -41,7 +41,7 @@ exports.changeUserStatus = async (req, res) => {
 
       res.status(200).json({
          success: true,
-         message: `Updated ID: ${userIdArr.join(", ")} status to ${userRole}. Enabled: ${userEnabled}.`
+         message: `Updated ID: ${userIdArr.join(", ")} status to ${userRole}. Enabled: ${userEnabled? "enabled" : "disabled"}.`
       });
    } catch (err) {
       console.log(err);

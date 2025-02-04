@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart, Star, StarHalf } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { Link } from "react-router-dom";
-import { use } from "react";
+
+import { motion } from "motion/react";
 
 //-------------------------------------------------------------------
 
 function CardProd({ prodObj }) {
-   const { addToCart, user, synCartwithProducts } = useEcomStore((state) => state);//getProduct from DB → set to carts in LocalStorage
+   const { addToCart, user, synCartwithProducts } = useEcomStore((state) => state); //getProduct from DB → set to carts in LocalStorage
    const [isFavorite, setIsFavorite] = useState(false);
    //to save price after discount + promotion → for further Checkout
    const [productData, setProductData] = useState(prodObj);
@@ -111,7 +112,7 @@ function CardProd({ prodObj }) {
    useEffect(() => {
       // console.log("productData", productData)
       synCartwithProducts(productData);
-   },[prodObj,productData]);
+   }, [prodObj, productData]);
 
    //cal promotion va discount price
    const renderDiscountPrice = (price) => {
@@ -137,106 +138,115 @@ function CardProd({ prodObj }) {
    };
 
    return (
-      <div>
-         {/* {console.log("prodObj", prodObj)} */}
-         {/* {console.log("productData", productData)} */}
-         <Card className='flex flex-col w-72 h-96 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
-            {/* Product Image+fav+badge */}
-            <div className='relative h-52 max-lg:h-28'>
-               <img
-                  src={prodObj?.images?.[0]?.url || ""}
-                  // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
-                  alt='No image'
-                  className='w-full h-full object-cover bg-slate-200'
-               />
-               {(prodObj?.promotion || getDiscountAmount()) && (
-                  <Badge className='absolute top-2 right-2 bg-red-500 px-1'>
-                     -{renderPercentDiscount()}%
-                  </Badge>
-               )}
-               {/* fav btn */}
-               <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={handleFavorite}
-                  className={`absolute top-2 left-2 hover:bg-white/80`}
-               >
-                  <Heart
-                     className={`w-5 h-5  ${
-                        isFavorite ? "text-red-500 fill-current" : "text-gray-500"
-                     }`}
+      <motion.div
+         initial={{ opacity: 0, scale: 0 }}
+         animate={{ opacity: 1, scale: 1 }}
+         transition={{
+            duration: 0.4,
+            scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 }
+         }}
+      >
+         <div>
+            {/* {console.log("prodObj", prodObj)} */}
+            {/* {console.log("productData", productData)} */}
+            <Card className='flex flex-col w-72 h-96 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
+               {/* Product Image+fav+badge */}
+               <div className='relative h-52 max-lg:h-28'>
+                  <img
+                     src={prodObj?.images?.[0]?.url || ""}
+                     // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
+                     alt='No image'
+                     className='w-full h-full object-cover bg-slate-200'
                   />
-               </Button>
-            </div>
-            {/*title + description+ brand  */}
-            <div className='flex flex-col flex-1 min-h-0 '>
-               {/* <div className="border-2 border-red-300  flex flex-col justify-between h-full"> */}
-               {/*className='space-y-1 px-4 py-2 max-lg:py-1 max-lg:px-2'  */}
-               <CardHeader className='h-24 px-4 py-2 max-lg:py-1 max-lg:px-2 '>
-                  {/* className='flex justify-between items-start' */}
-                  <div className='flex justify-between items-start '>
-                     <h3 className='font-medium text-sm max-lg:text-xs truncate'>
-                        {prodObj.title}
-                     </h3>
+                  {(prodObj?.promotion || getDiscountAmount()) && (
+                     <Badge className='absolute top-2 right-2 bg-red-500 px-1'>
+                        -{renderPercentDiscount()}%
+                     </Badge>
+                  )}
+                  {/* fav btn */}
+                  <Button
+                     variant='ghost'
+                     size='icon'
+                     onClick={handleFavorite}
+                     className={`absolute top-2 left-2 hover:bg-white/80`}
+                  >
+                     <Heart
+                        className={`w-5 h-5  ${
+                           isFavorite ? "text-red-500 fill-current" : "text-gray-500"
+                        }`}
+                     />
+                  </Button>
+               </div>
+               {/*title + description+ brand  */}
+               <div className='flex flex-col flex-1 min-h-0 '>
+                  {/* <div className="border-2 border-red-300  flex flex-col justify-between h-full"> */}
+                  {/*className='space-y-1 px-4 py-2 max-lg:py-1 max-lg:px-2'  */}
+                  <CardHeader className='h-24 px-4 py-2 max-lg:py-1 max-lg:px-2 '>
+                     {/* className='flex justify-between items-start' */}
+                     <div className='flex justify-between items-start '>
+                        <h3 className='font-medium text-sm max-lg:text-xs truncate'>
+                           {prodObj.title}
+                        </h3>
 
-                     <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p>
-                  </div>
-                  <p className='text-sm text-gray-500 max-lg:hidden truncate'>
-                     sold {prodObj.sold}
-                  </p>
-               </CardHeader>
+                        <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p>
+                     </div>
+                     <p className='text-sm text-gray-500 max-lg:hidden truncate'>
+                        sold {prodObj.sold}
+                     </p>
+                  </CardHeader>
 
-               {/* price + discount + rating */}
-               <CardContent className=' mt-auto pb-2 px-4 my-0 pt-0 max-lg:px-2 max-lg:ml-1 max-lg:absolute max-lg:top-[138px]'>
-                  <div className='flex items-center space-x-2 max-lg:h-[44px] max-lg:flex-col max-lg:space-x-1 max-lg:space-y-1 max-lg:items-start max-lg:justify-end'>
-                     {/* ราคาหลังหัก promotion */}
-                     <span className='text-xl font-bold text-blue-600 max-lg:text-sm'>
-                        ฿
-                        {prodObj?.promotion || getDiscountAmount()
-                           ? renderDiscountPrice(prodObj?.price)
-                           : formatNumber(prodObj?.price)}
-                     </span>
-                     {/* ราคาจริง มีขีด line-through */}
-                     <span className='text-sm text-gray-500 line-through max-lg:text-xs '>
-                        {prodObj?.promotion || getDiscountAmount()
-                           ? `฿${formatNumber(prodObj?.price)}`
-                           : ""}
-                     </span>
-                  </div>
-                  <div className='mt-1 mb-0 flex items-center space-x-1 max-lg:space-x-0 max-ld:top-[138px] max-lg:left-2'>
-                     {renderStar(prodObj.avgRating)}
-                     <span className='text-sm text-gray-500 ml-1 max-lg:text-xs '>
-                        {prodObj.avgRating}
-                     </span>
-                  </div>
-               </CardContent>
-               {/* </div> */}
+                  {/* price + discount + rating */}
+                  <CardContent className=' mt-auto pb-2 px-4 my-0 pt-0 max-lg:px-2 max-lg:ml-1 max-lg:absolute max-lg:top-[138px]'>
+                     <div className='flex items-center space-x-2 max-lg:h-[44px] max-lg:flex-col max-lg:space-x-1 max-lg:space-y-1 max-lg:items-start max-lg:justify-end'>
+                        {/* ราคาหลังหัก promotion */}
+                        <span className='text-xl font-bold text-blue-600 max-lg:text-sm'>
+                           ฿
+                           {prodObj?.promotion || getDiscountAmount()
+                              ? renderDiscountPrice(prodObj?.price)
+                              : formatNumber(prodObj?.price)}
+                        </span>
+                        {/* ราคาจริง มีขีด line-through */}
+                        <span className='text-sm text-gray-500 line-through max-lg:text-xs '>
+                           {prodObj?.promotion || getDiscountAmount()
+                              ? `฿${formatNumber(prodObj?.price)}`
+                              : ""}
+                        </span>
+                     </div>
+                     <div className='mt-1 mb-0 flex items-center space-x-1 max-lg:space-x-0 max-ld:top-[138px] max-lg:left-2'>
+                        {renderStar(prodObj.avgRating)}
+                        <span className='text-sm text-gray-500 ml-1 max-lg:text-xs '>
+                           {prodObj.avgRating}
+                        </span>
+                     </div>
+                  </CardContent>
+                  {/* </div> */}
 
-               {/* Add to cart BTN */}
-               <CardFooter className='px-4 mt-auto'>
-                  {!user ? (
-                     <Link
-                        to='/login'
-                        className='w-full'
-                     >
-                        <Button className='w-full max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'>
+                  {/* Add to cart BTN */}
+                  <CardFooter className='px-4 mt-auto'>
+                     {!user ? (
+                        <Link
+                           to='/login'
+                           className='w-full'
+                        >
+                           <Button className='w-full max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'>
+                              <ShoppingCart className='w-4 h-4 mr-2 max-lg:mr-0 ' />
+                              <span className='inline max-lg:hidden'>Add to cart</span>
+                           </Button>
+                        </Link>
+                     ) : (
+                        <Button
+                           onClick={() => addToCart(productData)}
+                           className='w-full rounded-xl max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'
+                        >
                            <ShoppingCart className='w-4 h-4 mr-2 max-lg:mr-0 ' />
                            <span className='inline max-lg:hidden'>Add to cart</span>
                         </Button>
-                     </Link>
-                  ) : (
-                     <Button
-                        onClick={() => addToCart(productData)}
-                        className='w-full rounded-xl max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'
-                     >
-                        <ShoppingCart className='w-4 h-4 mr-2 max-lg:mr-0 ' />
-                        <span className='inline max-lg:hidden'>Add to cart</span>
-                     </Button>
-                  )}
-               </CardFooter>
-            </div>
-         </Card>
-      </div>
+                     )}
+                  </CardFooter>
+               </div>
+            </Card>
+         </div>
+      </motion.div>
    );
 }
 

@@ -1,31 +1,40 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { getAllUserAdmin, changeUserStatusAdmin } from "@/api/adminAuth";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/hooks/use-toast";
-import { formatNumber } from "@/utilities/formatNumber";
-import { set } from "lodash";
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 
 function TableUersAdmin(props) {
    const { token } = useEcomStore((state) => state);
    const { toast } = useToast();
-   //for flowbite table
+   //Sort centent
    const [sortCol, setSortCol] = useState("");
    const [sortOrder, setSortOrder] = useState("asc");
 
    const [tableData, setTableData] = useState([]);
 
    const [searchTerm, setSearchTerm] = useState("");
-
+   //Selection row
    const [selectedRows, setSelectedRows] = useState([]);
    const [selectedEnabled, setSelectedEnabled] = useState(true);
    const [selecteRole, setSelectedRole] = useState("user");
-
+   //Pagiantion
    const [currentPage, setCurrentPage] = useState(1);
    const itemsPerPage = 10;
-   const [isTriggerRender, setIsTriggerRender] = useState(false);
+
+   const [showConfirmDialog, setShowConfirmDialog] = useState(false); //for AlertDialog
+   const [isTriggerRender, setIsTriggerRender] = useState(false); //for re-render after api
 
    useEffect(() => {
       const fetchOrders = async () => {
@@ -75,7 +84,12 @@ function TableUersAdmin(props) {
       if (selectedRows.length > 0) {
          try {
             console.log("selectedRows+enal+role", selectedRows, selectedEnabled, selecteRole);
-            const res = await changeUserStatusAdmin(token, selectedRows, selectedEnabled, selecteRole);
+            const res = await changeUserStatusAdmin(
+               token,
+               selectedRows,
+               selectedEnabled,
+               selecteRole
+            );
             // console.log("res status+role", resStat);
             toast({
                title: "Success",
@@ -92,11 +106,13 @@ function TableUersAdmin(props) {
          }
          setSelectedRows([]); // Clear selection after update
          setIsTriggerRender(!isTriggerRender);
+         setShowConfirmDialog(false);
       }
    };
 
-   // Filter data based on search term
-   //tableData === [{key:value},{},{}]
+   // Filter data based on search term | get searchTerm included in tableData
+   //tableData === [{col-key:contnt-value},{},{}]
+   //searchTerm==='' → filteredData contains all obj ► empty string ('') is considered to be included in any string for includes(). 
    const filteredData = tableData?.filter((obj) =>
       Object.values(obj).some((value) =>
          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -113,24 +129,25 @@ function TableUersAdmin(props) {
          <main className='flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-2 bg-card dark:bg-gray-900 p-4'>
             <div className='flex items-center gap-2'>
                <select
-                  value={selectedEnabled}
-                  onChange={(e) => setSelectedEnabled(e.target.value)}
-                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:ring-offset-0 focus:outline-none p-2'
-               >
-                  <option value={true}>Enable</option>
-                  <option value={false}>Unable</option>
-               </select>
-               <select
                   value={selecteRole}
                   onChange={(e) => setSelectedRole(e.target.value)}
-                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-0 focus:ring-offset-0 focus:outline-none p-2'
+                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none p-2'
                >
                   <option value='user'>User</option>
                   <option value='admin'>Admin</option>
                </select>
+               <select
+                  value={selectedEnabled}
+                  onChange={(e) => setSelectedEnabled(e.target.value)}
+                  className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none p-2'
+               >
+                  <option value={true}>Enable</option>
+                  <option value={false}>Disable</option>
+               </select>
                <Button
-                  onClick={handleBulkUpdate}
-                  className='text-white  hover:bg-fuchsia-700 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-slate-500 dark:hover:bg-slate-600 focus:outline-none dark:focus:ring-slate-700'
+                  onClick={() => setShowConfirmDialog(true)}
+                  //onClick={handleBulkUpdate}
+                  className=' hover:bg-slate-500 focus:ring-4 font-medium rounded-xl text-sm px-4 py-2 dark:bg-slate-500 dark:hover:bg-slate-600 focus:outline-none dark:focus:ring-slate-700'
                   disabled={selectedRows.length === 0}
                >
                   Update user status ({selectedRows.length} selected)
@@ -148,7 +165,7 @@ function TableUersAdmin(props) {
          </main>
          <main className='p-4 bg-card'>
             <div className='border rounded-xl overflow-hidden'>
-               <table className='w-fit text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
+               <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
                   <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                      <tr>
                         <th
@@ -239,7 +256,7 @@ function TableUersAdmin(props) {
                            onClick={() => sortData("enabled")}
                         >
                            <div className='flex items-center whitespace-nowrap'>
-                              Enabled
+                              Enabled ?
                               <svg
                                  className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
                                     sortCol === "enabled" && sortOrder === "asc" ? "rotate-180" : ""
@@ -264,7 +281,7 @@ function TableUersAdmin(props) {
                            onClick={() => sortData("createdAt")}
                         >
                            <div className='flex items-center whitespace-nowrap'>
-                              Created At
+                              Registered At
                               <svg
                                  className={`w-4 h-4 ml-2 hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
                                     sortCol === "createdAt" && sortOrder === "asc"
@@ -349,17 +366,29 @@ function TableUersAdmin(props) {
                                        : "bg-red-100 text-red-700"
                                  }`}
                               >
-                                 {item.enabled.toString()}
+                                 {item.enabled ? "Yes" : "No"}
                               </span>
                            </td>
                            <td className='px-6 py-4'>
-                              {new Date(item.createdAt).toLocaleString("en-us", {
-                                 timeZone: "Asia/Bangkok"
+                              {new Date(item.createdAt).toLocaleString("en-uk", {
+                                 timeZone: "Asia/Bangkok",
+                                 day: "2-digit",
+                                 month: "short",
+                                 year: "numeric",
+                                 hour: "2-digit",
+                                 minute: "2-digit",
+                                 hour12: true
                               })}
                            </td>
                            <td className='px-6 py-4'>
-                              {new Date(item.updatedAt).toLocaleString("en-us", {
-                                 timeZone: "Asia/Bangkok"
+                              {new Date(item.updatedAt).toLocaleString("en-uk", {
+                                 timeZone: "Asia/Bangkok",
+                                 day: "2-digit",
+                                 month: "short",
+                                 year: "numeric",
+                                 hour: "2-digit",
+                                 minute: "2-digit",
+                                 hour12: true
                               })}
                            </td>
                         </tr>
@@ -390,6 +419,45 @@ function TableUersAdmin(props) {
                </button>
             </div>
          </main>
+         <AlertDialog
+            open={showConfirmDialog}
+            onOpenChange={setShowConfirmDialog}
+         >
+            <AlertDialogContent>
+               <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm User Status Update</AlertDialogTitle>
+                  <AlertDialogDescription className='space-y-3'>
+                     <div>
+                        <strong>Status to update_</strong> Role:
+                        <strong>{selecteRole}</strong> Enable:
+                        <strong>{selectedEnabled.toString() === "true" ? "yes" : "disable"}</strong>
+                     </div>
+                     <div>This will affect user authorization.</div>
+                     <div>Please review the authorization types for each status:</div>
+                     <div>
+                        <strong>Admin:</strong> Full access to products, users, and resources.
+                        <br />
+                        <strong>User:</strong> Limited access to products, with ability to view,
+                        buy, and process payments.
+                     </div>
+                     <div>
+                        <strong>Enable:</strong> Grant full access to resources.
+                        <br />
+                        <strong>Disable:</strong> Restrict access to resources, except for login and
+                        product view.
+                     </div>
+                  </AlertDialogDescription>
+               </AlertDialogHeader>
+               <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setShowConfirmDialog(false)}>
+                     Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleBulkUpdate()}>
+                     Confirm update
+                  </AlertDialogAction>
+               </AlertDialogFooter>
+            </AlertDialogContent>
+         </AlertDialog>
       </div>
    );
 }
