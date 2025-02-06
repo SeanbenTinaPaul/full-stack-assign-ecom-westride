@@ -11,7 +11,7 @@ import ShippingFee from "@/utilities/ShippingFee";
 import { MapPinHouse,ShoppingBasket  } from "lucide-react";
 
 function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
-   const { token, carts } = useEcomStore((state) => state);
+   const { token, carts,isSaveToCart,updateStatusSaveToCart } = useEcomStore((state) => state);
    const { toast } = useToast();
    const [prodOnCartArr, setProdOnCartArr] = useState([]);
    const [cartTotal, setCartTotal] = useState(0);
@@ -75,6 +75,7 @@ function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
                      e.g. 123/4 หมู่ที่ 5 ถนนมิตรภาพ ต.แม่พริก อ.เมืองขอนแก่น จ.ขอนแก่น 40000
                   </div>
                   <Button
+                     disabled={carts.length === 0 && !isSaveToCart}
                      onClick={handleSaveAddress}
                      className='w-full rounded-xl transition-all duration-300 hover:bg-slate-500 shadow-md '
                   >

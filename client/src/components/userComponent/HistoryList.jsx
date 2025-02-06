@@ -64,7 +64,7 @@ function HistoryList(props) {
 
    return (
       <div>
-         <div className='flex items-center mt-6 mb-4 gap-2 min-w-[500px] bg-card shadow-md p-4 rounded-xl'>
+         <div className='flex items-center mt-6 mb-4 gap-2 min-w-[500px] bg-gradient-to-r from-card to-slate-100 shadow-md p-4 rounded-xl'>
             <FileClock
                size={20}
                className='drop-shadow-sm'
@@ -76,7 +76,7 @@ function HistoryList(props) {
             {/* card */}
             {orderList?.map((order) => (
                <article
-                  className='flex flex-col gap-2 p-6 mb-4 bg-card rounded-xl shadow-md'
+                  className='flex flex-col gap-2 p-6 mb-4 bg-gradient-to-r from-card to-slate-100 rounded-xl shadow-md'
                   key={order.id}
                >
                   {/* header */}
@@ -108,7 +108,7 @@ function HistoryList(props) {
                      </div>
                   </header>
                   <div>
-                     <table className='table-fixed w-full bg-card text-card-foreground rounded-lg'>
+                     <table className='table-fixed w-full bg-gradient-to-r from-card to-slate-100 text-card-foreground rounded-lg'>
                         <thead className='border-b'>
                            <tr className='text-left text-sm'>
                               <th>Product title</th>

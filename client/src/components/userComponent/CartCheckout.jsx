@@ -153,13 +153,13 @@ function CartCheckout({ isCollapsedContext }) {
       // max-[1286px]:pb-[calc(100vh-25rem)] max-[1504px]:pb-[calc(100vh-20rem)] max-[1920px]:pb-[calc(100vh-25rem)]
       <div className='flex flex-col min-h-screen relative ml-14 pb-[calc(100vh-40rem)] max-md:pb-[calc(100vh-20rem)] max-lg:pb-[calc(100vh-25rem)] max-xl:pb-[calc(100vh-25rem)] max-2xl:pb-[calc(100vh-25rem)] max-[1920px]:pb-[calc(100vh-25rem)]'>
          {/* header */}
-         <div className='flex p-4 mt-6 mb-4 bg-slate-700 gap-2 items-center rounded-xl shadow-md'>
+         <div className='flex p-4 mt-6 mb-4 bg-gradient-to-r from-slate-700 to-slate-500 gap-2 items-center rounded-xl shadow-md'>
             <ListChecks size={24} className="text-card"/>
             <p className='text-lg font-semibold text-card'>Product List: {carts.length}</p>
          </div>
 
          {/* list */}
-         <main className='p-10 h-full rounded-xl shadow-md bg-card'>
+         <main className='p-10 h-full rounded-xl shadow-md bg-gradient-to-r from-slate-100 to-card'>
             {/* left */}
             <div>
                {carts.map((cart) => (
@@ -295,7 +295,8 @@ function CartCheckout({ isCollapsedContext }) {
             <Link>
                <Button
                   variant='primary'
-                  className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
+                  className='w-full mt-4 text-white py-2 shadow-md rounded-xl bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500'
+                  disabled={carts.length === 0}
                   onClick={handleCreateCart}
                >
                   Checkout

@@ -8,7 +8,9 @@ import _, { update } from "lodash"; // for making unique el array
 import { binarySearchProdId } from "@/utilities/binarySearch.js";
 const apiUrl = import.meta.env.VITE_API_URL;
 import { useLocalStorage } from "react-use";
+import { clearCartUser } from "@/api/userAuth.jsx";
 
+//set((state) => ({ carts: [...state.carts, newItem] })) === set({ carts: [...carts, newItem] })
 //get is a function that allows you to retrieve the current state of the store.
 //set and get functions to update and retrieve the state of the ecomStore store in React components.
 const ecomStore = (set, get) => ({
@@ -19,21 +21,28 @@ const ecomStore = (set, get) => ({
    carts: [],
    isSaveToCart: false,
    savedCartCount: 0, //คอขวด carts.length
-   showLogoutConfirm: false,
+   showLogoutConfirm: false, // for Show confirmation if user go logout BUT cart not empty and not saved
    isLoggingOut: false, //to check logout attempt
    //to control logout confirmation dialog
    resetCartsAfterPurchas: () => {
       set({ carts: [] });
    },
    updateStatusSaveToCart: (value) => {
-      if (value === true) {
-         //ทำคอขวด ไม่ให้ Badge ใน SidebarUser.jsx เอาค่า carts.length ไปใช้ได้ง่ายๆจนกว่าจะกด "Place Order" ที่ CartInfo.jsx
-         set({
-            isSaveToCart: true,
-            savedCartCount: get().carts.length //คอขวดคือ savedCartCount , อยากได้ carts.len มาเอาผ่าน state นี้
-         });
-      }
+      //ทำคอขวด ไม่ให้ Badge ใน SidebarUser.jsx เอาค่า carts.length ไปใช้ได้ง่ายๆจนกว่าจะกด "Place Order" ที่ CartInfo.jsx
+      set({
+         isSaveToCart: value,
+         savedCartCount: get().carts.length //คอขวดคือ savedCartCount , อยากได้ carts.len มาเอาผ่าน state นี้
+      });
    },
+   // updateStatusSaveToCart: (value) => {
+   //    if (value === true) {
+   //       //ทำคอขวด ไม่ให้ Badge ใน SidebarUser.jsx เอาค่า carts.length ไปใช้ได้ง่ายๆจนกว่าจะกด "Place Order" ที่ CartInfo.jsx
+   //       set({
+   //          isSaveToCart: true,
+   //          savedCartCount: get().carts.length //คอขวดคือ savedCartCount , อยากได้ carts.len มาเอาผ่าน state นี้
+   //       });
+   //    }
+   // },
    //to make carts display up-to-date(promotion or discount)
    //productData for 1 prod | ==={id(productId), buyPrice, buyPriceNum, promotion, preferDiscount} แต่ไม่มี countCart
    /*
@@ -156,12 +165,23 @@ const ecomStore = (set, get) => ({
          )
       }));
    },
-   removeCart: (prodId) => {
+
+   removeCart: async (prodId) => {
       //remain every product except the one with id === prodId
       set((state) => ({
          carts: state.carts.filter((obj) => obj.id !== prodId)
       }));
       console.log("removeCart", prodId);
+      //if user rm carts to empty BUT carts records is wrtitten to DB ► reset confirmation states and rm cart in DB
+      if (get().carts.length === 0 && get().isSaveToCart === true) {
+         set({ isSaveToCart: false, showLogoutConfirm: false });
+         try {
+            const res = await clearCartUser(get().token);
+            console.log("clearCartUser", res);
+         } catch (err) {
+            console.log(err);
+         }
+      }
    },
    toTalPrice: () => {
       let total = get().carts.reduce((acc, curr) => acc + curr.buyPriceNum * curr.countCart, 0);
@@ -174,7 +194,7 @@ const ecomStore = (set, get) => ({
 
       //2. เอา res.data ต่างๆ มา setState ให้ ecomStore().user และ ecomStore().token
       set({
-         user: res.data.payload,
+         user: { ...res.data.payload, picture: res.data.picture, public_id: res.data.picturePub },
          token: res.data.token
       });
       /*
@@ -210,6 +230,7 @@ const ecomStore = (set, get) => ({
          // console.log(localStorage);
       }
    },
+   // Show confirmation if user go logout BUT cart not empty and not saved
    setShowLogoutConfirm: (show) =>
       set({
          showLogoutConfirm: show,
@@ -276,16 +297,16 @@ const useEcomStore = create(persist(ecomStore, usePersist)); //useEcomStore เ�
 export default useEcomStore; //useEcomStore(() => {return..}) to access global state 'ecomStore'
 
 /*
-เมื่อคุณใช้ useEcomStore hook เพื่อเข้าถึง property ใน ecomStore คุณจะต้องเรียกใช้ผ่าน callback เท่านั้น
+เมื่อใช้ useEcomStore hook เพื่อเข้าถึง property ใน ecomStore จะต้องเรียกใช้ผ่าน callback เท่านั้น
 สาเหตุหลักคือ ecomStore เป็น store ที่ใช้ Zustand ซึ่งเป็น state management library 
 ที่ใช้ callback เพื่อเข้าถึง state
-เมื่อคุณใช้ useEcomStore hook คุณจะได้รับ callback ที่สามารถเข้าถึง property ใน ecomStore ได้ 
-แต่คุณไม่สามารถเข้าถึง property ได้โดยตรง
+เมื่อใช้ useEcomStore hook จะได้รับ callback ที่สามารถเข้าถึง property ใน ecomStore ได้ 
+แต่ไม่สามารถเข้าถึง property ได้โดยตรง
 
 ตัวอย่างเช่น:
 
 const user = useEcomStore((state) => state.user);
 
 ในตัวอย่างข้างต้น useEcomStore hook จะส่ง callback 
-ที่สามารถเข้าถึง property user ใน ecomStore ได้ แต่คุณไม่สามารถเข้าถึง property user ได้โดยตรง
+ที่สามารถเข้าถึง property user ใน ecomStore ได้ แต่ไม่สามารถเข้าถึง property user ได้โดยตรง
 */

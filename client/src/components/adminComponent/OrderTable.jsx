@@ -134,6 +134,7 @@ function OrderTable(props) {
    const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
    const startIndex = (currentPage - 1) * itemsPerPage;
    const paginatedData = filteredData?.slice(startIndex, startIndex + itemsPerPage);
+
    return (
       <div className='relative overflow-x-auto shadow-md rounded-xl bg-card'>
          <main className='flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-2 bg-card dark:bg-gray-900 p-4'>
@@ -168,7 +169,7 @@ function OrderTable(props) {
          <main className='p-4 bg-card'>
             <div className='border rounded-xl overflow-hidden'>
                <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
-                  <thead className='text-xs py-auto text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+                  <thead className='text-sm py-auto text-gray-700  bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                      <tr className=''>
                         <th
                            scope='col'
@@ -220,7 +221,7 @@ function OrderTable(props) {
                            onClick={() => sortData("orderedById")}
                         >
                            <div className='flex items-center whitespace-nowrap'>
-                              User Id
+                              User ID
                               <svg
                                  className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
                                     sortCol === "orderedById" && sortOrder === "asc"

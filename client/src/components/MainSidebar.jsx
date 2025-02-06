@@ -44,7 +44,7 @@ const MainSidebar = ({ isCollapsed }) => {
 
    return (
       <div
-         className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
+         className={`${sidebarWidth} transition-all duration-300 bg-gradient-to-r from-slate-700 to-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
       >
          <div
             className={` mt-10 h-24 bg-slate-700 flex items-center justify-center ${

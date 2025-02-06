@@ -88,7 +88,7 @@ function Login() {
    };
 
    return (
-      <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+      <div className='flex justify-center items-center min-h-screen bg-[#e5e5e5]'>
          <Card className='w-full max-w-md'>
             <CardHeader className='space-y-6'>
                <CardTitle>Login</CardTitle>

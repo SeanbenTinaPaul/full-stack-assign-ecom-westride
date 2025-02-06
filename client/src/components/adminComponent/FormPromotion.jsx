@@ -124,7 +124,7 @@ function FormPromotion(props) {
                   variant='ghost'
                   onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                >
-                  Product Name
+                  Product Title
                   <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
                      <svg
                         className='w-4 h-4'
@@ -276,7 +276,7 @@ function FormPromotion(props) {
                variant='ghost'
                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-               startDate
+               Start Date
                <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
                   <svg
                      className='w-4 h-4'
@@ -335,7 +335,7 @@ function FormPromotion(props) {
                variant='ghost'
                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-               endDate
+               End Date
                <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
                   <svg
                      className='w-4 h-4'
@@ -520,7 +520,7 @@ function FormPromotion(props) {
                description: res.data.message
             });
             setShowConfirmDialog(false);
-            // รีเซ็ตฟอร์ม
+            // reset state form
             setSelectedProducts([]);
             setDiscountAmount("");
             setDescription("");
@@ -537,10 +537,10 @@ function FormPromotion(props) {
    };
    return (
       <div className='pt-6 space-y-6'>
-         <div className='w-full flex  mb-4 p-3 items-center rounded-xl gap-2 bg-card shadow-md'>
+         <div className='w-full flex  mb-4 p-3 items-center rounded-xl gap-2 bg-gradient-to-r from-card to-slate-100 shadow-md'>
             <h1 className='text-xl font-medium text-slate-700'>Promotion Management</h1>
          </div>
-         <Card>
+         <Card className='bg-gradient-to-tr from-card to-slate-100'>
             <CardHeader>
                <CardTitle className='flex items-center gap-2'>
                   <Percent className='w-5 h-5' />
@@ -576,7 +576,7 @@ function FormPromotion(props) {
                         max='100'
                         value={discountAmount}
                         onChange={(e) => setDiscountAmount(e.target.value)}
-                        className='mt-1 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='mt-1 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                      />
                   </div>
                </div>
@@ -597,7 +597,7 @@ function FormPromotion(props) {
                               mode='single' //can be single or range
                               selected={startDate}
                               onSelect={setStartDate}
-                              className='flex shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-md border focus:ring-1 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='flex shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-lg border focus:ring-1 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            />
                         </div>
                         <div className='flex-1'>
@@ -609,7 +609,7 @@ function FormPromotion(props) {
                               mode='single'
                               selected={endDate}
                               onSelect={setEndDate}
-                              className='flex shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-md border focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='flex shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-lg border focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            />
                         </div>
                      </div>
@@ -622,7 +622,7 @@ function FormPromotion(props) {
                      value={description}
                      onChange={(e) => setDescription(e.target.value)}
                      placeholder='e.g. New Year Sale, Summer Collection'
-                     className='shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                     className='shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                   />
                </div>
             </CardContent>
@@ -631,6 +631,7 @@ function FormPromotion(props) {
          {/* {console.log("products to table", products)} */}
          <div className=''>
             <DataTable
+               className='bg-gradient-to-tr from-card to-slate-100'
                columns={columns}
                data={products}
                onRowSelection={setSelectedProducts}
@@ -640,12 +641,14 @@ function FormPromotion(props) {
          {/* Button******** */}
          <div className='flex justify-end gap-4'>
             <Button
+               className='rounded-xl'
                variant='outline'
                onClick={handleReset}
             >
                Reset
             </Button>
             <Button
+               className='rounded-xl'
                onClick={() => setShowConfirmDialog(true)}
                disabled={!discountAmount || selectedProducts.length === 0}
             >

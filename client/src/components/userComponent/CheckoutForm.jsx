@@ -25,7 +25,7 @@ expire date : 12/34
 security code : 567
 */
 export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
-   const { token, resetCartsAfterPurchas } = useEcomStore((state) => state);
+   const { token, resetCartsAfterPurchas,updateStatusSaveToCart } = useEcomStore((state) => state);
    const navigate = useNavigate();
    const { toast } = useToast();
    const stripe = useStripe();
@@ -71,7 +71,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
       // redirected to the `return_url`.
       console.log("payload", payload);
       if (payload.paymentIntent.status !== "succeeded") {
-         console.log("payment staus wrong", payload.paymentIntent.status);
+         // console.log("payment staus wrong", payload.paymentIntent.status);
          toast({
             variant: "destructive",
             title: "Error!",
@@ -90,11 +90,11 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
          return;
       } else if (payload.paymentIntent.status === "succeeded") {
          //create Order record in DB
-         console.log("payload purchase", payload);
          try {
             const res = await saveOrderUser(token, payload);
             console.log("res.data CheckoutForm", res.data);
             resetCartsAfterPurchas();
+            updateStatusSaveToCart(false);//reset isSaveToCart , carts is empty now so user need to save cart again
             navigate("/user/history");
          } catch (err) {
             console.error(err);
@@ -104,7 +104,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
 
       setIsLoading(false);
    };
-   
+
    const handleCancelPurchase = async () => {
       //   console.log("paymentIntentData", paymentIntentData);
       try {
@@ -136,7 +136,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
             <Button
                disabled={(isLoading || !stripe || !elements) && !isSaveAddress}
                id='submit'
-               className='w-full mt-4 bg-fuchsia-800 text-white py-2 rounded-xl transition-colors duration-300 hover:bg-fuchsia-700 shadow-md'
+               className='w-full mt-4 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500 text-white py-2 rounded-xl transition-colors duration-300 shadow-md'
             >
                <span id='button-text'>
                   {isLoading ? (

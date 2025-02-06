@@ -149,14 +149,14 @@ function CardProd({ prodObj }) {
          <div>
             {/* {console.log("prodObj", prodObj)} */}
             {/* {console.log("productData", productData)} */}
-            <Card className='flex flex-col w-72 h-96 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
+            <Card className='flex flex-col w-72 h-96 bg-gradient-to-br from-card to-slate-100 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
                {/* Product Image+fav+badge */}
                <div className='relative h-52 max-lg:h-28'>
                   <img
                      src={prodObj?.images?.[0]?.url || ""}
                      // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
                      alt='No image'
-                     className='w-full h-full object-cover bg-slate-200'
+                     className='w-full h-full object-cover bg-gradient-to-tr from-slate-100 to-slate-200'
                   />
                   {(prodObj?.promotion || getDiscountAmount()) && (
                      <Badge className='absolute top-2 right-2 bg-red-500 px-1'>

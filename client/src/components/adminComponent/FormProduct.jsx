@@ -363,7 +363,7 @@ function FormProduct() {
 
                <Button
                   type='submit'
-                  className='w-52 mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
+                  className='w-52 mt-4 text-white py-2 shadow-md rounded-xl bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500'
                   disabled={loading}
                >
                   {loading ? (
@@ -398,6 +398,7 @@ function FormProduct() {
                   </AlertDialogFooter>
                </AlertDialogContent>
             </AlertDialog>
+            {/* Table */}
             <div className='mt-4 pt-6 max-w-full max-h-[80vh] mx-auto overflow-hidden overflow-y-auto overflow-x-auto'>
                <TableListProducts
                   products={products}

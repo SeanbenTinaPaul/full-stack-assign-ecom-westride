@@ -65,7 +65,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
       <div className='w-full'>
          <div className='relative sm:rounded-lg rounded-xl border bg-card text-card-foreground shadow-md '>
             <Table>
-               <Table.Head>
+               <Table.Head className="capitalize text-sm">
                   <Table.HeadCell
                      className='cursor-pointer'
                      onClick={() => sortData("id")}

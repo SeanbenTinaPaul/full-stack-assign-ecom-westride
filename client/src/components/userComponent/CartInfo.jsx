@@ -9,18 +9,7 @@ import { formatNumber } from "@/utilities/formatNumber";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/hooks/use-toast";
 import { createCartUser } from "@/api/userAuth";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+
 
 function CartInfo(props) {
    const {
@@ -38,7 +27,6 @@ function CartInfo(props) {
    } = useEcomStore((state) => state);
    //carts === [{ categoryId:, buyPriceNum:,countCart:,discounts:,promotion:, },{},..]
    const { toast } = useToast();
-   const [showDialog, setShowDialog] = useState(false); //for alert Confirm
 
    // console.log("carts in CartInfo", carts);
    // Sync with products when carts or products change
@@ -111,9 +99,9 @@ function CartInfo(props) {
    };
 
    return (
-      <div className="h-full w-full bg-card p-4 rounded-xl shadow-md">
+      <div className='h-full w-full bg-gradient-to-r from-card to-slate-100 p-4 rounded-xl shadow-md'>
          {/* Border */}
-         <main className='bg-card p-2 rounded-lg overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+         <main className=' bg-gradient-to-r from-card to-slate-100 p-2 rounded-lg overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
             {/* card */}
             {carts.map((cart) => (
                <div
@@ -203,17 +191,16 @@ function CartInfo(props) {
             {/* btn */}
             {/* <Link to='/user/cart'> */}
             <Button
+               disabled={carts.length === 0}
                onClick={() => {
                   updateStatusSaveToCart(true);
                   handleCreateCart();
                }}
-               className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'
+               className='w-full mt-4 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600  text-white py-2 shadow-md rounded-xl hover:from-fuchsia-700  hover:to-fuchsia-500 transition-all duration-300'
             >
                Place Order
             </Button>
-            {/* </Link> */}
          </main>
-         {/* "Don't Lose Your Cart! Place Order Before Logging Out"  Lost them. | Place order*/}
       </div>
    );
 }

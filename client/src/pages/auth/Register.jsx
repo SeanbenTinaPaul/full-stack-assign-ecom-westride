@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
-// import { toast } from "react-toastify";//ใช้แสดงข้อความแจ้งเตือน (toast message) บนเว็บไซต์
+const apiUrl = import.meta.env.VITE_API_URL;
 import useEcomStore from "../../store/ecom-store";
 import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
 
@@ -14,6 +14,7 @@ const Register = () => {
    const { toast } = useToast();
    const [form, setForm] = useState({
       email: "",
+      name: "",
       password: "",
       confirmPassword: ""
    });
@@ -37,7 +38,7 @@ const Register = () => {
 
       //Send to backend
       try {
-         const res = await axios.post("http://localhost:5000/api/register", form);
+         const res = await axios.post(`${apiUrl}/api/register`, form);
          toast({
             title: "Success",
             description: res.data.message || "Register Success"
@@ -52,7 +53,7 @@ const Register = () => {
       }
    };
    return (
-      <div className='flex justify-center items-center min-h-screen bg-gray-100'>
+      <div className='flex justify-center items-center min-h-screen bg-[#e5e5e5]'>
          <Card className='w-full max-w-md'>
             <CardHeader className='space-y-6'>
                <CardTitle>Register</CardTitle>
@@ -77,6 +78,17 @@ const Register = () => {
                         type='email'
                         name='email'
                         placeholder='Enter your email'
+                        onChange={handleOnchange}
+                        required
+                     />
+                  </div>
+                  <div className='space-y-2'>
+                     <Label htmlFor='email'>Name</Label>
+                     <Input
+                        id='name'
+                        type='name'
+                        name='name'
+                        placeholder='Enter your name'
                         onChange={handleOnchange}
                         required
                      />

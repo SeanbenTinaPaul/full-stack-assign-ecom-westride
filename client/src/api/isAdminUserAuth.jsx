@@ -23,9 +23,9 @@ Note: 2 ways to import ▼
 
 */
 //backend res.json()
-// go check if 'email:' in 'decoded token' exist in DB ► currUserProfile() in authService.js  
-export const currentUser = async (token) =>
-   await axios.post(
+// go check if 'email:' in 'decoded token' exist in DB ► currUserProfile() in authService.js
+export const currentUser = async (token) => {
+   return await axios.post(
       `${apiUrl}/api/profile-user`,
       {},
       {
@@ -35,6 +35,7 @@ export const currentUser = async (token) =>
          }
       }
    );
+};
 //backend res.json()
 export const currentAdmin = async (token) => {
    return await axios.post(

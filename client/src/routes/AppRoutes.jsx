@@ -10,6 +10,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
 import LayoutAdmin from "../layouts/LayoutAdmin";
+import { ProtectRouteAdmin } from "./ProtectRouteAdmin";
 import BrandAdmin from "../pages/admin/BrandStore";
 import Dashboard from "../pages/admin/Dashboard";
 import CategoryAdmin from "../pages/admin/Category";
@@ -19,14 +20,14 @@ import EditProdAdmin from "../pages/admin/EditProd";
 import PromotionAdmin from "../pages/admin/Promotion";
 
 import LayoutUser from "../layouts/LayoutUser";
+import { ProtectRouteUser } from "./ProtectRouteUser";
 import HomeUser from "../pages/user/HomeUser";
 import Payment from "../pages/user/PaymentUser";
-import { ProtectRouteUser } from "./ProtectRouteUser";
-import { ProtectRouteAdmin } from "./ProtectRouteAdmin";
 import ShopUser from "@/pages/user/ShopUser";
 import CartUser from "@/pages/user/CartUser";
 import HistoryUser from "@/pages/user/HistoryUser";
 import UpdateOrder from "@/pages/admin/UpdateOrder";
+import EditProfileUser from "@/pages/user/EditProfileUser";
 
 //แบ่งหน้า: 1. public 2. private
 //กลุ่มหน้า public ▼
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
          { path: "product/:id", element: <EditProdAdmin /> },
          { path: "manage", element: <ManageAdmin /> },
          { path: "promotion", element: <PromotionAdmin /> },
-         {path: "orders", element: <UpdateOrder/>}
+         { path: "orders", element: <UpdateOrder /> }
       ]
       //then go to LayoutAdmin > SidebarAdmin → add these children to pages
    },
@@ -72,7 +73,8 @@ const router = createBrowserRouter([
          //CartUser → ListCheckout
          { path: "cart", element: <CartUser /> },
          { path: "payment", element: <Payment /> },
-         { path: "history", element: <HistoryUser /> }
+         { path: "history", element: <HistoryUser /> },
+         { path: "editprofile", element: <EditProfileUser /> }
       ]
    }
 ]);

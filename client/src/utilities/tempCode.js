@@ -1,7 +1,11 @@
 //3D inside input text : className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
 //ลูกอมนูน : className='px-3 w-8 h-8 bg-gradient-to-b from-gray-200 to-gray-300 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
 //เงา svg 'text-slate-900 drop-shadow-sm '
-//hover เปลี่ยนสีปุ่ม transition-colors duration-300
+//ปุมม่วง(gradient) className='w-full mt-4 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500 text-white py-2 shadow-md rounded-xl '
+//ปุ่มม่วง className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'>
+//topic 1 className=' bg-gradient-to-r from-slate-700 to-slate-500 p-6 rounded-xl mb-4 flex items-center shadow-md'>
+//topic 2 className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-gradient-to-r from-slate-100 to-card  shadow-md '>
+//font topic <h1 className='text-xl font-sans font-semibold drop-shadow-sm'>
 
 //If don't set redirect: "if_required"→ need to handle the redirects manually▼ redirect: null
    if (payload.error) {

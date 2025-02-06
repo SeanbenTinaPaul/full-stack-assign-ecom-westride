@@ -23,6 +23,7 @@ model User {
   favorites      Favorite[] // เพิ่ม relation กับ Favorite
   productRatings Rating[] // เพิ่ม relation กับ Rating
   userCoupons    UserCoupon[]
+  picturePub     String?
 }
 
 model Product {

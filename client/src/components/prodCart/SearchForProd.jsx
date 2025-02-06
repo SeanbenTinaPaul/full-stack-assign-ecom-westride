@@ -131,7 +131,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    };
 
    return (
-      <div className='h-full w-full bg-card p-4 rounded-xl'>
+      <div className='h-full w-full bg-gradient-to-tr from-card to-slate-100 p-4 rounded-xl'>
          <form
             onSubmit={(e) => handleSumitSearchText(e)}
             className='flex flex-col gap-2 '
@@ -141,7 +141,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                value={textSearch}
                onChange={(e) => handleSearchText(e)}
                placeholder='e.g. ขาหมู, core i7'
-               className='w-full mb-4 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+               className='w-full mb-4 bg-gradient-to-tr from-card to-slate-100 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
             />
             <div className='mb-4'>
                {/* {console.log('categories search',categories)} */}

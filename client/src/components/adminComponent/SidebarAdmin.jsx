@@ -73,7 +73,7 @@ const SidebarAdmin = ({ isCollapsed }) => {
    //Added margin left (ml-64 or ml-16) to the main content to offset the fixed sidebar
    return (
       <div
-         className={`${sidebarWidth} transition-all duration-300 bg-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
+         className={`${sidebarWidth} transition-all duration-300 bg-gradient-to-r from-slate-700 to-slate-800 text-white flex flex-col h-screen drop-shadow-xl fixed top-0 left-0 z-50`}
       >
          {/* Logo */}
          <div
@@ -86,7 +86,7 @@ const SidebarAdmin = ({ isCollapsed }) => {
                   isCollapsed ? "text-sm" : "text-2xl"
                }`}
             >
-               {isCollapsed ? "AP" : "Admin Panel"}
+               {isCollapsed ? "AP" : "Admin Page"}
             </h2>
          </div>
          {/* menu Pages */}

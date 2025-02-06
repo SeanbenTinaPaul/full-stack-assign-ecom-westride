@@ -1,4 +1,6 @@
 const prisma = require("../config/prisma");
+const bcrypt = require("bcryptjs"); //ใช้ในการเข้ารหัส password
+const jwt = require("jsonwebtoken"); //ใช้ในการสร้าง token
 
 //ข้อมูลการสั่งซื้อในตะกร้าของ users
 //Feature/Button: "Add to Cart", "Update Cart", "Save Cart"
@@ -259,28 +261,31 @@ exports.getUserCart = async (req, res) => {
 };
 
 //Feature/Button: "Empty Cart", "Clear Cart", "Remove All Items from Cart"
-exports.emptyCart = async (req, res) => {
+exports.clearCart = async (req, res) => {
+   const { id } = req.user;
    try {
       //1. หา cart ของ user นั้นว่ามีหรือไม่
       const cart = await prisma.cart.findFirst({
-         where: { orderedById: Number(req.user.id) }
+         where: { orderedById: Number(id) }
       });
       //2. ถ้าไม่มีให้ return 400
       if (!cart) return res.status(400).json({ message: "No cart found." });
+
       //3. ถ้ามีให้ลบข้อมูลในตาราง ProductOnCart และ Cart ทั้งหมด
-      await prisma.productOnCart.deleteMany({
-         where: { cartId: cart.id }
-      });
-      const delCart = await prisma.cart.deleteMany({
-         where: { orderedById: Number(req.user.id) }
+      const delCart = await prisma.$transaction(async (prisma) => {
+         await prisma.productOnCart.deleteMany({
+            where: { cartId: cart.id }
+         });
+         await prisma.cart.deleteMany({
+            where: { orderedById: Number(id) }
+         });
       });
 
       res.status(200).json({
          success: true,
          message: "Success!!! Your cart is now empty.",
-         "deleted count": delCart.count,
-         "deleted cart": delCart, //{"count": 1}
-         data: cart
+         // deletedCount: delCart.count,
+         deletedCart: delCart
       });
    } catch (err) {
       console.log(err);
@@ -327,8 +332,9 @@ exports.saveOrder = async (req, res) => {
    try {
       console.log("save order ->", req.body);
       const { id, amount, currency, status } = req.body.paymentIntent;
-      if(status !== 'succeeded') return res.status(400).json({message: "Error!!! Payment failed."});
-      
+      if (status !== "succeeded")
+         return res.status(400).json({ message: "Error!!! Payment failed." });
+
       //1. หา cart ของ user นั้นว่ามีหรือไม่
       // userCart จะดึง record แรก(ที่...) ทุกคอลัมน์จาก table 'Cart' และบางส่วนจาก 'ProductOnCart' ที่มี cartId กับ Cart.id
       const userCart = await prisma.cart.findFirst({
@@ -355,7 +361,7 @@ exports.saveOrder = async (req, res) => {
          return res
             .status(400)
             .json({ message: "Your cart is empty. Please add some product to a cart." });
-          
+
       //3. Compare: product quantity in cart (userCart.products) vs  product quantity in stock (product.quantity)
       // let outStockProd = []; //เก็บ product ที่ไม่มี stock พอ
       // for (const item of userCart.products) {
@@ -390,7 +396,7 @@ exports.saveOrder = async (req, res) => {
                   productId: item.productId,
                   count: item.count,
                   price: item.buyPriceNum,
-                  discount: item.price*item.discount/100
+                  discount: (item.price * item.discount) / 100
                }))
             },
             //connect คือไปดึง record ของ User.id(มีอยู่แล้ว) มาเติมใน record ตัวเอง
@@ -494,6 +500,81 @@ exports.getOrder = async (req, res) => {
    }
 };
 
+//pending...
+//req.body ► picture ,name, email, password
+//req.user.id
+exports.updateUserProfile = async (req, res) => {
+   const { name, email, password, image } = req.body;
+   const { id } = req.user;
+   console.log("pic update profile->", image);
+   //1. check email
+   try {
+      const user = await prisma.user.findFirst({
+         where: {
+            id: id
+         }
+      });
+
+      //if (!user || !user.enabled)
+      if (!user) return res.status(200).json({ success: false, message: "Unauthorized" });
+
+      //2. check password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+         return res.status(200).json({ success: false, message: "Password incorrect 555" });
+      // return res.status(200).json({ success: true, message: "Password correct" });
+      const updateUser = await prisma.user.update({
+         where: {
+            id: id
+         },
+         data: {
+            email: email,
+            picture: image?.url,
+            picturePub: image?.public_id,
+            name: name
+         }
+      });
+      //3. create payload
+      const payload = {
+         id: user.id,
+         email: updateUser.email,
+         role: user.role,
+         name: updateUser.name
+      };
+
+      //4. generate token
+      jwt.sign(
+         payload,
+         process.env.JWT_SECRET,
+         { expiresIn: process.env.JWT_EXPIRE },
+         (err, token) => {
+            if (err) {
+               return res.status(500).json({ message: "Server Error" });
+            } else {
+               console.log("token update", token);
+               console.log("paylod upadate", payload);
+               //front need payload.role and token to access
+               return res
+                  .status(200)
+                  .json({
+                     success: true,
+                     message: "update profile success ☻",
+                     payload,
+                     token,
+                     picture: updateUser.picture,
+                     picturePub: updateUser.picturePub
+                  });
+            }
+         }
+      );
+
+      // res.status(200).json({ success: true, message: "Login success☻", data: user });
+      // res.send("login success ☻");
+   } catch (err) {
+      console.log(err);
+      return res.status(500).json({ success: false, message: "Server Error ╬" });
+   }
+};
 //pending...
 exports.favoriteProduct = async (req, res) => {
    const { productId } = req.body;

@@ -30,8 +30,8 @@ const ShopUser = () => {
          {/* search bar */}
          {/* To make dev responsive → rm "min-w-[...px]" from all div */}
          <article className='w-1/5 min-w-[200px] h-screen flex flex-col bg-[#E5E5E5] '>
-            <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-card  shadow-md '>
-               <PackageSearch className='drop-shadow-sm' />
+            <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-gradient-to-r from-card to-slate-100  shadow-md '>
+               <PackageSearch className='drop-shadow-sm ' size={20} />
                <h1 className='text-xl text-slate-700 font-sans font-semibold drop-shadow-sm'>
                   Search product
                </h1>
@@ -44,7 +44,7 @@ const ShopUser = () => {
          </article>
          {/* display products */}
          <article className={`${user ? "w-3/5" : "w-4/5"} p-4 h-screen overflow-x-auto`}>
-            <div className='bg-slate-700 p-6 rounded-xl mb-4 flex items-center shadow-md'>
+            <div className=' bg-gradient-to-r from-slate-700 to-slate-500 p-6 rounded-xl mb-4 flex items-center shadow-md'>
                <p className='text-2xl font-sans font-bold  text-slate-50'>Products</p>
             </div>
             {!isFoundTextSearch && whatTextSearch && (
@@ -58,7 +58,7 @@ const ShopUser = () => {
                </section>
             )}
             {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
-            <section className='shadow-md bg-slate-50 pt-10 rounded-xl flex flex-wrap min-w-[300px] justify-center gap-4 max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
+            <section className='shadow-md bg-slate-50 py-10 px-2 rounded-xl flex flex-wrap min-w-[350px] justify-center gap-4 max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
                {/* {console.log("products", products)} */}
                {Array.isArray(products) ? (
                   products.map((obj) => (
@@ -78,8 +78,8 @@ const ShopUser = () => {
          {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
          {user && (
             <article className='w-1/5 p-4 min-w-[280px] h-screen overflow-y-auto bg-[#E5E5E5]'>
-               <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-card  shadow-md '>
-                  <View className='drop-shadow-sm 'size={22} />
+               <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-gradient-to-r from-card to-slate-100  shadow-md '>
+                  <View className='drop-shadow-sm 'size={20} />
                   <h1 className='text-xl text-slate-700 font-sans font-semibold drop-shadow-sm'>
                   Preview Cart
                   </h1>

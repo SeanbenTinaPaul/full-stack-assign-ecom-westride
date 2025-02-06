@@ -40,7 +40,7 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true, t
       columns,
       //current state of the table
       getCoreRowModel: getCoreRowModel(),
-     
+
       state: {
          rowSelection,
          globalFilter,
@@ -70,7 +70,7 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true, t
    }, [table, tableRef]);
 
    return (
-      <div className='space-y-4 p-6  bg-card shadow-md rounded-xl border-slate-200 border'>
+      <div className='space-y-4 p-6  bg-gradient-to-tr from-card to-slate-100 shadow-md rounded-xl border-slate-200 border'>
          {showToolbar && (
             <div className='flex items-center justify-between'>
                <div className='flex w-full max-w-sm items-center space-x-2'>
@@ -78,7 +78,7 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true, t
                      placeholder='Search...'
                      value={globalFilter ?? ""}
                      onChange={(e) => setGlobalFilter(String(e.target.value))}
-                     className='h-8 w-[150px] lg:w-[250px] shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                     className='h-8 w-[150px] lg:w-[250px] shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                   />
                </div>
                <div className='flex items-center space-x-2'>
@@ -90,7 +90,7 @@ export function DataTable({ columns, data, onRowSelection, showToolbar = true, t
             </div>
          )}
 
-         <div className='rounded-md border'>
+         <div className='rounded-lg border'>
             <Table>
                <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (

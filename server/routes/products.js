@@ -32,7 +32,7 @@ router.post("/display-prod-by", displayProdBy); //pending...
 router.post("/search-filters", searchFilters);
 
 //image management in cloud ONLY
-router.post("/images", authCheck, adminCheck, uploadImages); //upload image to cloudinary
-router.post("/removeimage", authCheck, adminCheck, removeImage); //use .post to delete multiple images
+router.post("/images", authCheck, uploadImages); //upload image to cloudinary
+router.post("/removeimage", authCheck,  removeImage); //use .post to delete multiple images
 
 module.exports = router;

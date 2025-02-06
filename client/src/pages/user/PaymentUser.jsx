@@ -37,7 +37,7 @@ const Payment = () => {
                      <p className='text-gray-500'>more info : docs.stripe.com/testing </p>
                      <hr />
                      <section className='font-medium'>
-                        For PromptPay <span className='text-xs'>(no mobile needed)</span>
+                        For PromptPay <span className='text-xs text-slate-400'>(no mobile needed)</span>
                      </section>
                      <div className='text-gray-600'>
                         Email :{" "}
@@ -55,7 +55,7 @@ const Payment = () => {
                         </span>
                      </div>
                      <div className="mt-4">
-                        click
+                        click{" "}
                         <span className="p-1  rounded-sm shadow bg-purple-500 text-white">AUTHORIZE TEST PAYMENT</span>
                      </div>
                      <p className='text-gray-600'>close the browser tab</p>

@@ -43,7 +43,7 @@ const Shop = () => {
          </article>
          {/* display products ${user? 'w-3/5': 'w-4/5'}*/}
          <article className={`w-4/5 p-4 h-screen overflow-auto `}>
-            <div className='bg-slate-700 p-6 rounded-xl mb-4 flex items-center shadow-md'>
+            <div className='bg-gradient-to-r from-slate-700 to-slate-500 p-6 rounded-xl mb-4 flex items-center shadow-md'>
                <p className='text-2xl font-sans font-bold  text-slate-50'>Products</p>
             </div>
             {!isFoundTextSearch && whatTextSearch && (
@@ -57,7 +57,7 @@ const Shop = () => {
                </section>
             )}
             {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
-            <section className='shadow-md bg-slate-50 pt-10 rounded-xl flex flex-wrap gap-4 justify-center min-w-[300px]   max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
+            <section className='shadow-md bg-slate-50 pt-10 rounded-xl flex flex-wrap gap-4 justify-center min-w-[300px] max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
                {/* {console.log("products", products)} */}
                {Array.isArray(products) ? (
                   products.map((obj) => (

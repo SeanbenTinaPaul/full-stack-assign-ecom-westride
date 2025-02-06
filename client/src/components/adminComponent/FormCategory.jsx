@@ -187,7 +187,7 @@ function FormCategory() {
    return (
       <div>
          <div className='w-full space-y-6 max-w-3xl  '>
-            <Card className='w-full max-w-3xl rounded-xl'>
+            <Card className='w-full max-w-3xl rounded-xl bg-gradient-to-tr from-slate-50 to-card'>
                <CardHeader>
                   <CardTitle className='flex items-center gap-2'>
                      <PackagePlus className='w-5 h-5' />
@@ -215,7 +215,7 @@ function FormCategory() {
                   </form>
                </CardContent>
             </Card>
-            <Card className='w-full max-w-3xl rounded-xl'>
+            <Card className='w-full max-w-3xl rounded-xl bg-gradient-to-tr from-slate-50 to-card'>
                <CardHeader>
                   <CardTitle className='flex items-center gap-2'>
                      <FileText className='w-4 h-4' />
@@ -225,10 +225,10 @@ function FormCategory() {
                <CardContent>
                   <div className='relative overflow-x-auto'>
                      <table className='w-full text-sm text-left'>
-                        <thead className='text-xs uppercase bg-gray-50'>
+                        <thead className='text-xs  bg-gray-50'>
                            <tr>
                               <th className='px-6 py-3'>ID</th>
-                              <th className='px-6 py-3'>Category title</th>
+                              <th className='px-6 py-3'>Category Title</th>
                               <th className='px-6 py-3 text-right'>Remove</th>
                            </tr>
                         </thead>
@@ -245,7 +245,7 @@ function FormCategory() {
                                        variant='ghost'
                                        size='icon'
                                        onClick={() => handleRemove(item.id, item.name)}
-                                       className='hover:text-rose-700'
+                                       className='hover:text-rose-700 hover:scale-125 transition-all duration-300 ease-in-out'
                                     >
                                        <Trash2 className='w-4 h-4' />
                                     </Button>

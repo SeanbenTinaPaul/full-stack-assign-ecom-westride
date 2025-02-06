@@ -18,6 +18,15 @@ export const getCartUser = async (token) => {
       }
    });
 };
+
+export const clearCartUser = async (token) => {
+   return await axios.delete(`${apiUrl}/api/user/cart`, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};
+
 //res.json()
 export const saveAddressUser = async (token, addressObj) => {
    return await axios.post(`${apiUrl}/api/user/address`, addressObj, {
@@ -36,6 +45,13 @@ export const saveOrderUser = async (token, payload) => {
 };
 export const getOrderUser = async (token) => {
    return await axios.get(`${apiUrl}/api/user/order`, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};
+export const updateProfileUser = async (token, info) => {
+   return await axios.patch(`${apiUrl}/api/user/update-profile`, info, {
       headers: {
          Authorization: `Bearer ${token}`
       }
