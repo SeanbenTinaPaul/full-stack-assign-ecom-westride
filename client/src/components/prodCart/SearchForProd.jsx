@@ -30,7 +30,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    //console.log(textSearch);
    useEffect(() => {
       getCategory();
-      getProduct(100);
+      getProduct(100,1);
    }, []);
    //1. search by text
    //req.body → { "query": "core" }
@@ -87,7 +87,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
          //if not search input → just display all products
          //empty str is false, empty arr is true
          if (!searchTerms.query && searchTerms.category.length === 0) {
-            getProduct(100);
+            getProduct(100,1);
             setIsFoundTextSearch(true);
          }
 
@@ -96,7 +96,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
          if (result?.data?.length === 0) {
             //not found but display all prod instead
             setIsFoundTextSearch(false);
-            getProduct(100);
+            getProduct(100,1);
          } else {
             //found
             setIsFoundTextSearch(true);
@@ -123,7 +123,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 
       // Reset search results by fetching all products
       try {
-         await getProduct(100);
+         await getProduct(100,1);
          setIsFoundTextSearch(false);
       } catch (err) {
          console.error("Reset error:", err);

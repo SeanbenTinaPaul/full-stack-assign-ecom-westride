@@ -39,9 +39,7 @@ exports.createProd = async (req, res) => {
    }
 };
 
-exports.listProd = async (req, res) => {
-   // console.log("req to list", req);
-   // console.log("req.user to list", req.user);//undefined when NO <token> sent in req.header
+const updateDiscount = async () => {
    try {
       //auto check and update expired seasonal discount everytime frontend fetch product
       //use UTC time
@@ -68,11 +66,26 @@ exports.listProd = async (req, res) => {
             }
          });
       }
+   } catch (err) {
+      console.log(err);
+   }
+};
+
+exports.listProd = async (req, res) => {
+   // console.log("req to list", req);
+   // console.log("req.user to list", req.user);//undefined when NO <token> sent in req.header
+   try {
+      await updateDiscount();
       //----------------------------------------------------------------------------
       //findMany === SELECT * from TableName
       //take === LIMIT
       const { count } = req.params;
+      const {range} = req.body;
+      console.log("range->", range);
       const products = await prisma.product.findMany({
+         where: {
+            quantity: { gte: range }
+         },
          take: parseInt(count),
          orderBy: {
             createdAt: "desc"
@@ -305,18 +318,121 @@ exports.removeProd = async (req, res) => {
 //ใช้แสดงสินค้าเรียงตามความนิยม
 exports.displayProdBy = async (req, res) => {
    try {
-      //ต้องการ req 3 อย่าง: sort<เรียงอะไร?>, order<มากไปน้อย?>, limit<จำนวนที่ต้องการ?>
+      //auto-update expired discount
+      await updateDiscount();
+      //------------------------------------------------------------------------
+      //ต้องการ req 3 อย่าง: sort<col?>, order<มากไปน้อย?>, limit<จำนวนที่ต้องการ?>
       const { sort, order, limit } = req.body;
       const products = await prisma.product.findMany({
+         where: {
+            quantity: { gt: 0 }
+         },
          take: limit,
-         //[sort] เพื่อเอา value จาก key sort มาใช้
          orderBy: { [sort]: order },
-         include: { category: true }
+         include: { category: true, images: true, discounts: true }
       });
-      res.send(products);
+      res.status(200).json({
+         success: true,
+         data: products
+      });
    } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Server Error" });
+   }
+};
+
+exports.displayProdByUser = async (req, res) => {
+   const { id } = req.user;
+   try {
+      const favCatArr = await prisma.order.findMany({
+         where: {
+            orderedById: id,
+            OR: [{ status: "succeeded" }, { orderStatus: "Completed" }]
+         },
+         include: {
+            products: {
+               include: {
+                  product: {
+                     include: {
+                        category: true
+                     }
+                  }
+               }
+            }
+         }
+      });
+
+      //{'1': 5, '2': 3}
+      const catcount = {};
+      for (const order of favCatArr) {
+         for (const product of order.products) {
+            const catId = product.product.categoryId;
+            if (catId) {
+               catcount[catId] = (catcount[catId] || 0) + 1;
+            }
+         }
+      }
+
+      //get top 5 cat | topCat===[1, 2, 3, 4, 5]
+      const topCat = Object.entries(catcount)
+         .sort(([, a], [, b]) => b - a)
+         .slice(0, 5)
+         //[catId] = pair[0]
+         .map(([catId]) => parseInt(catId));
+
+      if (topCat.length === 0) {
+         return res.status(200).json({
+            success: true,
+            message: "No purchase history found",
+            data: []
+         });
+      }
+
+      //get 2 or 5 products from each category and group them
+      const recomProdsCat = {}; //{ "1": [{prod1}, {prod2}], "2": [{prod3}, {prod4}] }
+      const prodsPerCat = topCat.length > 2 ? 2 : 5;
+
+      for (const catId of topCat) {
+         const products = await prisma.product.findMany({
+            where: {
+               categoryId: catId,
+               quantity: { gt: 0 }
+            },
+            take: prodsPerCat,
+            orderBy: {
+               updatedAt: "desc"
+            },
+            include: {
+               category: true,
+               images: true,
+               discounts: true
+            }
+         });
+
+         // Store directly in the grouped format
+         recomProdsCat[catId] = products;
+      }
+      //recomProdArr===[{prod1},{prod2}]
+      const recomProdArr = Object.values(recomProdsCat).flat();
+      res.status(200).json({
+         success: true,
+         data: { recomProdsCat: recomProdsCat, topCat: topCat, recomProdArr: recomProdArr }
+      });
+      /*
+      data: {
+         topCat: [1, 2, 3, 4, 5], // category IDs
+         recomProdsCat: {
+            "1": [product1, product2],
+            "2": [product3, product4],
+                     }
+            }
+      */
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({
+         success: false,
+         message: "Error retrieving personalized recommendations"
+      });
    }
 };
 
@@ -516,6 +632,9 @@ exports.removeImage = async (req, res) => {
    }
 };
 
+
+
+
 /*
 //in case Cloudinary support return Promise by default ▼
 exports.removeImage = async (req, res) => {
@@ -679,4 +798,3 @@ exports.changeStatusDiscount = async (req, res) => {
       });
    }
 };
-

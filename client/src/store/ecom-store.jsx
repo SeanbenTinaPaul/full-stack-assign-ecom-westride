@@ -249,9 +249,9 @@ const ecomStore = (set, get) => ({
       }
    },
    //product in table
-   getProduct: async (count = 100) => {
+   getProduct: async (count = 100, range) => {
       try {
-         const res = await listProduct(count);
+         const res = await listProduct(count, range);
          // console.log("getProduct response:", res.data);
          set({ products: res.data }); //เก็บ res.data►[{},{},..] ที่ส่งมาจาก backend
 

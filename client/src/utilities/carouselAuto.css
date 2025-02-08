@@ -1,0 +1,44 @@
+/* Custom styles for Swiper pagination and navigation */
+.swiper-pagination-bullet {
+    width: 10px !important;
+    height: 10px !important;
+    background: rgba(157, 156, 156, 0.632) !important;
+    opacity: 0.5 !important;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: #6b21a8 !important; /* Purple color */
+    opacity: 1 !important;
+  }
+  
+  /* Navigation buttons */
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: grey !important; /* Purple color */
+    background: rgba(255, 255, 255, 0.8);
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.1);
+  }
+  
+  /* Adjust arrow size */
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 20px !important;
+    font-weight: bold;
+  }
+  
+  /* Hide navigation buttons on mobile */
+  @media (max-width: 768px) {
+    .swiper-button-next,
+    .swiper-button-prev {
+      /* display: none !important; */
+    }
+  }

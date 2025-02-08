@@ -35,7 +35,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
    useEffect(() => {
       const fetchProduct = async () => {
          try {
-            const res = await getProduct(100);
+            const res = await getProduct(1000, 0);
             console.log("res from TableListProducts->", res.data);
             if (res && res.data) {
                setTableData(res.data);

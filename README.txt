@@ -163,6 +163,14 @@ npx shadcn@latest add card
 
 Payment -> Build a checkout page on the client
 >npm install --save @stripe/react-stripe-js @stripe/stripe-js
+
+motion 
+>npm i framer-motion
+>npm install motion
+>npm i swiper
+
+upload non-db img 
+>npm i cloudinary
 -----------------------------------------------------
 
 ส่งข้อมูลไปยัง backend (เข้าไปเปิดไฟล์ของ backend แล้ว >npm start ก่อน)

@@ -1,9 +1,16 @@
 import React from "react";
+import BestSeller from "@/components/homeComponents/BestSeller";
+import CarouselBanner from "@/components/homeComponents/CarouselBanner";
+import NewProd from "@/components/homeComponents/NewProd";
 
 const Home = () => {
    return (
-      <div>
-         <h1 className='text-3xl  font-bold underline'>Home page</h1>
+      <div className=' flex flex-col items-center'>
+         <CarouselBanner />
+
+         <BestSeller />
+
+         <NewProd />
       </div>
    );
 };

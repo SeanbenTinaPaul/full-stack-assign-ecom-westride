@@ -40,7 +40,7 @@ function FormPromotion(props) {
          try {
             // const res = await getProduct(100);
             // setProducts(res.data);
-            getProduct(100);
+            getProduct(1000,0);
          } catch (error) {
             console.error(error);
             toast({
@@ -524,7 +524,7 @@ function FormPromotion(props) {
             setSelectedProducts([]);
             setDiscountAmount("");
             setDescription("");
-            getProduct(100);
+            getProduct(1000,0);
          }
       } catch (error) {
          console.error(error);

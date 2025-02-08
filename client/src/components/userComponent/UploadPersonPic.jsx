@@ -10,7 +10,7 @@ import { delImg, uploadFiles } from "@/api/ProductAuth";
 import { calculateTextColor } from "@/utilities/useContrastText";
 
 function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
-   const { token,user } = useEcomStore((state) => state);
+   const { token, user } = useEcomStore((state) => state);
    const [isLoading, setIsLoading] = useState(false);
    const [bgColors, setBgColors] = useState({}); //Store text color for each image
    const fileInputRef = createRef(); // Create a ref for the file input
@@ -144,23 +144,23 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
             )}
             {/* display selected(uploaded) images */}
             {console.log("inputForm->", inputForm)}
-            {console.log('user->',user)}
+            {console.log("user->", user)}
             {inputForm.image && (
                <div
                   key={inputForm.image?.asset_id}
                   className='relative  hover:z-22'
                >
                   <img
-                     src={inputForm.image?.url ? inputForm.image?.url : inputForm.image}
+                     src={inputForm.image?.url || inputForm.image}
                      alt='user-img'
                      className='h-32 object-cover scale-150 rounded-full hover:rounded-lg hover:shadow-lg hover:scale-[250%] transition-all duration-500 ease-in-out'
                      crossOrigin='anonymous' // Needed for Color Thief
-                     onLoad={(e) => handleCalculateTextColor(e.target, inputForm.image?.asset_id)}
+                     onLoad={(e) => handleCalculateTextColor(e.target, inputForm.image?.asset_id || inputForm.public_id)}
                   />
                   <span
-                     title='Delete image'
+                     title='Delete picture'
                      className={`absolute top-0 right-2 w-4 opacity-30 cursor-pointer hover:opacity-100 hover:rotate-90 hover:scale-y-125 transition duration-500`}
-                     onClick={() => handleDelImg(inputForm.image?.public_id ? inputForm.image?.public_id : inputForm.public_id)}
+                     onClick={() => handleDelImg(inputForm.image?.public_id || inputForm.public_id)}
                   >
                      <IconX
                         bgColor={bgColors[inputForm.image?.asset_id]}
@@ -183,22 +183,6 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
                className='form-control bg-transparent block w-32 text-sm text-transparent rounded-xl file:rounded-xl '
                onChange={handleOnChange}
             />
-            {/* <span className='text-sm text-gray-500'>
-               {imageCount > 0 ? `${imageCount} image(s)` : "No images selected"}
-            </span> */}
-            {/* <button
-                   onClick={handleButtonClick}
-                   className='px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2'
-                >
-                   Choose Files
-                </button>
-                <span className='text-sm text-gray-500'>
-                   {selectedFiles.length === 0
-                      ? "No file chosen"
-                      : selectedFiles.length === 1
-                      ? selectedFiles[0].name
-                      : `${selectedFiles.length} images selected`}
-                </span> */}
          </div>
       </div>
    );

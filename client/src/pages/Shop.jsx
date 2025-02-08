@@ -16,7 +16,7 @@ const Shop = () => {
    useEffect(() => {
       const fetchProducts = async () => {
          try {
-            await getProduct();
+            await getProduct(100,1);
          } catch (err) {
             console.error("Error fetching products:", err);
          }

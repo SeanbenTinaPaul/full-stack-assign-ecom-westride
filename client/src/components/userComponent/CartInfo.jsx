@@ -31,7 +31,7 @@ function CartInfo(props) {
    // console.log("carts in CartInfo", carts);
    // Sync with products when carts or products change
    const handleClickAddDelamount = () => {
-      getProduct();
+      getProduct(1000,1);
       // console.log("carts after click add", carts);
    };
    // Safe discount amount getter

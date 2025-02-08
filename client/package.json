@@ -26,6 +26,7 @@
     "@tanstack/react-table": "^8.20.6",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
     "colorthief": "^2.6.0",
     "date-fns": "^3.6.0",
@@ -44,6 +45,7 @@
     "react-router-dom": "^7.1.1",
     "react-toastify": "^11.0.2",
     "react-use": "^17.6.0",
+    "swiper": "^11.2.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.2"

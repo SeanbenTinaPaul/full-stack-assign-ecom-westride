@@ -87,7 +87,7 @@ function FormProduct() {
    }, [getCategory]);
 
    useEffect(() => {
-      getProduct(100);
+      getProduct(1000, 0);
    }, [getProduct]);
 
    //when filling each key in input box
@@ -168,7 +168,7 @@ function FormProduct() {
          });
          // toast.success(`Add Product: ${res.data.title} Success.`);
          //refresh the list after click 'Add Product'
-         getProduct();
+         getProduct(1000,0);
          setInputForm({
             title: "",
             description: "",
@@ -202,7 +202,7 @@ function FormProduct() {
             title: "Product Deleted Successfully",
             description: `Product: ${res.data.data.title}`
          });
-         getProduct();
+         getProduct(1000,0);
          setShowDialog(false);
          setProductToRemove(null);
          // toast.success(`Delete Product: ${res.data.data.title} Success.`);

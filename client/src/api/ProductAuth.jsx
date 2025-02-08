@@ -15,8 +15,8 @@ export const createProduct = async (token, form) => {
 
 //backend res.send()
 //count = 20 → LIMIT = 20
-export const listProduct = async (count = 50) => {
-   return await axios.get(`${apiUrl}/api/products/${count}`);
+export const listProduct = async (count = 50, range) => {
+   return await axios.post(`${apiUrl}/api/products/${count}`, { range });
 };
 
 //for EditProd.jsx → FormEditProd.jsx
@@ -95,3 +95,23 @@ export const bulkDiscount = async (token, form) => {
 export const seachFilterProd = async (filter) => {
    return await axios.post(`${apiUrl}/api/search-filters`, filter);
 };
+
+export const displayProdBy = async (sort = "sold", order = "desc", limit = 5) => {
+   return await axios.post(`${apiUrl}/api/display-prod-by`, { sort, order, limit });
+};
+export const displayProdByUser = async (token) => {
+   return await axios.get(`${apiUrl}/api/display-prod-by-user`, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+};
+export const getImgFromCloud = async (folderName) => {
+   return await axios.post(`${apiUrl}/api/get-folder-images`, {
+      folderName,
+      // maxResults,
+      // sortBy,
+      // order
+   });
+};
+

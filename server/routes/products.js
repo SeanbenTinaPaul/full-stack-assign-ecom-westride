@@ -9,6 +9,7 @@ const {
    updateProd,
    removeProd,
    displayProdBy,
+   displayProdByUser,
    searchFilters,
    uploadImages,
    removeImage,
@@ -18,7 +19,7 @@ const { authCheck, adminCheck } = require("../middlewares/authCheck");
 
 //ENDPOINT: http://localhost:5000/api/product
 //read
-router.get("/products/:count", listProd); //view product records according to count numbers
+router.post("/products/:count", listProd); //view product records according to count numbers
 router.get("/product/:id", readAprod); //for FormEditProd.jsx → readProduct(token, id,)
 
 //write
@@ -28,11 +29,13 @@ router.delete("/product/:id", authCheck, adminCheck, removeProd); //delete only 
 router.post("/bulk-discount", authCheck, adminCheck, handleBulkDiscount);
 
 //read
-router.post("/display-prod-by", displayProdBy); //pending...
+router.post("/display-prod-by", displayProdBy);
+router.get("/display-prod-by-user", authCheck, displayProdByUser);
 router.post("/search-filters", searchFilters);
 
 //image management in cloud ONLY
 router.post("/images", authCheck, uploadImages); //upload image to cloudinary
-router.post("/removeimage", authCheck,  removeImage); //use .post to delete multiple images
+router.post("/removeimage", authCheck, removeImage); //use .post to delete multiple images
+
 
 module.exports = router;

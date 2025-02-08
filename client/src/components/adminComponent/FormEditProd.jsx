@@ -108,39 +108,39 @@ function FormEditProd() {
       console.log("inputForm->", inputForm);
 
       //if user did not select category and click 'update Product' ► won't let to submit, using return to stop
-      for (let key in inputForm) {
-         if (!inputForm[key] || inputForm[key] === "") {
-            if (
-               key === "description" ||
-               key === "sold" ||
-               key === "images" ||
-               key === "avgRating" ||
-               key === "promotion"
-            )
-               continue; //empty description can be allowed
-            if (key === "categoryId") {
-               setAlert(
-                  <Alert variant='destructive'>
-                     <AlertCircle className='h-4 w-4' />
-                     <AlertTitle>Warning!</AlertTitle>
-                     <AlertDescription>Please select category.</AlertDescription>
-                  </Alert>
-               );
-               setTimeout(() => setAlert(null), 3000);
-               return;
-            } else {
-               setAlert(
-                  <Alert variant='destructive'>
-                     <AlertCircle className='h-4 w-4' />
-                     <AlertTitle>Warning!</AlertTitle>
-                     <AlertDescription>Please enter all fields.</AlertDescription>
-                  </Alert>
-               );
-               setTimeout(() => setAlert(null), 3000);
-               return;
-            }
-         }
-      }
+      // for (let key in inputForm) {
+      //    if (!inputForm[key] || inputForm[key] === "") {
+      //       if (
+      //          key === "description" ||
+      //          key === "sold" ||
+      //          key === "images" ||
+      //          key === "avgRating" ||
+      //          key === "promotion"
+      //       )
+      //          continue; //empty description can be allowed
+      //       if (key === "categoryId") {
+      //          setAlert(
+      //             <Alert variant='destructive'>
+      //                <AlertCircle className='h-4 w-4' />
+      //                <AlertTitle>Warning!</AlertTitle>
+      //                <AlertDescription>Please select category.</AlertDescription>
+      //             </Alert>
+      //          );
+      //          setTimeout(() => setAlert(null), 3000);
+      //          return;
+      //       } else {
+      //          setAlert(
+      //             <Alert variant='destructive'>
+      //                <AlertCircle className='h-4 w-4' />
+      //                <AlertTitle>Warning!</AlertTitle>
+      //                <AlertDescription>Please enter all fields.</AlertDescription>
+      //             </Alert>
+      //          );
+      //          setTimeout(() => setAlert(null), 3000);
+      //          return;
+      //       }
+      //    }
+      // }
 
       try {
          setLoading(true);
