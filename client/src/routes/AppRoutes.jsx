@@ -28,6 +28,7 @@ import CartUser from "@/pages/user/CartUser";
 import HistoryUser from "@/pages/user/HistoryUser";
 import UpdateOrder from "@/pages/admin/UpdateOrder";
 import EditProfileUser from "@/pages/user/EditProfileUser";
+import ViewProdUser from "@/pages/user/ViewProdUser";
 
 //แบ่งหน้า: 1. public 2. private
 //กลุ่มหน้า public ▼
@@ -70,11 +71,11 @@ const router = createBrowserRouter([
       children: [
          { index: true, element: <HomeUser /> },
          { path: "shop", element: <ShopUser /> },
-         //CartUser → ListCheckout
          { path: "cart", element: <CartUser /> },
          { path: "payment", element: <Payment /> },
          { path: "history", element: <HistoryUser /> },
-         { path: "editprofile", element: <EditProfileUser /> }
+         { path: "editprofile", element: <EditProfileUser /> },
+         { path: "view-product/:id", element: <ViewProdUser /> }
       ]
    }
 ]);

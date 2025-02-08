@@ -192,7 +192,7 @@ function FormEditProd() {
 
    //if click 'Cancel' → Del all new added images in Cloudinary
    const handleCancel = () => {
-      setCancelImg(true); // Trigger cleanup in UploadFile component
+      setCancelImg(true); // trigger cleanup in UploadFile component
       navigate("/admin/product");
    };
 

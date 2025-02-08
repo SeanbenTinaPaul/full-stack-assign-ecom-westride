@@ -217,30 +217,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
                      </div>
                   </Table.HeadCell>
 
-                  <Table.HeadCell
-                     className='cursor-pointer'
-                     onClick={() => sortData("description")}
-                  >
-                     <div className='flex items-center'>
-                        Description
-                        <svg
-                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
-                              sortCol === "description" && sortOrder === "asc" ? "rotate-180" : ""
-                           }`}
-                           xmlns='http://www.w3.org/2000/svg'
-                           fill='none'
-                           viewBox='0 0 24 24'
-                           stroke='currentColor'
-                        >
-                           <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
-                           />
-                        </svg>
-                     </div>
-                  </Table.HeadCell>
+                  
                   <Table.HeadCell
                      className='cursor-pointer'
                      onClick={() => sortData("createdAt")}
@@ -316,7 +293,6 @@ function TableListProducts({ products, handleDel, isRerender }) {
                         <Table.Cell>{formatNumber(row.price)}</Table.Cell>
                         <Table.Cell>{row.quantity}</Table.Cell>
                         <Table.Cell>{row.sold}</Table.Cell>
-                        <Table.Cell>{row.description}</Table.Cell>
                         <Table.Cell className="whitespace-nowrap">
                            {new Date(row.createdAt).toLocaleString("en-uk", {
                               timeZone: "Asia/Bangkok",

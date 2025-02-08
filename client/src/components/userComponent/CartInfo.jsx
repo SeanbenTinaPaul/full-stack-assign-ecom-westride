@@ -77,7 +77,8 @@ function CartInfo(props) {
    //send req to backend
    const handleCreateCart = async () => {
       try {
-         const res = await createCartUser(token, { carts });
+         //need req.body.carts: [{id, countCart, count, price, buyPriceNum, discount, productId},{..}]
+         const res = await createCartUser(token, { carts: carts });
          console.log("res.data.cart", res.data.cart);
          console.log("res.data.productOnCart", res.data.productOnCart);
          if (res.data.success) {

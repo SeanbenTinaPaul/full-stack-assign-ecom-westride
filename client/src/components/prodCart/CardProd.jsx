@@ -1,6 +1,7 @@
 //parent → ShopUser.jsx
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { Link, useLocation } from "react-router-dom";
 import { formatNumber } from "@/utilities/formatNumber";
 //component ui
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
@@ -9,7 +10,6 @@ import { Button } from "@/components/ui/button";
 //icons
 import { Heart, ShoppingCart, Star, StarHalf } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
-import { Link } from "react-router-dom";
 
 import { motion } from "motion/react";
 
@@ -152,12 +152,14 @@ function CardProd({ prodObj }) {
             <Card className='flex flex-col w-72 h-96 bg-gradient-to-br from-card to-slate-100 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
                {/* Product Image+fav+badge */}
                <div className='relative h-52 max-lg:h-28'>
+                  <Link to={`/user/view-product/${prodObj.id}`}>
                   <img
                      src={prodObj?.images?.[0]?.url || ""}
                      // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
                      alt='No image'
                      className='w-full h-full object-cover bg-gradient-to-tr from-slate-100 to-slate-200'
                   />
+                  </Link>
                   {(prodObj?.promotion || getDiscountAmount()) && (
                      <Badge className='absolute top-2 right-2 bg-red-500 px-1'>
                         -{renderPercentDiscount()}%

@@ -93,7 +93,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
          try {
             const res = await saveOrderUser(token, payload);
             console.log("res.data CheckoutForm", res.data);
-            resetCartsAfterPurchas();
+            resetCartsAfterPurchas(res.data.prodIdPaid);
             updateStatusSaveToCart(false);//reset isSaveToCart , carts is empty now so user need to save cart again
             navigate("/user/history");
          } catch (err) {

@@ -436,6 +436,10 @@ exports.saveOrder = async (req, res) => {
             quantity: { decrement: item.count }
          }
       }));
+      let prodIdPaid = [];
+      for (const item of updateProduct) {
+         prodIdPaid.push(item.where.id);
+      }
       //6.2 ส่ง updateProduct ไป update ในตาราง Product
       //The key is to collect the promises in an array and then use Promise.all() to wait for all the promises to resolve.
       // await Promise.all([promise1, promise2, ...]) | when promise = {..}
@@ -452,7 +456,8 @@ exports.saveOrder = async (req, res) => {
          message: "save Order Success",
          data: userCart,
          updateProduct: updateProduct,
-         order: order
+         order: order,
+         prodIdPaid: prodIdPaid
       });
       //7. records ในตาราง Order และ ProductOnOrder จะไม่ถูกลบ → ใช้เก็บ log การสั่งซื้อทั้งหมดของ users
    } catch (err) {

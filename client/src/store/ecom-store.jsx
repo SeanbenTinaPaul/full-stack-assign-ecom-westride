@@ -24,8 +24,9 @@ const ecomStore = (set, get) => ({
    showLogoutConfirm: false, // for Show confirmation if user go logout BUT cart not empty and not saved
    isLoggingOut: false, //to check logout attempt
    //to control logout confirmation dialog
-   resetCartsAfterPurchas: () => {
-      set({ carts: [] });
+   resetCartsAfterPurchas: (prodIdPaidArr) => {
+      //keep carts[i].id that not in prodIdPaidArr
+      set({ carts: get().carts.filter((obj) => !prodIdPaidArr.includes(obj.id)) });
    },
    updateStatusSaveToCart: (value) => {
       //ทำคอขวด ไม่ให้ Badge ใน SidebarUser.jsx เอาค่า carts.length ไปใช้ได้ง่ายๆจนกว่าจะกด "Place Order" ที่ CartInfo.jsx
