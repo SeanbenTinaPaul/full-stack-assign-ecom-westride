@@ -8,6 +8,7 @@ const {
    saveAddress,
    saveOrder,
    getOrder,
+   addProdRating,
    favoriteProduct,
    updateUserProfile
 } = require("../service/userService");
@@ -23,6 +24,7 @@ router.post("/user/address", authCheck, saveAddress);
 
 router.post("/user/order", authCheck, saveOrder);
 router.get("/user/order", authCheck, getOrder);
+router.post('/user/rating', authCheck, addProdRating);
 
 router.patch("/user/update-profile", authCheck, updateUserProfile);
 router.post("/user/favorite-prod", favoriteProduct);//pending...

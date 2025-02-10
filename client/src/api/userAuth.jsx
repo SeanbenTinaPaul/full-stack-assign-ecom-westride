@@ -57,3 +57,10 @@ export const updateProfileUser = async (token, info) => {
       }
    });
 };
+export const addRatingUser = async (token, payload) => {
+   return await axios.post(`${apiUrl}/api/user/rating`, payload, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+}

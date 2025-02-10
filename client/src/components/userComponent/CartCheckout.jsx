@@ -36,12 +36,12 @@ function CartCheckout({ isCollapsedContext }) {
 
    // Sync with products when carts or products change
    useEffect(() => {
-      getProduct(1000,0);
+      getProduct(1000,1);
    }, []);
 
    //fetch products every '+' and '-' clicked
    const handleClickAddDelamount = () => {
-      getProduct(1000,0);
+      getProduct(1000,1);
       // console.log("carts after click add", carts);
    };
    //check if scrolled to bottom

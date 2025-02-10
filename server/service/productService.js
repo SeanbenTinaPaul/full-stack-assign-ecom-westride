@@ -80,7 +80,7 @@ exports.listProd = async (req, res) => {
       //findMany === SELECT * from TableName
       //take === LIMIT
       const { count } = req.params;
-      const {range} = req.body;
+      const { range } = req.body;
       console.log("range->", range);
       const products = await prisma.product.findMany({
          where: {
@@ -122,7 +122,7 @@ exports.readAprod = async (req, res) => {
       //findFirst === SELECT * from TableName WHERE id = ?
       //take === LIMIT
       const { id } = req.params;
-      const products = await prisma.product.findFirst({
+      const aProduct = await prisma.product.findFirst({
          where: {
             id: parseInt(id)
          },
@@ -130,7 +130,8 @@ exports.readAprod = async (req, res) => {
          //เพิ่มเพื่อดึงข้อมูลจากตาราง category...
          include: {
             category: true,
-            images: true
+            images: true,
+            ratings: true
             /*
                 model Product {
                     category Category? @relation(fields: [categoryId], references: [id])  // Points to one category
@@ -139,9 +140,59 @@ exports.readAprod = async (req, res) => {
                 */
          }
       });
+
+      //cal percent of ratings from 1 to 5
+      // const { ratings } = aProduct;
+      let score1 = 0,
+         score2 = 0,
+         score3 = 0,
+         score4 = 0,
+         score5 = 0;
+      let percent1 = 0,
+         percent2 = 0,
+         percent3 = 0,
+         percent4 = 0,
+         percent5 = 0;
+      if (aProduct.ratings.length > 0) {
+         for (const ratings of aProduct.ratings) {
+            if (ratings?.rating === 5) {
+               score5++;
+            } else if (ratings?.rating === 4) {
+               score4++;
+            } else if (ratings?.rating === 3) {
+               score3++;
+            } else if (ratings?.rating === 2) {
+               score2++;
+            } else if (ratings?.rating === 1) {
+               score1++;
+            }
+         }
+
+         percent5 = score5 > 0 ? (score5 / aProduct.ratings?.length) * 100 : 0;
+         percent4 = score4 > 0 ? (score4 / aProduct.ratings?.length) * 100 : 0;
+         percent3 = score3 > 0 ? (score3 / aProduct.ratings?.length) * 100 : 0;
+         percent2 = score2 > 0 ? (score2 / aProduct.ratings?.length) * 100 : 0;
+         percent1 = score1 > 0 ? (score1 / aProduct.ratings?.length) * 100 : 0;
+
+         // const totalRating = aProduct.ratings.reduce((acc, curr) => acc + curr.rating, 0);
+         // aProduct.ratingPercent = (totalRating / aProduct.ratings.length) * 100;
+      }
       res.status(200).json({
          success: true,
-         data: products
+         data: aProduct,
+         globalRatingCount: aProduct.ratings.length,
+         ratingInfo: {
+            score1,
+            score2,
+            score3,
+            score4,
+            score5,
+            percent1,
+            percent2,
+            percent3,
+            percent4,
+            percent5
+         }
       });
       // res.send(products);
    } catch (err) {
@@ -631,9 +682,6 @@ exports.removeImage = async (req, res) => {
       res.status(500).json({ message: "Server Error" });
    }
 };
-
-
-
 
 /*
 //in case Cloudinary support return Promise by default ▼

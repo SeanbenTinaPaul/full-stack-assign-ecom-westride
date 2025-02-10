@@ -482,7 +482,7 @@ exports.getOrder = async (req, res) => {
          orderBy: { createdAt: "desc" },
          include: {
             products: {
-               include: { product: true }
+               include: { product: { include: { ratings: true } } }
             }
          }
       });
@@ -501,6 +501,108 @@ exports.getOrder = async (req, res) => {
          success: false,
          message: "Get to getOrder Error",
          error: err.message
+      });
+   }
+};
+
+/*
+req.body
+{
+  "ratings": [
+    {
+      "productId": 1,
+      "orderId": 123,
+      "rating": 4,
+      "comment": "Good quality product!"
+    },
+    {
+      "productId": 2,
+      "orderId": 123,
+      "rating": 5,
+      "comment": "Excellent service and fast delivery"
+    },
+*/
+exports.addProdRating = async (req, res) => {
+   try {
+      const { ratings } = req.body;
+      const userId = req.user.id;
+      console.log("ratings->", ratings);
+      // return;
+      //validate if rating star < 1 or > 5 → reject
+      if (ratings.some((r) => r.rating < 1 || r.rating > 5)) {
+         return res.status(400).json({
+            success: false,
+            message: "Rating star must be between 1 and 5."
+         });
+      }
+
+      //add all rating
+      const transactionResult = await prisma.$transaction(async (prisma) => {
+         //1. create all rating
+         const createRating = await Promise.all(
+            ratings.map((rating) => {
+               return prisma.rating.create({
+                  data: {
+                     rating: rating.rating,
+                     comment: rating.comment,
+                     productId: rating.productId,
+                     orderId: rating.orderId,
+                     userId: userId
+                  }
+               });
+            })
+         );
+         /*
+         // Input ratings
+         ratings === [
+            { productId: 1, rating: 5 },
+            { productId: 1, rating: 4 },
+            { productId: 2, rating: 3 }
+         ];
+
+         // After groupBy
+         productRatings === [
+            { productId: 1, _avg: { rating: 4.5 }, _count: { _all: 2 } },
+            { productId: 2, _avg: { rating: 3.0 }, _count: { _all: 1 } }
+         ];
+         */
+         //2. get updated avg rating for affected products
+         const prodRating = await prisma.rating.groupBy({
+            by: ["productId"], //group records by productId
+            where: {
+               productId: { in: ratings.map((r) => r.productId) }
+            },
+            _avg: {
+               //cal avg
+               rating: true //..of grouped rating col
+            },
+            _count: true //cal row count of each productId groups
+         });
+         //3. update avgRAting in Product table (each productId)
+         await Promise.all(
+            prodRating.map((prodRating) => {
+               return prisma.product.update({
+                  where: { id: prodRating.productId },
+                  data: {
+                     avgRating: prodRating._avg.rating
+                  }
+               });
+            })
+         );
+         return createRating; 
+         //return this to save to transactionResult | without this, transactionResult===undefinded
+      });
+
+      res.status(200).json({
+         success: true,
+         message: "Add rating success",
+         data: transactionResult
+      });
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({
+         success: false,
+         message: "Add rating error"
       });
    }
 };
@@ -559,16 +661,14 @@ exports.updateUserProfile = async (req, res) => {
                console.log("token update", token);
                console.log("paylod upadate", payload);
                //front need payload.role and token to access
-               return res
-                  .status(200)
-                  .json({
-                     success: true,
-                     message: "update profile success ☻",
-                     payload,
-                     token,
-                     picture: updateUser.picture,
-                     picturePub: updateUser.picturePub
-                  });
+               return res.status(200).json({
+                  success: true,
+                  message: "update profile success ☻",
+                  payload,
+                  token,
+                  picture: updateUser.picture,
+                  picturePub: updateUser.picturePub
+               });
             }
          }
       );

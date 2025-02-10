@@ -169,8 +169,8 @@ motion
 >npm install motion
 >npm i swiper
 
-upload non-db img 
->npm i cloudinary
+rate score
+>npm i react-rating-stars-component
 -----------------------------------------------------
 
 ส่งข้อมูลไปยัง backend (เข้าไปเปิดไฟล์ของ backend แล้ว >npm start ก่อน)

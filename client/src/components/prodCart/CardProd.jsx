@@ -217,7 +217,7 @@ function CardProd({ prodObj }) {
                      <div className='mt-1 mb-0 flex items-center space-x-1 max-lg:space-x-0 max-ld:top-[138px] max-lg:left-2'>
                         {renderStar(prodObj.avgRating)}
                         <span className='text-sm text-gray-500 ml-1 max-lg:text-xs '>
-                           {prodObj.avgRating}
+                           {formatNumber(prodObj.avgRating)}
                         </span>
                      </div>
                   </CardContent>
