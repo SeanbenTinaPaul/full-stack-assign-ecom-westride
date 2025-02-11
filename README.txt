@@ -1,4 +1,7 @@
-Inspired by Roitai-Dev's ecom-2024 repository
+Special thanks to Roitai-Dev's ecom-2024 for the initial reference points in:
+- Database schema fundamentals
+- Frontend architecture patterns
+While these elements provided a valuable starting foundation, this project has evolved into its own distinct implementation with unique features, optimizations, and architectural decisions.
 
 -----------Server---------------
 >npm init -y
