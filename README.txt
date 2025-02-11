@@ -1,11 +1,5 @@
 Inspired by Roitai-Dev's ecom-2024 repository
 
-https://nodejs.org/en/download/package-manager/current
-https://www.postman.com/downloads/
-https://dev.mysql.com/downloads/workbench/
-https://code.visualstudio.com/download
-
-
 -----------Server---------------
 >npm init -y
 >npm install express morgan cors nodemon bcryptjs jsonwebtoken
