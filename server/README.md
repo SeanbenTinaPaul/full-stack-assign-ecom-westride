@@ -1,4 +1,4 @@
-#Inspired by Roitai-Dev's ecom-2024 repository
+Inspired by Roitai-Dev's ecom-2024 repository
 # API Endpoints Summary
 
 ## Authentication
