@@ -81,9 +81,11 @@ function Login() {
    const roleRedirect = (role) => {
       if (role === "admin") {
          navigate("/admin");
-      } else {
+      } else if(role==="user"){
          navigate("/user");
          // navigate(-1); //กลับไป previous url
+      }else{
+         navigate(-1); //กลับไป previous url
       }
    };
 

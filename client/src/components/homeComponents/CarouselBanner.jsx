@@ -1,9 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-//img banner from cloudinary
-const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const cloudAPIkey = import.meta.env.VITE_CLOUDINARY_API_KEY;
-const cloudSecret = import.meta.env.VITE_CLOUDINARY_API_SECRET;
-
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -11,14 +6,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import 'swiper/css/free-mode';
+import 'swiper/css/thumbs';
 
 // import required modules
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { Autoplay, Pagination, Navigation,FreeMode,Thumbs } from "swiper/modules";
 import axios from "axios";
+
 import { getImgFromCloud,readProduct } from "@/api/ProductAuth";
 
 function CarouselBanner(props) {
    const [imagArr, setImagArr] = useState([]);
+   const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
    useEffect(() => {
       const fetchImg = async () => {
@@ -49,10 +48,14 @@ function CarouselBanner(props) {
                stopOnLastSlide: false,
                waitForTransition: false
             }}
+            //for thumbnail
+            thumbs={{ swiper: thumbsSwiper }}
+            // loop={true}
+            // navigation={true}
             // speed={800}
-            modules={[Autoplay, Pagination]}
+            modules={[Autoplay, Pagination,FreeMode,Navigation,Thumbs]}
             pagination={{ clickable: false, dynamicBullets: true }}
-            className='mySwiper h-auto w-[90dvw] object-cover rounded-lg mb-2 shadow-md'
+            className='mySwiper h-auto w-[90dvw] object-cover rounded-lg mb-2 shadow-md cursor-grab active:cursor-grabbing'
          >
             {imagArr?.map((img) => (
                <SwiperSlide
@@ -70,6 +73,8 @@ function CarouselBanner(props) {
             ))}
          </Swiper>
          {/*  */}
+        
+         {/*  */}
          <Swiper
             slidesPerView={5}
             spaceBetween={10}
@@ -85,10 +90,15 @@ function CarouselBanner(props) {
                stopOnLastSlide: false,
                waitForTransition: false
             }}
+            //for thumbnail
+            onSwiper={setThumbsSwiper}
+            loop={true}
+            freeMode={true}
+            watchSlidesProgress={true}
             // speed={800}
-            modules={[Autoplay, Pagination, Navigation]}
+            modules={[Autoplay, Pagination, Navigation,FreeMode,Thumbs]}
             pagination={{ clickable: true, dynamicBullets: true }}
-            className='mySwiper h-24 w-[90dvw] object-cover rounded-lg '
+            className='mySwiper h-24 w-[90dvw] object-cover rounded-lg cursor-pointer'
          >
             {imagArr?.map((img) => (
                <SwiperSlide

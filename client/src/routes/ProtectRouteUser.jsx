@@ -30,7 +30,7 @@ export const ProtectRouteUser = ({ element }) => {
             })
             .catch((err) => setPass(false));//if currUserProfile() recieve res.status(401) 
       }
-   }, []);
+   }, [ user, token ]);
 
    return pass ? element : <LoadingToRedirect />; // element ► <LayoutUser />
 };

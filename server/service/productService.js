@@ -131,7 +131,22 @@ exports.readAprod = async (req, res) => {
          include: {
             category: true,
             images: true,
-            ratings: true
+            ratings: {
+               orderBy:{
+                  order: {
+                     createdAt: "desc"
+                  }
+               },
+               include: { 
+                  user: { 
+                     select: { 
+                        name: true, picture: true 
+                     } 
+                  } 
+               }
+               // orderBy: { createdAt: "desc" }
+            }
+            // orderItems: true
             /*
                 model Product {
                     category Category? @relation(fields: [categoryId], references: [id])  // Points to one category
@@ -140,7 +155,23 @@ exports.readAprod = async (req, res) => {
                 */
          }
       });
-
+      const prodOnOrder = await prisma.productOnOrder.findMany({
+         where: {
+            productId: parseInt(id)
+         },
+         orderBy: {
+            order: {
+               createdAt: "desc"
+            }
+         },
+         include: {
+            order: {
+               select: {
+                  createdAt: true
+               }
+            }
+         }
+      });
       //cal percent of ratings from 1 to 5
       // const { ratings } = aProduct;
       let score1 = 0,
@@ -180,6 +211,7 @@ exports.readAprod = async (req, res) => {
       res.status(200).json({
          success: true,
          data: aProduct,
+         prodOnOrder: prodOnOrder,
          globalRatingCount: aProduct.ratings.length,
          ratingInfo: {
             score1,

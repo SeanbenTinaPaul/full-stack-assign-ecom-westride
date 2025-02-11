@@ -1,9 +1,9 @@
+//parent → ViewProdPageUser.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { formatNumber } from "@/utilities/formatNumber";
 import { renderStar } from "@/utilities/renderStars";
 //component ui
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,9 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 
 import { motion } from "motion/react";
 import { readProduct } from "@/api/ProductAuth";
+import { SwiperSlide } from "swiper/react";
+import CarouselThumnailProd from "@/utilities/CarouselThumnailProd";
+import GlobalRating from "@/components/userComponent/GlobalRating";
 
 const inputProd = {
    title: "",
@@ -53,6 +56,16 @@ function ViewProdUser(props) {
    // Add loading state
    const [isLoading, setIsLoading] = useState(true);
    const [quantity, setQuantity] = useState(1);
+
+   //for thumbnail carousel
+   const [imagArr, setImagArr] = useState([]);
+   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+
+   //global rating
+   const [ratingCount, setRatingCount] = useState(0);
+   const [ratingInfo, setRatingInfo] = useState({});
+   const [rateAndComment, setRateAndComment] = useState([]);
+   const [prodOnOrder, setProdOnOrder] = useState([]);
 
    const handleFavorite = () => {
       setIsFavorite(!isFavorite);
@@ -202,47 +215,7 @@ function ViewProdUser(props) {
       }));
    }, [productData?.id, carts, calDiscountedPrice]);
 
-   //  useEffect(() => {
-   //     const calDiscountPrice = () => {
-   //        const discountAmount = getDiscountAmount();
-   //        let buyPrice = formatNumber(productData?.price); //assign เผื่อไม่มี discount กับ promotion
-   //        let buyPriceNum = productData?.price;
-   //        let preferDiscount = null;
-
-   //        if (productData?.promotion > discountAmount) {
-   //           preferDiscount = productData.promotion;
-   //           buyPriceNum = productData.price * (1 - productData.promotion / 100);
-   //           buyPrice = formatNumber(buyPriceNum);
-   //        } else if (productData?.promotion < discountAmount) {
-   //           preferDiscount = discountAmount;
-   //           buyPriceNum = productData.price * (1 - productData.discounts[0].amount / 100);
-   //           buyPrice = formatNumber(buyPriceNum);
-   //        }
-
-   //        // selct carts[i].id vs productData.id when first render | if existProdIndex !== -1 ► setProductData(carts[existProdIndex])
-   //        if (carts.length > 0) {
-   //           let existProdIndex = carts.findIndex((item) => item.id === productData.id);
-   //           setProductData((prev) => ({
-   //              ...prev,
-   //              ...carts[existProdIndex],
-   //              buyPrice: buyPrice,
-   //              buyPriceNum: buyPriceNum,
-   //              preferDiscount: preferDiscount
-   //           }));
-   //        }
-
-   //        setProductData((prev) => ({
-   //           ...prev,
-   //           buyPrice: buyPrice,
-   //           buyPriceNum: buyPriceNum,
-   //           preferDiscount: preferDiscount
-   //        }));
-   //        // synCartwithProducts(productData);
-   //     };
-   //     calDiscountPrice();
-
-   //     synCartwithProducts(productData);
-   //  }, [setProductData, carts]);
+   
 
    const handleGoBack = async () => {
       try {
@@ -261,13 +234,20 @@ function ViewProdUser(props) {
          setIsLoading(false);
       }
    };
+
    useEffect(() => {
       const fetchData = async () => {
          try {
             setIsLoading(true);
             const res = await readProduct(id);
+            // console.log("res data readProd->", res.data);
             setProductData(res.data.data);
-            await getCategory();
+            setImagArr(res.data.data.images);
+            setRatingCount(res.data.globalRatingCount);
+            setRatingInfo({ ...res.data.ratingInfo });
+            setRateAndComment(res.data.data.ratings);
+            setProdOnOrder(res.data.prodOnOrder);
+            await getCategory(); //random solution to trigger contents in navigte path to rerender
          } catch (err) {
             console.error("Error fetching product:", err);
             toast({
@@ -275,7 +255,7 @@ function ViewProdUser(props) {
                title: "Error",
                description: "Failed to load product details"
             });
-            // Redirect on error
+            // redirect if cant fetch this prod
             navigate(-1, { replace: true });
          } finally {
             setIsLoading(false);
@@ -299,11 +279,11 @@ function ViewProdUser(props) {
    const renderDiscountPrice = (price) => {
       const discountAmount = getDiscountAmount();
       if (productData?.promotion > discountAmount) {
-         return formatNumber(price * (1 - productData.promotion / 100));
+         return price * (1 - productData.promotion / 100);
       } else if (productData?.promotion < discountAmount) {
-         return formatNumber(price * (1 - productData.discounts[0].amount / 100));
+         return price * (1 - productData.discounts[0].amount / 100);
       }
-      return formatNumber(price);
+      return price;
    };
    //3.cal percent discount for badge
    const renderPercentDiscount = () => {
@@ -320,7 +300,7 @@ function ViewProdUser(props) {
 
    return (
       <div className='mt-10 ml-4 py-6 px-4'>
-         <div>
+         <div className='flex items-center justify-center mb-4 pr-1 w-10 h-10 bg-card rounded-full opacity-70 hover:opacity-100 hover:scale-110'>
             <div
                //  to={"/user/shop"}
                className='cursor-pointer'
@@ -331,31 +311,40 @@ function ViewProdUser(props) {
          </div>
          {/* {console.log("prodObj", prodObj)} */}
          {/* {console.log("productData", productData)} */}
-         <main className='flex w-[90dvw] h-[60dvh] min-w-[700px] bg-gradient-to-br from-card to-slate-100 '>
+         <main className='inline-flex w-[90dvw] h-[60dvh] min-w-[700px] bg-gradient-to-br from-card to-slate-100 shadow-md rounded-xl'>
             {/* Image*/}
             <article className='w-1/2 h-full '>
-               <img
-                  src={productData?.images?.[0]?.url || ""}
-                  // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
-                  alt='No image'
-                  className='w-full h-3/4 object-cover bg-gradient-to-tr from-slate-100 to-slate-200 border'
-               />
-               <div className='h-1/4 border border-green-400'>Swiper pending..</div>
+               <CarouselThumnailProd
+                  setThumbsSwiper={setThumbsSwiper}
+                  thumbsSwiper={thumbsSwiper}
+               >
+                  {imagArr?.map((image) => (
+                     <SwiperSlide key={image.id} className='swiper-slide'>
+                        <img
+                           src={image?.url}
+                           alt='No image'
+                           className='object-cover bg-gradient-to-tr from-slate-100 to-slate-200 '
+                        />
+                     </SwiperSlide>
+                  ))}
+               </CarouselThumnailProd>
             </article>
+            {/* All right */}
             <article className='w-1/2 flex flex-col'>
-               <header className='flex flex-col h-52 w-full p-4 gap-2 border-2 border-yellow-300'>
-                  <p className='font-medium text-2xl drop-shadow '>{productData.title}</p>
+               {/* top-left : title discount star brand sold fav  */}
+               <header className='flex flex-col h-52 w-full p-4 gap-2 '>
+                  <p className='mb-4 font-medium text-2xl drop-shadow '>{productData.title}</p>
                   {(productData?.promotion || getDiscountAmount()) && (
-                     <Badge className='w-12 bg-red-500 py-1 px-2'>
+                     <Badge className='ml-4 w-12 bg-red-500 py-1 px-2'>
                         -{renderPercentDiscount()}%
                      </Badge>
                   )}
-                  {/* fav btn */}
+
                   <section className='flex justify-between'>
-                     <div className='mt-1  flex items-center space-x-1'>
+                     <div className='mt-1 ml-4 flex items-center space-x-1'>
                         {renderStar(productData.avgRating)}
                         <span className='text-lg text-gray-500 ml-1  '>
-                           {productData.avgRating}
+                           {productData.avgRating?.toFixed(1)}
                         </span>
                      </div>
                      <Button
@@ -383,19 +372,19 @@ function ViewProdUser(props) {
                      </header>
                   </section>
                </header>
-               {/*title + description+ brand  */}
-               <header className='flex flex-col justify-between h-full border-4 border-purple-500 '>
+               {/* bottom-left : price + discount price + adjust + stock + Buy now + Add to card  */}
+               <header className='flex flex-col justify-between h-full '>
                   {/* <div className="border-2 border-red-300  flex flex-col justify-between h-full"> */}
                   {/*className='space-y-1 px-4 py-2 max-lg:py-1 max-lg:px-2'  */}
 
-                  {/* price + discount + rating */}
-                  <section className='p-4 border'>
+                  {/* price + discount  */}
+                  <section className='p-4 '>
                      <div className='flex space-x-4 '>
                         {/* ราคาหลังหัก promotion */}
                         <span className='text-3xl font-bold text-blue-600 drop-shadow'>
                            ฿
                            {productData?.promotion || getDiscountAmount()
-                              ? renderDiscountPrice(productData?.price)
+                              ? formatNumber(renderDiscountPrice(productData?.price))
                               : formatNumber(productData?.price)}
                         </span>
                         {/* ราคาจริง มีขีด line-through */}
@@ -406,42 +395,47 @@ function ViewProdUser(props) {
                         </span>
                      </div>
                   </section>
-                  {/* </div> */}
-                  <section>
-                     <div className='flex justify-between items-center '>
-                        {/* LEFT:quantity */}
-                        <div className='flex items-center space-x-4'>
-                           <section className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                  {/* adjust quantity stock*/}
+                  <section className='px-4'>
+                     <div className='flex gap-4 w-full '>
+                        <div className='flex flex-col w-full items-center p-4 gap-4  '>
+                           <section className='w-full flex items-center justify-between px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-2xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
                               <button
                                  onClick={() => handleQuantityChange(-1)}
                                  disabled={quantity <= 1}
-                                 className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                                 className='px-3 w-14 h-10 bg-gradient-to-b from-card to-gray-100 rounded-2xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
                               >
                                  -
                               </button>
-                              <span className='px-4 font-light text-xs'>{quantity}</span>
+                              <span className='px-4 font-light text-sm'>{quantity}</span>
                               <button
                                  onClick={() => handleQuantityChange(1)}
                                  disabled={quantity >= productData.quantity}
-                                 className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                                 className='px-3 w-14 h-10 bg-gradient-to-b from-card to-gray-100 rounded-2xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
                               >
                                  +
                               </button>
                            </section>
-                           <p className='font-light text-xs text-gray-500'>
+                           <p className='w-full text-center font-light text-base text-gray-500'>
                               {/* In stock: {cart.quantity - cart.countCart} */}
                               In stock: {productData.quantity - quantity}
                            </p>
                         </div>
-                        {/* RIGHT: price */}
-                        {/* {console.log("cart buyPriceNum", cart)} */}
-                        <section className='font-medium text-base text-fuchsia-900'>
-                           {/* ฿{formatNumber(cart.buyPriceNum * cart.countCart)} */}
-                        </section>
+                        {/* RIGHT: price * quantity */}
+                        <div className='w-full flex flex-col items-center gap-4 py-4 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-2xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                           <section className='w-full text-center font-normal text-2xl text-fuchsia-900 drop-shadow'>
+                              ฿
+                              {productData?.promotion || getDiscountAmount()
+                                 ? formatNumber(renderDiscountPrice(productData?.price) * quantity)
+                                 : formatNumber(productData?.price * quantity)}
+                              {/* ฿{formatNumber(cart.buyPriceNum * quantity)} */}
+                           </section>
+                           <p className='font-normal text-base text-gray-500'>Net total</p>
+                        </div>
                      </div>
                   </section>
                   {/* Add to cart BTN */}
-                  <footer className='p-4 border-2'>
+                  <footer className='p-4 '>
                      {!user ? (
                         <Link
                            to='/login'
@@ -480,10 +474,24 @@ function ViewProdUser(props) {
                </header>
             </article>
          </main>
+         {/*Global rating  */}
+         <main className="mt-4">
+            <GlobalRating
+               ratingCount={ratingCount}
+               ratingInfo={ratingInfo}
+               rateAndComment={rateAndComment}
+               prodOnOrder={prodOnOrder}
+               productData={productData}
+            />
+         </main>
       </div>
    );
 }
-
+/*
+   const [ratingCount, setRatingCount] = useState(0);
+   const [ratingInfo, setRatingInfo] = useState({});
+   const [rateAndComment, setRateAndComment] = useState([]);
+   */
 ViewProdUser.propTypes = {};
 
 export default ViewProdUser;

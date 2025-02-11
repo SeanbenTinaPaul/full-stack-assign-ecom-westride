@@ -1,0 +1,96 @@
+.main-swiper .swiper-slide {
+    height: 100%;
+    overflow: hidden;
+   
+}
+
+.main-swiper .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* background-image: none; */
+}
+
+/* Thumbnail swiper styles */
+.thumb-swiper .swiper-slide {
+    opacity: 0.4;
+    height: 100%;
+    /* width: auto; */
+    overflow: hidden;
+}
+
+.thumb-swiper .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.thumb-swiper .swiper-slide-thumb-active {
+    opacity: 1;
+}
+
+/* navigation buttons */
+.swiper-button-next,
+.swiper-button-prev {
+    color: #666;
+    background: rgba(255, 255, 255, 0.8);
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50%;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 16px !important;
+}
+
+/* .swiper-slide { */
+/* styles to maintain aspect ratio */
+/* position: relative; */
+/*  for absolute positioning of the image */
+/* width: 100%; */
+/* padding-bottom: 75%; */
+/* adjust this value to set the desired aspect ratio (e.g., 75% for 4:3) */
+/* overflow: hidden; */
+/* } */
+
+/* .swiper-slide img { */
+/* position: absolute; */
+/* top: 0; */
+/* left: 0; */
+/* width: 100%; */
+
+/* height: 100%; */
+/* object-fit: contain; */
+/* background-color: white; */
+/* background-image: none; */
+/* maintain aspect ratio and cover the entire area */
+/* } */
+
+/* .thumbnail-swiper-slide { */
+/* position: relative; */
+/* width: 100%; */
+/* height: 100%; */
+/* overflow: hidden; */
+/* border-radius: 5px; */
+/* opacity: 0.4; */
+
+/* } */
+/* .thumbnail-swiper-slide-active { */
+/* opacity: 1; */
+/* } */
+
+/* .thumbnail-swiper-slide img { */
+/* position: absolute; */
+/* top: 0; */
+/* left: 0; */
+/* width: 100%; */
+/* height: 100%; */
+/* object-fit:contain; */
+/* } */
+/* Remove pagination from thumbnail swiper */
+/* .thumbnail-swiper .swiper-pagination { */
+/* display: none; */
+/* } */
+/* Main swiper styles */

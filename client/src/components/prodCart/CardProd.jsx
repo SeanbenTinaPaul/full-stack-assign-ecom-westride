@@ -152,13 +152,15 @@ function CardProd({ prodObj }) {
             <Card className='flex flex-col w-72 h-96 bg-gradient-to-br from-card to-slate-100 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
                {/* Product Image+fav+badge */}
                <div className='relative h-52 max-lg:h-28'>
-                  <Link to={`/user/view-product/${prodObj.id}`}>
-                  <img
-                     src={prodObj?.images?.[0]?.url || ""}
-                     // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
-                     alt='No image'
-                     className='w-full h-full object-cover bg-gradient-to-tr from-slate-100 to-slate-200'
-                  />
+                  <Link
+                     to={user ? `/user/view-product/${prodObj.id}` : `/view-product/${prodObj.id}`}
+                  >
+                     <img
+                        src={prodObj?.images?.[0]?.url || ""}
+                        // Without optional chaining → prodObj.images[0].url ► NO '.' in front of [0]
+                        alt='No image'
+                        className='w-full h-full object-cover bg-gradient-to-tr from-slate-100 to-slate-200'
+                     />
                   </Link>
                   {(prodObj?.promotion || getDiscountAmount()) && (
                      <Badge className='absolute top-2 right-2 bg-red-500 px-1'>
@@ -217,7 +219,7 @@ function CardProd({ prodObj }) {
                      <div className='mt-1 mb-0 flex items-center space-x-1 max-lg:space-x-0 max-ld:top-[138px] max-lg:left-2'>
                         {renderStar(prodObj.avgRating)}
                         <span className='text-sm text-gray-500 ml-1 max-lg:text-xs '>
-                           {formatNumber(prodObj.avgRating)}
+                           {prodObj.avgRating?.toFixed(1)}
                         </span>
                      </div>
                   </CardContent>
