@@ -1,3 +1,11 @@
+## Acknowledgments
+
+Special thanks to [Roitai-Dev's ecom-2024] for the initial reference points in:
+- Database schema fundamentals
+- Frontend architecture patterns
+
+While these elements provided a valuable starting foundation, this project has evolved into its own distinct implementation with unique features, optimizations, and architectural decisions.
+
 # API Endpoints Summary
 
 ## Authentication
@@ -48,6 +56,7 @@
 |-------------------------------------|--------|---------------------------|-----------------------------------|
 | `/api/user/order`                   | PATCH    | Update order status        | `{ "orderId": 35, "orderStatus": "Completed" }` |
 | `/api/admin/orders`                 | GET    | Get all orders             | None                              |
+<<<<<<< HEAD:README.md
 
 
 ## Acknowledgments
@@ -57,3 +66,5 @@ Special thanks to [Roitai-Dev's ecom-2024] for the initial reference points in:
 - Frontend architecture patterns
 
 While these elements provided a valuable starting foundation, this project has evolved into its own distinct implementation with unique features, optimizations, and architectural decisions.
+=======
+>>>>>>> origin/main:server/README.md
