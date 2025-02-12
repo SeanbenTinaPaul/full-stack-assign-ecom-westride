@@ -38,7 +38,7 @@
 | `/api/user/cart`                    | POST   | Add to cart               | `{ "cart": [{ "id": 1, "count": 2, "price": 100 }, { "id": 5, "count": 1, "price": 200 }] }` |
 | `/api/user/cart`                    | GET    | Get cart                  | None                                                       |
 | `/api/user/cart`                    | DELETE | Delete cart               | None                                                       |
-| `/api/user/address`                 | POST   | Add user address          | `{ "address": "korat" }`                                   |
+| `/api/user/address`                 | POST   | Add user address          | `{ "address": "kku" }`                                   |
 | `/api/user/order`                   | POST   | Place an order            | None                                                       |
 | `/api/user/order`                   | GET    | Get user orders           | None                                                       |
 
@@ -48,3 +48,12 @@
 |-------------------------------------|--------|---------------------------|-----------------------------------|
 | `/api/user/order`                   | PATCH    | Update order status        | `{ "orderId": 35, "orderStatus": "Completed" }` |
 | `/api/admin/orders`                 | GET    | Get all orders             | None                              |
+
+
+## Acknowledgments
+
+Special thanks to [Roitai-Dev's ecom-2024] for the initial reference points in:
+- Database schema fundamentals
+- Frontend architecture patterns
+
+While these elements provided a valuable starting foundation, this project has evolved into its own distinct implementation with unique features, optimizations, and architectural decisions.
