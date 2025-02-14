@@ -13,7 +13,7 @@ const {
    searchFilters,
    uploadImages,
    removeImage,
-   handleBulkDiscount
+   bulkDiscount
 } = require("../service/productService");
 const { authCheck, adminCheck } = require("../middlewares/authCheck");
 
@@ -26,7 +26,7 @@ router.get("/product/:id", readAprod); //for FormEditProd.jsx → readProduct(to
 router.post("/product", authCheck, adminCheck, createProd);
 router.patch("/product/:id", authCheck, adminCheck, updateProd);
 router.delete("/product/:id", authCheck, adminCheck, removeProd); //delete only a single product
-router.post("/bulk-discount", authCheck, adminCheck, handleBulkDiscount);
+router.post("/bulk-discount", authCheck, adminCheck, bulkDiscount);
 
 //read
 router.post("/display-prod-by", displayProdBy);

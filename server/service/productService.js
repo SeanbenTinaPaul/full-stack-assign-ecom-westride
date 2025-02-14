@@ -734,17 +734,17 @@ exports.removeImage = async (req, res) => {
 req.body === 
    {
       products:[ {id:1, title:test ,... images:[]}, {..} ],
-      amount:0,
+      amount:10,
       startDate: "2025-01-17T21:58:44.063Z",
-      endDate: "2025-01-17T21:58:44.063Z",
+      endDate: "2025-02-17T21:58:44.063Z",
       description: "",
-      isPromotion: true
+      isPromotion: false
    }
 
    isPromotion===true for promotion
    isPromotion===false for discount
 */
-exports.handleBulkDiscount = async (req, res) => {
+exports.bulkDiscount = async (req, res) => {
    const { products, amount, startDate, endDate, description, isPromotion } = req.body;
    const { email } = req.user; //can access req.user bc <token> sent in req.headers.authorization
    // console.log("req.user to handleBulkDiscount", req.user);

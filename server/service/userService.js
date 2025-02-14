@@ -607,9 +607,10 @@ exports.addProdRating = async (req, res) => {
    }
 };
 
-//pending...
+
 //req.body ► picture ,name, email, password
 //req.user.id
+//{ "name": "test2", "email": "test@example.com", "password": "567","image": { "url": "https://res.cloudinary.com/...","public_id": "Ecom_fullstack_app_msc_products/product-173..."} }
 exports.updateUserProfile = async (req, res) => {
    const { name, email, password, image } = req.body;
    const { id } = req.user;
