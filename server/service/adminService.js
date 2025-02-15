@@ -1,7 +1,7 @@
 const prisma = require("../config/prisma");
 
 //Feature/Button: "View All Users", "User Management", "Admin: View Users"
-exports.listAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
    try {
       const users = await prisma.user.findMany({
          select: {
@@ -34,14 +34,17 @@ exports.listAllUsers = async (req, res) => {
 exports.changeUserStatus = async (req, res) => {
    try {
       const { userIdArr, userEnabled, userRole } = req.body;
+      const { email } = req.user;
       const user = await prisma.user.updateMany({
          where: { id: { in: userIdArr.map((id) => parseInt(id)) } },
-         data: { enabled: userEnabled, role: userRole }
+         data: { enabled: userEnabled, role: userRole, updatedBy: email }
       });
 
       res.status(200).json({
          success: true,
-         message: `Updated ID: ${userIdArr.join(", ")} status to ${userRole}. Enabled: ${userEnabled? "enabled" : "disabled"}.`
+         message: `Updated ID: ${userIdArr.join(", ")} status to ${userRole}. Enabled: ${
+            userEnabled ? "enabled" : "disabled"
+         }.`
       });
    } catch (err) {
       console.log(err);
@@ -52,13 +55,13 @@ exports.changeUserStatus = async (req, res) => {
    }
 };
 
-
 exports.changeOrderStatus = async (req, res) => {
    try {
       const { orderIdArr, orderStatus } = req.body;
+      const { email } = req.user;
       const countOrderUpdate = await prisma.order.updateMany({
          where: { id: { in: orderIdArr } },
-         data: { orderStatus: orderStatus }
+         data: { orderStatus: orderStatus, updatedBy: email }
       });
 
       res.status(200).json({

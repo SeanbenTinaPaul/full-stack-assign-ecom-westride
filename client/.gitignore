@@ -23,4 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 # Ignore client .env fil
-client/.env
+.env

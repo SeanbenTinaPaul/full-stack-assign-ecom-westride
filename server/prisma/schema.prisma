@@ -24,6 +24,7 @@ model User {
   productRatings Rating[] // เพิ่ม relation กับ Rating
   userCoupons    UserCoupon[]
   picturePub     String?
+  updatedBy      String? //เก็บ email admin ที่เปลี่ยน status user คนอื่น
 }
 
 model Product {
@@ -47,6 +48,8 @@ model Product {
   avgRating   Float? // เพิ่มฟิลด์เก็บค่าเฉลี่ย rating
   brandId     Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
   brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
+  createdBy   String?
+  updatedBy   String?
 }
 
 model Order {
@@ -64,6 +67,7 @@ model Order {
   status       String           @default("")
   currency     String           @default("thb")
   refundAmount Float?           @default(0)
+  updatedBy    String? //เก็บ email admin ที่เปลี่ยน status
 }
 
 model ProductOnOrder {
@@ -84,6 +88,7 @@ model Category {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   products  Product[]
+  createdBy String?
 }
 
 model Cart {

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 //import service
 const {
-   listAllUsers,
+    getAllUsers,
    changeUserStatus,
    changeOrderStatus,
    getOrderAdmin
@@ -10,7 +10,7 @@ const {
 const { authCheck, adminCheck } = require("../middlewares/authCheck");
 
 //1. ดึงข้อมูลทั้งหมดไปแสดงที่หน้า admin
-router.get("/admin/all-users", authCheck, adminCheck, listAllUsers);
+router.get("/admin/all-users", authCheck, adminCheck, getAllUsers);
 router.get("/admin/orders", authCheck, adminCheck, getOrderAdmin);
 
 //2. หลังดึงข้อมูลจะ update สถานะ

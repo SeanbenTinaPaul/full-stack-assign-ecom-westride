@@ -1,11 +1,13 @@
 const prisma = require("../config/prisma");
 
 exports.createCategory = async (req , res) => {
+    const {email} = req.body;
     try{
         const { name } = req.body;
         const category = await prisma.category.create({
             data:{
-                name:name
+                name:name,
+                createdBy: email
             }
         })
         res.send(category);

@@ -3,6 +3,7 @@ const cloudinary = require("cloudinary").v2; // import { v2 as cloudinary } from
 
 exports.createProd = async (req, res) => {
    try {
+      const { email } = req.user;
       const { title, description, price, quantity, categoryId, images } = req.body;
       // console.log('req.body.images->', images)
       //verify res.body data if they are not null or undefined
@@ -28,7 +29,8 @@ exports.createProd = async (req, res) => {
                   url: obj.url,
                   secure_url: obj.secure_url
                }))
-            }
+            },
+            createdBy: email
          }
       });
 
@@ -132,17 +134,18 @@ exports.readAprod = async (req, res) => {
             category: true,
             images: true,
             ratings: {
-               orderBy:{
+               orderBy: {
                   order: {
                      createdAt: "desc"
                   }
                },
-               include: { 
-                  user: { 
-                     select: { 
-                        name: true, picture: true 
-                     } 
-                  } 
+               include: {
+                  user: {
+                     select: {
+                        name: true,
+                        picture: true
+                     }
+                  }
                }
                // orderBy: { createdAt: "desc" }
             }
@@ -246,6 +249,7 @@ const product = await prisma.product.update({
 exports.updateProd = async (req, res) => {
    try {
       //req.body === inputForm → form in Frontend
+      const { email } = req.user;
       const { title, description, price, quantity, categoryId, images } = req.body;
 
       // ดึงข้อมูลปัจจุบันจากฐานข้อมูล
@@ -305,6 +309,7 @@ exports.updateProd = async (req, res) => {
             quantity: quantity !== undefined ? parseInt(quantity) : existingProduct.quantity,
             categoryId:
                categoryId !== undefined ? parseInt(categoryId) : existingProduct.categoryId,
+            updatedBy: email,
             //เป็น one-to-many จึงต้องใช้ object ในการเก็บค่า ***เดี๋ยวกลับมาทำ
             // 1 product มีหลาย images
             // ถ้าเพิ่มรูปใน table 'Product' จะเพิ่มใน table 'Image' ด้วย
@@ -615,7 +620,7 @@ exports.searchFilters = async (req, res) => {
 
       /*1. สร้าง obj เก็บค่าล่วงหน้า สำหรับส่งไป query DB โดย
       ตั้งชื่อ key ให้เหมือนชื่อคอลัมน์ใน DB และ method ของ prisma
-         {
+        whereConditions =  {
          title: { contains: "tes" },
          categoryId: { in: [7,1] },
          price: { gte: 0, lte: 100 }
@@ -634,7 +639,7 @@ exports.searchFilters = async (req, res) => {
             in: category.map((id) => {
                const intId = parseInt(id);
                if (isNaN(intId)) {
-                  throw new Error(`Invalid category id: ${id}`);
+                  throw new Error(`Invalid category id: ${id}`); //=== return console.log(err) in json
                } else {
                   return intId;
                }
@@ -763,13 +768,14 @@ exports.bulkDiscount = async (req, res) => {
       });
       console.log("existProdWithDiscounts-->", existProdWithDiscounts);
 
-      //Make: existProdWithDiscounts[i].discounts===[ [], [{1}] ,[{2}] ] → [{1},{2}]
+      //Make: existProdWithDiscounts[i].discounts===[ [], [{productId,..}] ,[{productId...}] ] → [{productId},{productId}]
       //Way2: let existingDiscount = existProdWithDiscounts.map((d) => d.discounts).flat();
       let existingDiscount = [].concat(...existProdWithDiscounts.map((obj) => obj.discounts));
       console.log("existingDiscount-->", existingDiscount);
 
       let prodToCreate = [];
       let prodToUpdate = products.filter((obj) => {
+         //execute anyway since loop through existProdWithDiscounts, length always > 0
          for (let i = 0; i < existProdWithDiscounts.length; i++) {
             if (existingDiscount.length > 0 && obj.id === existingDiscount[i].productId) {
                return true;
@@ -782,7 +788,7 @@ exports.bulkDiscount = async (req, res) => {
       console.log("prodToCreate-->", prodToCreate);
       console.log("prodToUpdate-->", prodToUpdate);
       const promises = [];
-      //if existProdWithDiscounts is empty, then create new discounts
+      //if isPromotion === true → update col promotion in Product and leave
       if (isPromotion) {
          //อัพเดตฟิลด์ promotion ในตาราง Product
          promises.push(
@@ -868,7 +874,7 @@ exports.changeStatusDiscount = async (req, res) => {
 
       res.status(200).json({
          success: true,
-         message: `Update userID: ${productIdArr} status to ${status}.`
+         message: `Update productID: ${productIdArr} status to ${status}.`
       });
    } catch (err) {
       console.log(err);

@@ -67,7 +67,7 @@ exports.logIn = async (req, res) => {
          name: user.name
       };
 
-      //4. generate token
+      //4. gen token
       jwt.sign(
          payload,
          process.env.JWT_SECRET,
