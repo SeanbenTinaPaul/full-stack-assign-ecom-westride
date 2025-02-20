@@ -25,6 +25,8 @@ model User {
   userCoupons    UserCoupon[]
   picturePub     String?
   updatedBy      String? //เก็บ email admin ที่เปลี่ยน status user คนอื่น
+  // updatedBy      User?        @relation(fields: [updatedById], references: [id])
+  // updatedById    Int?
 }
 
 model Product {
@@ -41,15 +43,19 @@ model Product {
   category    Category?        @relation(fields: [categoryId], references: [id])
   cartItems   ProductOnCart[]
   orderItems  ProductOnOrder[]
-  promotion   Float? // เก็บค่าเปอร์เซ็นต์ส่วนลดทั่วไป
+  promotion   Float? // เก็บค่า % ส่วนลดทั่วไป
   discounts   Discount[] // เพิ่ม relation กับ Discount สำหรับ high-season
   favorites   Favorite[] // เพิ่ม relation กับ Favorite
   ratings     Rating[] // เพิ่ม relation กับ Rating
-  avgRating   Float? // เพิ่มฟิลด์เก็บค่าเฉลี่ย rating
-  brandId     Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
+  avgRating   Float? // เพิ่ม col เก็บค่าเฉลี่ย rating
+  brandId     Int? // เพิ่ม col สำหรับเก็บ foreign key ของแบรนด์
   brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
   createdBy   String?
   updatedBy   String?
+  // createdBy   User?    @relation(fields: [createdById], references: [id]) // use to access whole table User | includes: {createdBy:true} 
+  // createdById Int?     //foreign key | use with where clause | where: {createdById: 123}
+  // updatedBy   User?    @relation(fields: [updatedById], references: [id])
+  // updatedById Int?
 }
 
 model Order {
@@ -68,6 +74,8 @@ model Order {
   currency     String           @default("thb")
   refundAmount Float?           @default(0)
   updatedBy    String? //เก็บ email admin ที่เปลี่ยน status
+  // updatedBy    User?    @relation(fields: [updatedById], references: [id])
+  // updatedById  Int?
 }
 
 model ProductOnOrder {
@@ -89,6 +97,8 @@ model Category {
   updatedAt DateTime  @updatedAt
   products  Product[]
   createdBy String?
+  // createdBy   User?    @relation(fields: [createdById], references: [id])
+  // createdById Int?     //foreign key
 }
 
 model Cart {
@@ -99,7 +109,7 @@ model Cart {
   orderedById Int
   orderedBy   User            @relation(fields: [orderedById], references: [id])
   products    ProductOnCart[]
-  // Consider adding these fields
+  // consider adding these fields
   // lastSynced  DateTime        @updatedAt // Track last sync time
   // status      String          @default("active") // Track cart status
 }
@@ -113,7 +123,7 @@ model ProductOnCart {
   price       Float
   cart        Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product     Product @relation(fields: [productId], references: [id])
-  // Consider adding these fields to support discounts
+  //adding these to support discounts
   buyPriceNum Float // Store discounted price at time of adding
   discount    Float? // Store applied discount
 }
@@ -166,7 +176,7 @@ model Rating {
   updatedAt DateTime @updatedAt
   comment   String?
 
-  @@unique([userId, productId, orderId, comment]) // ป้องกันการให้ rating ซ้ำในแต่ละ order
+  @@unique([userId, productId, orderId, comment]) // ป้องกันการให้ rating ซ้ำในแต่ละ order record
 }
 
 // สำหรับ Seasonal Discount
@@ -174,14 +184,16 @@ model Discount {
   id          Int      @id @default(autoincrement())
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   Int
-  amount      Float // เก็บค่าเปอร์เซ็นต์ส่วนลด
+  amount      Float // เก็บค่า%ส่วนลด
   startDate   DateTime // วันที่เริ่มต้นส่วนลด
   endDate     DateTime // วันที่สิ้นสุดส่วนลด
-  description String? // คำอธิบายเพิ่มเติม เช่น "High Season Sale"
+  description String? // คำอธิบาย เช่น "High Season Sale"
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdBy   String // เก็บ email ของ admin ที่สร้าง discount
+  // createdBy   User?    @relation(fields: [createdById], references: [id])
+  // createdById Int?     //foreign key
 
   /**
    * // Querying promotions between dates becomes faster
@@ -210,6 +222,8 @@ model Coupon {
   updatedAt   DateTime     @updatedAt
   createdBy   String // Admin email
   userCoupons UserCoupon[]
+  // createdBy   User?    @relation(fields: [createdById], references: [id])
+  // createdById Int?     //foreign key
 }
 
 // For tracking which users have claimed which coupons
@@ -226,13 +240,12 @@ model UserCoupon {
   @@unique([userId, couponId]) // Prevent user from claiming same coupon twice
 }
 
-//  Brand
 model Brand {
   id          Int       @id @default(autoincrement())
-  title       String    @unique // ชื่อแบรนด์ต้องไม่ซ้ำกัน
+  title       String    @unique // ชื่อ brandต้องไม่ซ้ำกัน
   description String?
-  images      Image[] // ใช้โมเดล Image เดิมสำหรับเก็บรูปภาพแบรนด์
-  products    Product[] // relation กับสินค้า
+  images      Image[] // ใช้table Image เดิมสำหรับเก็บรูป brand
+  products    Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

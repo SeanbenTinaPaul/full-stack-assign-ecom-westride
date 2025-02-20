@@ -8,7 +8,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* background-image: none; */
+    background-image: none;
 }
 
 /* Thumbnail swiper styles */

@@ -26,7 +26,7 @@ function TableUersAdmin(props) {
 
    const [searchTerm, setSearchTerm] = useState("");
    //Selection row
-   const [selectedRows, setSelectedRows] = useState([]);
+   const [selectedRows, setSelectedRows] = useState([]);//for checkbox
    const [selectedEnabled, setSelectedEnabled] = useState(true);
    const [selecteRole, setSelectedRole] = useState("user");
    //Pagiantion
@@ -65,6 +65,7 @@ function TableUersAdmin(props) {
 
    //checkbox selection
    const handleSelectRow = (id) => {
+      //if already selected, filter out else add
       setSelectedRows((prev) =>
          prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
       );
@@ -119,7 +120,7 @@ function TableUersAdmin(props) {
       )
    );
 
-   // Pagination
+   // Pagination → separate some data for display
    const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
    const startIndex = (currentPage - 1) * itemsPerPage;
    const paginatedData = filteredData?.slice(startIndex, startIndex + itemsPerPage);
@@ -157,7 +158,7 @@ function TableUersAdmin(props) {
             <div className='relative'>
                <input
                   type='text'
-                  className='block w-[350px] ps-6 text-sm overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                  className='block w-[350px] ps-6 text-sm p-2 rounded-xl Input-3Dshadow'
                   placeholder='Search...'
                   onChange={(e) => setSearchTerm(e.target.value)}
                />
@@ -166,7 +167,7 @@ function TableUersAdmin(props) {
          <main className='p-4 bg-card'>
             <div className='border rounded-xl overflow-hidden'>
                <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
-                  <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+                  <thead className='text-xs text-gray-700 capitalize bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                      <tr>
                         <th
                            scope='col'

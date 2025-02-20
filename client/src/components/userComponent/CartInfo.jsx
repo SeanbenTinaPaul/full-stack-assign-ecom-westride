@@ -102,7 +102,7 @@ function CartInfo(props) {
    return (
       <div className='h-full w-full bg-gradient-to-r from-card to-slate-100 p-4 rounded-xl shadow-md'>
          {/* Border */}
-         <main className=' bg-gradient-to-r from-card to-slate-100 p-2 rounded-lg overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+         <main className=' bg-gradient-to-r from-card to-slate-100 p-2 rounded-lg Input-3Dshadow'>
             {/* card */}
             {carts.map((cart) => (
                <div
@@ -150,13 +150,13 @@ function CartInfo(props) {
                   {/* row 2: quantity + price */}
                   <article className='flex justify-between items-center'>
                      {/* LEFT:quantity */}
-                     <section className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                     <section className=' px-2 py-1 rounded-xl Input-3Dshadow'>
                         <button
                            onClick={() => {
                               adjustQuantity(cart.id, cart.countCart - 1);
                               handleClickAddDelamount();
                            }}
-                           className='px-1 w-6 bg-gradient-to-b from-card to-gray-100 rounded-md shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                           className='px-1 w-6 rounded-md Btn-3Dshadow'
                         >
                            -
                         </button>
@@ -167,7 +167,7 @@ function CartInfo(props) {
                               adjustQuantity(cart.id, cart.countCart + 1);
                               handleClickAddDelamount();
                            }}
-                           className='px-1 w-6 bg-gradient-to-b from-card to-gray-100 rounded-md shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                           className='px-1 w-6 rounded-md Btn-3Dshadow'
                         >
                            +
                         </button>
@@ -197,7 +197,7 @@ function CartInfo(props) {
                   updateStatusSaveToCart(true);
                   handleCreateCart();
                }}
-               className='w-full mt-4 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600  text-white py-2 shadow-md rounded-xl hover:from-fuchsia-700  hover:to-fuchsia-500 transition-all duration-300'
+               className='w-full mt-4 py-2 shadow-md rounded-xl Btn-gradientFuchsia'
             >
                Place Order
             </Button>

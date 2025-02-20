@@ -11,6 +11,7 @@ import useEcomStore from "../../store/ecom-store";
 import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
 
 const Register = () => {
+   const navigate = useNavigate();
    const { toast } = useToast();
    const [form, setForm] = useState({
       email: "",
@@ -26,7 +27,7 @@ const Register = () => {
       });
    };
    const handleSubmit = async (event) => {
-      event.preventDefault(); //ป้องกันการ refresh
+      event.preventDefault(); 
       if (form.password !== form.confirmPassword) {
          toast({
             variant: "destructive",
@@ -43,6 +44,7 @@ const Register = () => {
             title: "Success",
             description: res.data.message || "Register Success"
          });
+         navigate("/login", { replace: true });
       } catch (err) {
          const errMsg = err.response?.data?.message;
          toast({
@@ -117,7 +119,7 @@ const Register = () => {
                   </div>
                   <Button
                      type='submit'
-                     className='w-full'
+                     className='w-full hover:bg-slate-500 transition-all duration-300'
                   >
                      Register
                   </Button>

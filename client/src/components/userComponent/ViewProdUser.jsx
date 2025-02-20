@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 //icons
-import { Heart, ShoppingCart, Star, StarHalf, ChevronLeft, ShoppingBasket } from "lucide-react";
+import { Heart, ShoppingCart, Star, StarHalf, ChevronLeft, ShoppingBasket,Hourglass  } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { createCartUser } from "@/api/userAuth";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -272,7 +272,7 @@ function ViewProdUser(props) {
    }, [id, getCategory, navigate]);
    // Show loading state
    if (isLoading) {
-      return <div className='mt-10 ml-4 py-6 px-4'>Loading...</div>;
+      return <div className='mt-10 ml-4 py-6 px-4'><Hourglass className="animate-bounceScale inline-block"/> Loading...</div>;
    }
 
    //1.cal promotion vs discount price
@@ -311,7 +311,7 @@ function ViewProdUser(props) {
          </div>
          {/* {console.log("prodObj", prodObj)} */}
          {/* {console.log("productData", productData)} */}
-         <main className='inline-flex w-[90dvw] h-[60dvh] min-w-[700px] bg-gradient-to-br from-card to-slate-100 shadow-md rounded-xl'>
+         <main className='inline-flex p-6 w-[80dvw] h-[60dvh] min-w-[800px] bg-card shadow-md rounded-xl'>
             {/* Image*/}
             <article className='w-1/2 h-full '>
                <CarouselThumnailProd
@@ -399,11 +399,11 @@ function ViewProdUser(props) {
                   <section className='px-4'>
                      <div className='flex gap-4 w-full '>
                         <div className='flex flex-col w-full items-center p-4 gap-4  '>
-                           <section className='w-full flex items-center justify-between px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-2xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                           <section className='w-full flex items-center justify-between px-2 py-2 rounded-2xl Input-3Dshadow'>
                               <button
                                  onClick={() => handleQuantityChange(-1)}
                                  disabled={quantity <= 1}
-                                 className='px-3 w-14 h-10 bg-gradient-to-b from-card to-gray-100 rounded-2xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                                 className='px-3 w-14 h-10 rounded-2xl Btn-3Dshadow'
                               >
                                  -
                               </button>
@@ -411,7 +411,7 @@ function ViewProdUser(props) {
                               <button
                                  onClick={() => handleQuantityChange(1)}
                                  disabled={quantity >= productData.quantity}
-                                 className='px-3 w-14 h-10 bg-gradient-to-b from-card to-gray-100 rounded-2xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                                 className='px-3 w-14 h-10 rounded-2xl Btn-3Dshadow'
                               >
                                  +
                               </button>
@@ -422,7 +422,7 @@ function ViewProdUser(props) {
                            </p>
                         </div>
                         {/* RIGHT: price * quantity */}
-                        <div className='w-full flex flex-col items-center gap-4 py-4 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-2xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                        <div className='w-full flex flex-col items-center gap-4 py-4 rounded-2xl Input-3Dshadow'>
                            <section className='w-full text-center font-normal text-2xl text-fuchsia-900 drop-shadow'>
                               ฿
                               {productData?.promotion || getDiscountAmount()
@@ -441,7 +441,7 @@ function ViewProdUser(props) {
                            to='/login'
                            className='flex gap-4 w-full'
                         >
-                           <Button className='w-full h-10 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500 text-white py-2 shadow-md rounded-xl'>
+                           <Button className='w-full h-10 py-2 shadow-md rounded-xl Btn-gradientFuchsia'>
                               <ShoppingBasket className='w-4 h-4 mr-2  ' />
                               <span className='inline drop-shadow'>Buy now</span>
                            </Button>
@@ -455,7 +455,7 @@ function ViewProdUser(props) {
                            <Button
                               onClick={handleBuyNow}
                               disabled={isLoading}
-                              className='w-full h-10 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500 text-white py-2 shadow-md rounded-xl'
+                              className='w-full h-10 py-2 shadow-md rounded-xl Btn-gradientFuchsia'
                            >
                               <ShoppingBasket className='w-4 h-4 mr-2 drop-shadow ' />
                               <span className='inline drop-shadow'>Buy now</span>

@@ -136,7 +136,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
             <Button
                disabled={(isLoading || !stripe || !elements) && !isSaveAddress}
                id='submit'
-               className='w-full mt-4 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500 text-white py-2 rounded-xl transition-colors duration-300 shadow-md'
+               className='w-full mt-4 py-2 rounded-xl shadow-md Btn-gradientFuchsia'
             >
                <span id='button-text'>
                   {isLoading ? (

@@ -57,7 +57,7 @@ exports.logIn = async (req, res) => {
 
       //2. check password
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ message: "Password incorrect 555" });
+      if (!isMatch) return res.status(400).json({ message: "Password incorrect" });
 
       //3. create payload
       const payload = {

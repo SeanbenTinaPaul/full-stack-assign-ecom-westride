@@ -1,3 +1,4 @@
+//parent →FormEditProfileUser.jsx
 import React, { useState, createRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import useEcomStore from "@/store/ecom-store";
@@ -45,12 +46,12 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
 
       //// for image files section ////
       setIsLoading(true);
-      //Image Resize and upload
+      //Image Resize and upload | 300,480,720,900,1080,1200,1440,1920 | JPEG, PNG, WEBP 
       Resizer.imageFileResizer(
          file,
          720,
          720,
-         "JPEG",
+         "WEBP",
          100,
          0,
          async (binaryPic) => {
@@ -151,6 +152,7 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
                   className='relative  hover:z-22'
                >
                   <img
+                  // inputForm.image?.url if just uploaded | inputForm.image if from DB (from token)
                      src={inputForm.image?.url || inputForm.image}
                      alt='user-img'
                      className='h-32 object-cover scale-150 rounded-full hover:rounded-lg hover:shadow-lg hover:scale-[250%] transition-all duration-500 ease-in-out'

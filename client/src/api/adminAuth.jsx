@@ -31,7 +31,7 @@ export const getAllUserAdmin = async (token) => {
    });
 };
 export const changeUserStatusAdmin = async (token, userIdArr, userEnabled, userRole) => {
-   return await axios.post(
+   return await axios.put(
       `${apiUrl}/api/admin/change-status`,
       { userIdArr, userEnabled, userRole },
       {

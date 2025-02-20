@@ -58,7 +58,7 @@ function HistoryList(props) {
          const res = await reqRefund(token, orderId);
          console.log("res.data refund", res.data);
          if (res.data.success) {
-            await fetchOrderList();
+            await fetchOrderList();//refresh orderList
             toast({
                title: "Refund requested successfully",
                description: "Your refund request has been processed"
@@ -355,7 +355,7 @@ function HistoryList(props) {
                                  </p>
                                  <p className='text-sm text-gray-500'>
                                     <strong>Comment</strong>:{" "}
-                                    <p className='w-full p-2 h-auto overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                                    <p className='w-full p-2 h-auto rounded-xl Input-3Dshadow overflow-auto'>
                                        {
                                           obj.product.ratings.find((r) => r.orderId === obj.orderId)
                                              .comment
@@ -388,8 +388,8 @@ function HistoryList(props) {
                                     onChange={(e) =>
                                        handleComment(obj.orderId, obj.productId, e.target.value)
                                     }
-                                    placeholder='Rate now and help others! This feature is only available before refunds or order completion'
-                                    className='w-full p-2 h-12 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                                    placeholder='Rate now and help others! This feature is only available before refunds or after order completion'
+                                    className='w-full p-2 h-12 rounded-xl Input-3Dshadow overflow-auto'
                                  />
                               </div>
                            )}

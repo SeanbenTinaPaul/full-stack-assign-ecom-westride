@@ -15,8 +15,8 @@ export const createProduct = async (token, form) => {
 
 //backend res.send()
 //count = 20 → LIMIT = 20
-export const listProduct = async (count = 50, range) => {
-   return await axios.post(`${apiUrl}/api/products/${count}`, { range });
+export const listProduct = async (count = 50, leastStock) => {
+   return await axios.post(`${apiUrl}/api/products/${count}`, { leastStock });
 };
 
 //for EditProd.jsx → FormEditProd.jsx

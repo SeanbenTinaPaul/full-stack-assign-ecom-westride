@@ -28,7 +28,7 @@ function CartCheckout({ isCollapsedContext }) {
    const [total, setTotal] = useState(0);
    const navigate = useNavigate();
    const { toast } = useToast();
-   const [scrolledToBottom, setScrolledToBottom] = useState(false);
+   const [scrolledToBottom, setScrolledToBottom] = useState(false);//true→fully show | false→hide some part
    // const sidebarWidth = isCollapsedContext ? "6rem" : "16rem"; //for moving last <main>
 
    // console.log(user);
@@ -47,12 +47,18 @@ function CartCheckout({ isCollapsedContext }) {
    //check if scrolled to bottom
    useEffect(() => {
       const handleScroll = () => {
+         //check if the user has reached the bottom of the page by calculating the distance from the top of the page to the bottom.
+         //.innerHeight return the height of browser window area
+         //.scrollY returns the number of pixels that the webpage has been scrolled vertically (distance from the top of the webpage to the current scroll position)
+         //.scrollHeight returns the total height of HTML document, including any content that is not visible due to scrolling.
          const bottom =
             Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
+         //if have reached the bottom, set a state scrolledToBottom to true.
          setScrolledToBottom(bottom);
       };
 
       window.addEventListener("scroll", handleScroll, { passive: true });
+      //return in useEffect() : Removing event listeners, Closing WebSockets or other network connections,Canceling timers or intervals,Releasing resources, such as file handles or database connections
       return () => window.removeEventListener("scroll", handleScroll);
    }, []);
    //send req to backend
@@ -227,13 +233,13 @@ function CartCheckout({ isCollapsedContext }) {
                      <div className='flex justify-between items-center '>
                         {/* LEFT:quantity */}
                         <div className='flex items-center space-x-4'>
-                           <section className='border px-2 py-1 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                           <section className='border px-2 py-1 p-2 rounded-xl Input-3Dshadow'>
                               <button
                                  onClick={() => {
                                     adjustQuantity(cart.id, cart.countCart - 1);
                                     handleClickAddDelamount();
                                  }}
-                                 className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                                 className='px-3 w-8 h-8 rounded-xl Btn-3Dshadow'
                               >
                                  -
                               </button>
@@ -244,7 +250,7 @@ function CartCheckout({ isCollapsedContext }) {
                                     adjustQuantity(cart.id, cart.countCart + 1);
                                     handleClickAddDelamount();
                                  }}
-                                 className='px-3 w-8 h-8 bg-gradient-to-b from-card to-gray-100 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+                                 className='px-3 w-8 h-8 rounded-xl Btn-3Dshadow'
                               >
                                  +
                               </button>
@@ -275,7 +281,7 @@ function CartCheckout({ isCollapsedContext }) {
             `}
          >
             {carts.length > 0 && (
-               <article className='w-full overflow-hidden border-transparent p-2 rounded-xl transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)]  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+               <article className='w-full p-2 rounded-xl Input-3Dshadow'>
                   {/* className="bg-card p-2 mb-2 rounded-md shadow-md" */}
                   <section className='flex justify-between p-2 mb-2 '>
                      <p>Total</p>
@@ -295,7 +301,7 @@ function CartCheckout({ isCollapsedContext }) {
             <Link>
                <Button
                   variant='primary'
-                  className='w-full mt-4 text-white py-2 shadow-md rounded-xl bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500'
+                  className='w-full mt-4 text-white py-2 shadow-md rounded-xl Btn-gradientFuchsia'
                   disabled={carts.length === 0}
                   onClick={handleCreateCart}
                >

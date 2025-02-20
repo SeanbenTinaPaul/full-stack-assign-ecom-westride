@@ -160,7 +160,7 @@ function OrderTable(props) {
             <div className='relative'>
                <input
                   type='text'
-                  className='block w-[350px] ps-6 text-sm overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                  className='block w-[350px] ps-6 text-sm p-2 rounded-xl Input-3Dshadow'
                   placeholder='Search...'
                   onChange={(e) => setSearchTerm(e.target.value)}
                />

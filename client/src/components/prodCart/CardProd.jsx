@@ -110,6 +110,7 @@ function CardProd({ prodObj }) {
    }, [prodObj]);
 
    useEffect(() => {
+      // useEffect() is designed to handle side effects, such as updating the global state, making API calls, or setting timers.
       // console.log("productData", productData)
       synCartwithProducts(productData);
    }, [prodObj, productData]);
@@ -149,7 +150,7 @@ function CardProd({ prodObj }) {
          <div>
             {/* {console.log("prodObj", prodObj)} */}
             {/* {console.log("productData", productData)} */}
-            <Card className='flex flex-col w-72 h-96 bg-gradient-to-br from-card to-slate-100 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden'>
+            <Card className='flex flex-col w-72 h-96 bg-gradient-to-br from-card to-slate-100 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden border-none'>
                {/* Product Image+fav+badge */}
                <div className='relative h-52 max-lg:h-28'>
                   <Link

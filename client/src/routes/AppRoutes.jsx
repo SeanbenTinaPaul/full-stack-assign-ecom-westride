@@ -54,14 +54,15 @@ const router = createBrowserRouter([
       path: "/admin",
       element: <ProtectRouteAdmin element={<LayoutAdmin />} />,
       children: [
-         { index: true, element: <Dashboard /> },
-         { path: "brand-store", element: <BrandAdmin /> },
+         // { index: true, element: <Dashboard /> },
+         { index: true, element: <ManageAdmin /> },
+         // { path: "brand-store", element: <BrandAdmin /> },
+         // { path: "manage", element: <ManageAdmin /> },
          { path: "category", element: <CategoryAdmin /> },
          { path: "product", element: <ProductAdmin /> },
          { path: "product/:id", element: <EditProdAdmin /> },
-         { path: "manage", element: <ManageAdmin /> },
+         { path: "orders", element: <UpdateOrder /> },
          { path: "promotion", element: <PromotionAdmin /> },
-         { path: "orders", element: <UpdateOrder /> }
       ]
       //then go to LayoutAdmin > SidebarAdmin → add these children to pages
    },

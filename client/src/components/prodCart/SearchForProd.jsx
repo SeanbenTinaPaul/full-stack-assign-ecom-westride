@@ -19,7 +19,7 @@ let seachBody = {
    price: []
 };
 
-function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSearch }) {
+function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
    const { token, products, getProduct, getSeachFilterProd, getCategory, categories } =
       useEcomStore((state) => state);
    const [textSearch, setTextSearch] = useState(""); //for text search
@@ -30,7 +30,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    //console.log(textSearch);
    useEffect(() => {
       getCategory();
-      getProduct(100,1);
+      getProduct(100, 1);
    }, []);
    //1. search by text
    //req.body → { "query": "core" }
@@ -38,7 +38,7 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       e.preventDefault();
       const txt = e.target.value;
       setTextSearch(txt); // use to assign to value={} of <input/>
-      setWhatTextSearch(txt.trim());
+      // setWhatTextSearch(txt.trim());
       // console.log(txt.trim());
 
       if (txt.trim()) {
@@ -80,30 +80,32 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
    };
 
    //4. req to backend
-   const handleSumitSearchText = async (e) => {
+   const handleSumitSearch = async (e) => {
       e.preventDefault();
       console.log(searchTerms);
       try {
-         //if not search input → just display all products
+         //if no search input → just display all products
          //empty str is false, empty arr is true
          if (!searchTerms.query && searchTerms.category.length === 0) {
-            getProduct(100,1);
-            setIsFoundTextSearch(true);
+            getProduct(100, 1);
+            setIsFoundSearch(true);
          }
 
          const result = await getSeachFilterProd(searchTerms);
+         console.log("Search result", result);
          //check if prod were found
          if (result?.data?.length === 0) {
-            //not found but display all prod instead
-            setIsFoundTextSearch(false);
-            getProduct(100,1);
+            //not found→ display all prod instead
+            setIsFoundSearch(false);
+            getProduct(100, 1);
+            setWhatTextSearch(searchTerms.query);
          } else {
             //found
-            setIsFoundTextSearch(true);
+            setIsFoundSearch(true);
          }
       } catch (err) {
          console.error("Search error:", err);
-         setIsFoundTextSearch(false);
+         setIsFoundSearch(false);
       }
    };
 
@@ -119,21 +121,21 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
       });
       setWhatTextSearch("");
       setPriceRange([0, 50000]);
-      setResetKey((prev) => prev + 1); // Increment key to force re-render
+      setResetKey((prev) => prev + 1); // Increment key to force re-render → ..just found not re-render issue
 
       // Reset search results by fetching all products
       try {
-         await getProduct(100,1);
-         setIsFoundTextSearch(false);
+         await getProduct(100, 1);
+         setIsFoundSearch(false);
       } catch (err) {
          console.error("Reset error:", err);
       }
    };
 
    return (
-      <div className='h-full w-full bg-gradient-to-tr from-card to-slate-100 p-4 rounded-xl'>
+      <div className='h-full w-full  p-4 rounded-xl bg-gradient-to-tr from-card to-slate-100'>
          <form
-            onSubmit={(e) => handleSumitSearchText(e)}
+            onSubmit={(e) => handleSumitSearch(e)}
             className='flex flex-col gap-2 '
          >
             <input
@@ -141,48 +143,58 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
                value={textSearch}
                onChange={(e) => handleSearchText(e)}
                placeholder='e.g. ขาหมู, core i7'
-               className='w-full mb-4 bg-gradient-to-tr from-card to-slate-100 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+               className='w-full mb-4 bg-gradient-to-tr from-card to-slate-100 p-2 rounded-xl Input-3Dshadow'
             />
             <div className='mb-4'>
                {/* {console.log('categories search',categories)} */}
                <div className='flex gap-2 items-center mb-2'>
-                  <Boxes size={20} className='text-slate-700' />
+                  <Boxes
+                     size={20}
+                     className='text-slate-700'
+                  />
                   <h1 className='text-lg font-semibold text-slate-700'>Category</h1>
                </div>
                <div>
-                  {categories.map((obj) => (
-                     <div
-                        key={obj.id}
-                        className='flex gap-2 items-center'
-                     >
-                        {/* <input
+                  {categories.map(
+                     (obj) =>
+                        obj.name !== "Banner(not for sale)" &&
+                        obj.id !== 38 && (
+                           <div
+                              key={obj.id}
+                              className='flex gap-2 items-center'
+                           >
+                              {/* <input
                            type='checkbox'
                            value={obj.id}
                            checked={selectedCate.includes(obj.id)}
                            onChange={(e) => handleCheckCate(e)}
                         /> */}
-                        <Checkbox
-                           className='w-4 h-4 bg-white border border-gray-300 rounded-sm'
-                           id={`category-${obj.id}`}
-                           checked={selectedCate.includes(obj.id)}
-                           onCheckedChange={(checked) => {
-                              handleCheckCate({
-                                 target: {
-                                    value: obj.id,
-                                    checked: checked
-                                 }
-                              });
-                           }}
-                        />
-                        <label>{obj.name}</label>
-                     </div>
-                  ))}
+                              <Checkbox
+                                 className='w-4 h-4 bg-white border border-gray-300 rounded-sm'
+                                 id={`category-${obj.id}`}
+                                 checked={selectedCate.includes(obj.id)}
+                                 onCheckedChange={(checked) => {
+                                    handleCheckCate({
+                                       target: {
+                                          value: obj.id,
+                                          checked: checked
+                                       }
+                                    });
+                                 }}
+                              />
+                              <label>{obj.name}</label>
+                           </div>
+                        )
+                  )}
                </div>
             </div>
             <div>
                {/* Price range */}
                <div className='flex gap-2 items-center mb-2'>
-                  <DollarSign size={20} className='text-slate-700'/>
+                  <DollarSign
+                     size={20}
+                     className='text-slate-700'
+                  />
                   <h1 className='text-lg font-semibold text-slate-700'>Price</h1>
                </div>
                <div>
@@ -236,9 +248,9 @@ function SearchForProd({ setIsFoundTextSearch, isFoundTextSearch, setWhatTextSea
 }
 
 SearchForProd.propTypes = {
-   setIsFoundTextSearch: PropTypes.func,
-   setWhatTextSearch: PropTypes.func,
-   isFoundTextSearch: PropTypes.bool
+   setIsFoundSearch: PropTypes.func,
+   setWhatTextSearch: PropTypes.func
+   // isFoundTextSearch: PropTypes.bool
 };
 
 export default SearchForProd;

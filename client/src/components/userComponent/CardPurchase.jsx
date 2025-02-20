@@ -69,9 +69,9 @@ function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
                   <textarea
                      onChange={(e) => setAddress({ address: e.target.value.trim() })}
                      placeholder='Please enter address to display payment methods'
-                     className='w-full p-2 h-24 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                     className='w-full p-2 h-24 rounded-xl Input-3Dshadow'
                   />
-                  <div className='disabled:cursor-not-allowed text-sm text-slate-400 w-full p-2 overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'>
+                  <div className='disabled:cursor-not-allowed text-sm text-slate-400 w-full p-2 rounded-xl Input-3Dshadow'>
                      e.g. 123/4 หมู่ที่ 5 ถนนมิตรภาพ ต.แม่พริก อ.เมืองขอนแก่น จ.ขอนแก่น 40000
                   </div>
                   <Button

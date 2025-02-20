@@ -15,7 +15,7 @@ const {
    removeImage,
    bulkDiscount
 } = require("../service/productService");
-const { authCheck, adminCheck } = require("../middlewares/authCheck");
+const { userVerify, adminVerify } = require("../middlewares/authVerify");
 
 //ENDPOINT: http://localhost:5000/api/product
 //read
@@ -23,19 +23,19 @@ router.post("/products/:count", listProd); //view product records according to c
 router.get("/product/:id", readAprod); //for FormEditProd.jsx → readProduct(token, id,)
 
 //write
-router.post("/product", authCheck, adminCheck, createProd);
-router.patch("/product/:id", authCheck, adminCheck, updateProd);
-router.delete("/product/:id", authCheck, adminCheck, removeProd); //delete only a single product
-router.post("/bulk-discount", authCheck, adminCheck, bulkDiscount);
+router.post("/product", userVerify, adminVerify, createProd);
+router.patch("/product/:id", userVerify, adminVerify, updateProd);
+router.delete("/product/:id", userVerify, adminVerify, removeProd); //delete only a single product
+router.post("/bulk-discount", userVerify, adminVerify, bulkDiscount);
 
 //read
 router.post("/display-prod-by", displayProdBy);
-router.get("/display-prod-by-user", authCheck, displayProdByUser);
+router.get("/display-prod-by-user", userVerify, displayProdByUser);
 router.post("/search-filters", searchFilters);
 
 //image management in cloud ONLY
-router.post("/images", authCheck, uploadImages); //upload image to cloudinary
-router.post("/removeimage", authCheck, removeImage); //use .post to delete multiple images
+router.post("/images", userVerify, uploadImages); //upload image to cloudinary
+router.post("/removeimage", userVerify, removeImage); //use .post to delete multiple images
 
 
 module.exports = router;

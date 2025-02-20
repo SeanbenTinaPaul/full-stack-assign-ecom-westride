@@ -76,3 +76,33 @@ const getImgFromFolder = async (req, res) => {
        });
     }
  };
+
+//-----------------------------------------------------------
+ const products = await prisma.product.findMany({
+   where: {
+      categoryId: catId,
+      quantity: { gt: 0 }
+   },
+   take: prodsPerCat,
+   orderBy: {
+      updatedAt: "desc"
+   },
+   include: {
+      category: true,
+      images: true,
+      discounts: true
+   }
+});
+/*
+SELECT "Product".*, 
+       "Category".*, 
+       "Image".*, 
+       "Discount".*
+FROM "Product"
+LEFT JOIN "Category" ON "Product"."categoryId" = "Category"."id"
+LEFT JOIN "Image" ON "Product"."id" = "Image"."productId"
+LEFT JOIN "Discount" ON "Product"."id" = "Discount"."productId"
+WHERE "Product"."categoryId" = $1 AND "Product"."quantity" > 0
+ORDER BY "Product"."updatedAt" DESC
+LIMIT $2
+*/

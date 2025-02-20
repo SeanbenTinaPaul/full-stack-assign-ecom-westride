@@ -1,8 +1,9 @@
+//imported by folder routes 
 const jwt = require("jsonwebtoken");
 const prisma = require("../config/prisma");
 
 //handle req.headers → verify if token is valid
-exports.authCheck = async (req, res, next) => {
+exports.userVerify = async (req, res, next) => {
    try {
       const bearerToken = req.headers.authorization;
 
@@ -42,7 +43,7 @@ exports.authCheck = async (req, res, next) => {
    }
 };
 
-exports.adminCheck = async (req, res, next) => {
+exports.adminVerify = async (req, res, next) => {
    try {
       //req.user มาจาก authCheck()
       const { email } = req.user;

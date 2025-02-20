@@ -1,5 +1,5 @@
-//3D inside input text : className='w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
-//ลูกอมนูน : className='px-3 w-8 h-8 bg-gradient-to-b from-gray-200 to-gray-300 rounded-xl shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
+//3D inside input text : className='w-full p-2 rounded-xl overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+//ลูกอมนูน : className='px-3 w-8 h-8 rounded-xl bg-gradient-to-b from-gray-200 to-gray-300  shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2),0_4px_6px_rgba(0,0,0,0.15)] hover:from-gray-300 hover:to-gray-400 hover:shadow-[inset_0_-1px_2px_rgba(0,0,0,0.15),0_6px_8px_rgba(0,0,0,0.2)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] active:translate-y-0.5 transition-all duration-500'
 //เงา svg 'text-slate-900 drop-shadow-sm '
 //ปุมม่วง(gradient) className='w-full mt-4 bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500 text-white py-2 shadow-md rounded-xl '
 //ปุ่มม่วง className='w-full mt-4 bg-fuchsia-800 text-white py-2 shadow-md rounded-xl hover:bg-fuchsia-700 transition-all duration-300'>
@@ -894,3 +894,38 @@ const columns = [
    ))}
 </ul>
 </div> */}
+
+ //if user did not select category and click 'update Product' ► won't let to submit, using return to stop
+      for (let key in inputForm) {
+         if (!inputForm[key] || inputForm[key] === "") {
+            if (
+               key === "description" ||
+               key === "sold" ||
+               key === "images" ||
+               key === "avgRating" ||
+               key === "promotion"
+            )
+               continue; //empty description can be allowed
+            if (key === "categoryId") {
+               setAlert(
+                  <Alert variant='destructive'>
+                     <AlertCircle className='h-4 w-4' />
+                     <AlertTitle>Warning!</AlertTitle>
+                     <AlertDescription>Please select category.</AlertDescription>
+                  </Alert>
+               );
+               setTimeout(() => setAlert(null), 3000);
+               return;
+            } else {
+               setAlert(
+                  <Alert variant='destructive'>
+                     <AlertCircle className='h-4 w-4' />
+                     <AlertTitle>Warning!</AlertTitle>
+                     <AlertDescription>Please enter all fields.</AlertDescription>
+                  </Alert>
+               );
+               setTimeout(() => setAlert(null), 3000);
+               return;
+            }
+         }
+      }

@@ -106,42 +106,6 @@ function FormEditProd() {
    const handleSubmit = async (e) => {
       e.preventDefault();
       console.log("inputForm->", inputForm);
-
-      //if user did not select category and click 'update Product' ► won't let to submit, using return to stop
-      // for (let key in inputForm) {
-      //    if (!inputForm[key] || inputForm[key] === "") {
-      //       if (
-      //          key === "description" ||
-      //          key === "sold" ||
-      //          key === "images" ||
-      //          key === "avgRating" ||
-      //          key === "promotion"
-      //       )
-      //          continue; //empty description can be allowed
-      //       if (key === "categoryId") {
-      //          setAlert(
-      //             <Alert variant='destructive'>
-      //                <AlertCircle className='h-4 w-4' />
-      //                <AlertTitle>Warning!</AlertTitle>
-      //                <AlertDescription>Please select category.</AlertDescription>
-      //             </Alert>
-      //          );
-      //          setTimeout(() => setAlert(null), 3000);
-      //          return;
-      //       } else {
-      //          setAlert(
-      //             <Alert variant='destructive'>
-      //                <AlertCircle className='h-4 w-4' />
-      //                <AlertTitle>Warning!</AlertTitle>
-      //                <AlertDescription>Please enter all fields.</AlertDescription>
-      //             </Alert>
-      //          );
-      //          setTimeout(() => setAlert(null), 3000);
-      //          return;
-      //       }
-      //    }
-      // }
-
       try {
          setLoading(true);
          const res = await updateProduct(token, id, inputForm);
@@ -149,7 +113,6 @@ function FormEditProd() {
             title: "Update Success!",
             description: `Product: ${res.data.data.title}`
          });
-         // toast.success(`Update Product: ${res.data.data.title} Success.`);
          setTimeout(() => {
             navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
          }, 200);
@@ -223,7 +186,7 @@ function FormEditProd() {
                         name='title'
                         value={inputForm.title}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full p-2 rounded-xl Input-3Dshadow'
                         required
                      />
                   </div>
@@ -236,7 +199,7 @@ function FormEditProd() {
                         name='description'
                         value={inputForm.description}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full p-2 rounded-xl Input-3Dshadow overflow-auto'
                      />
                   </div>
                </CardContent>
@@ -261,7 +224,7 @@ function FormEditProd() {
                            name='price'
                            value={inputForm.price}
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full p-2 rounded-xl Input-3Dshadow'
                            required
                         />
                      </div>
@@ -276,7 +239,7 @@ function FormEditProd() {
                            name='quantity'
                            value={inputForm.quantity}
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full p-2 rounded-xl Input-3Dshadow'
                            required
                         />
                      </div>

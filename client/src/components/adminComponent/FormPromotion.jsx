@@ -21,7 +21,7 @@ import { CalendarIcon, Percent, Timer } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { bulkDiscount } from "@/api/ProductAuth";
 
-function FormPromotion(props) {
+function FormPromotion() {
    const { getProduct, products, token } = useEcomStore();
    const { toast } = useToast();
    const tableRef = useRef(null); //for clear checkbox in table
@@ -576,7 +576,7 @@ function FormPromotion(props) {
                         max='100'
                         value={discountAmount}
                         onChange={(e) => setDiscountAmount(e.target.value)}
-                        className='mt-1 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='mt-1 p-2 rounded-xl transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent  focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                      />
                   </div>
                </div>
@@ -597,7 +597,7 @@ function FormPromotion(props) {
                               mode='single' //can be single or range
                               selected={startDate}
                               onSelect={setStartDate}
-                              className='flex shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-lg border focus:ring-1 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='flex transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-lg border focus:ring-1 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            />
                         </div>
                         <div className='flex-1'>
@@ -609,7 +609,7 @@ function FormPromotion(props) {
                               mode='single'
                               selected={endDate}
                               onSelect={setEndDate}
-                              className='flex shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-lg border focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='flex transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] rounded-lg border focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                            />
                         </div>
                      </div>
@@ -622,7 +622,7 @@ function FormPromotion(props) {
                      value={description}
                      onChange={(e) => setDescription(e.target.value)}
                      placeholder='e.g. New Year Sale, Summer Collection'
-                     className='shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                     className='transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
                   />
                </div>
             </CardContent>

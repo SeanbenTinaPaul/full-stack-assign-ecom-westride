@@ -3,14 +3,13 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+const secretKeyAPI = import.meta.env.VITE_STRIPE_SECRET_API_KEY;
 import { createPaymentUser } from "@/api/PaymentAuth";
 import useEcomStore from "@/store/ecom-store";
 import CheckoutForm from "./CheckoutForm";
 
 //secret API key "pk_..." → ต่างกันใน user
-const stripePromise = loadStripe(
-   "pk_test_51QlpOAGb4ZSqFhpEUEYYjEdhd3y4fInGQXktSrOcMeB8OScSs1ewoNY4CqPCiu5A7cRJXWeaHurkPabCctEqtFeX008XPOOCHC"
-);
+const stripePromise = loadStripe(secretKeyAPI);
 
 //------------------------------------------------------------------------------------------
 function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {

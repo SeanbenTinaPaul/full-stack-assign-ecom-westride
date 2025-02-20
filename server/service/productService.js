@@ -82,11 +82,11 @@ exports.listProd = async (req, res) => {
       //findMany === SELECT * from TableName
       //take === LIMIT
       const { count } = req.params;
-      const { range } = req.body;
-      console.log("range->", range);
+      const { leastStock } = req.body;
+      console.log("leastStock->", leastStock);
       const products = await prisma.product.findMany({
          where: {
-            quantity: { gte: range }
+            quantity: { gte: leastStock }
          },
          take: parseInt(count),
          orderBy: {
@@ -431,6 +431,7 @@ exports.displayProdBy = async (req, res) => {
 
 exports.displayProdByUser = async (req, res) => {
    const { id } = req.user;
+   //to get 2-5 products from user's most frequently purchased categories
    try {
       const favCatArr = await prisma.order.findMany({
          where: {
@@ -450,10 +451,13 @@ exports.displayProdByUser = async (req, res) => {
          }
       });
 
-      //{'1': 5, '2': 3}
+      //{'1': 5, '2': 3} count categoryId found  in table Order 
       const catcount = {};
+      //order === each records in table Order
       for (const order of favCatArr) {
+         //const product === each ProductOnOrder
          for (const product of order.products) {
+            //.product → table Product 
             const catId = product.product.categoryId;
             if (catId) {
                catcount[catId] = (catcount[catId] || 0) + 1;
@@ -461,12 +465,11 @@ exports.displayProdByUser = async (req, res) => {
          }
       }
 
-      //get top 5 cat | topCat===[1, 2, 3, 4, 5]
+      //get top 5 catId | topCat===[1, 2, 3, 4, 5]
       const topCat = Object.entries(catcount)
-         .sort(([, a], [, b]) => b - a)
-         .slice(0, 5)
-         //[catId] = pair[0]
-         .map(([catId]) => parseInt(catId));
+         .sort(([, a], [, b]) => b - a) //sort by value
+         .slice(0, 5) //[['1', 5], ['2', 3], [], [], []]
+         .map(([catId]) => parseInt(catId));//[catId] = pair[0] | [, a] = pair[1]
 
       if (topCat.length === 0) {
          return res.status(200).json({
@@ -477,7 +480,8 @@ exports.displayProdByUser = async (req, res) => {
       }
 
       //get 2 or 5 products from each category and group them
-      const recomProdsCat = {}; //{ "1": [{prod1}, {prod2}], "2": [{prod3}, {prod4}] }
+      const recomProdsInCat = {}; //{ "1": [{prod1}, {prod2}], "2": [{prod3}, {prod4}] }
+      //need at least 5 total products
       const prodsPerCat = topCat.length > 2 ? 2 : 5;
 
       for (const catId of topCat) {
@@ -498,21 +502,22 @@ exports.displayProdByUser = async (req, res) => {
          });
 
          // Store directly in the grouped format
-         recomProdsCat[catId] = products;
+         recomProdsInCat[catId] = products;
       }
       //recomProdArr===[{prod1},{prod2}]
-      const recomProdArr = Object.values(recomProdsCat).flat();
+      const recomProdArr = Object.values(recomProdsInCat).flat();
       res.status(200).json({
          success: true,
-         data: { recomProdsCat: recomProdsCat, topCat: topCat, recomProdArr: recomProdArr }
+         data: { recomProdsInCat: recomProdsInCat, topCat: topCat, recomProdArr: recomProdArr }
       });
       /*
       data: {
          topCat: [1, 2, 3, 4, 5], // category IDs
-         recomProdsCat: {
-            "1": [product1, product2],
-            "2": [product3, product4],
-                     }
+         recomProdsInCat: {
+            "1": [{product1}, {product2}],
+            "2": [{product3}, {product4}],
+                          },
+            recomProdArr: [{product1}, {product2},..]              
             }
       */
    } catch (err) {
@@ -788,7 +793,7 @@ exports.bulkDiscount = async (req, res) => {
       console.log("prodToCreate-->", prodToCreate);
       console.log("prodToUpdate-->", prodToUpdate);
       const promises = [];
-      //if isPromotion === true → update col promotion in Product and leave
+      //if isPromotion === true → update col promotion in Product and go to res.status(200)
       if (isPromotion) {
          //อัพเดตฟิลด์ promotion ในตาราง Product
          promises.push(

@@ -17,17 +17,23 @@ import {
 } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 const navItems = [
+   // {
+   //    title: "Dashboard",
+   //    url: "/admin",
+   //    icon: ChartPie,
+   //    end: true
+   // },
    {
-      title: "Dashboard",
+      title: "Manage users",
       url: "/admin",
       icon: ChartPie,
       end: true
    },
-   {
-      title: "Manage users",
-      url: "manage",
-      icon: ChartNoAxesGantt
-   },
+   // {
+   //    title: "Manage users",
+   //    url: "manage",
+   //    icon: ChartNoAxesGantt
+   // },
    // {
    //    title: "Brand Store",
    //    url: "brand-store",

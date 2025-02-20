@@ -111,12 +111,12 @@ function UploadFile({ inputForm, setInputForm, cancelImg, setCancelImg }) {
 
             setIsLoading(true);
 
-            //Image Resize and upload
+            //Image Resize and upload | 300,480,720,900,1080,1200,1440,1920 | JPEG, PNG, WEBP 
             Resizer.imageFileResizer(
                fileList[i],
-               720,
-               720,
-               "JPEG",
+               1080, 
+               1080,
+               "WEBP",
                100,
                0,
                (binaryImg) => {

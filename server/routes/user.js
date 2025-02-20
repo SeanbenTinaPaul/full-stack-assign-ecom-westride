@@ -13,20 +13,20 @@ const {
    updateUserProfile
 } = require("../service/userService");
 
-const { authCheck } = require("../middlewares/authCheck.js");
+const { userVerify } = require("../middlewares/authVerify");
 
-router.post("/user/cart", authCheck, createUserCart); //add cart
-router.get("/user/cart", authCheck, getUserCart);
+router.post("/user/cart", userVerify, createUserCart); //add cart
+router.get("/user/cart", userVerify, getUserCart);
 //pending...
-router.delete("/user/cart", authCheck, clearCart); //ไม่มี id เพราะจะใช้ id จาก token user คนนั้น
+router.delete("/user/cart", userVerify, clearCart); //ไม่มี id เพราะจะใช้ id จาก token user คนนั้น
 
-router.post("/user/address", authCheck, saveAddress);
+router.post("/user/address", userVerify, saveAddress);
 
-router.post("/user/order", authCheck, saveOrder);
-router.get("/user/order", authCheck, getOrder);
-router.post('/user/rating', authCheck, addProdRating);
+router.post("/user/order", userVerify, saveOrder);
+router.get("/user/order", userVerify, getOrder);
+router.post('/user/rating', userVerify, addProdRating);
 
-router.patch("/user/update-profile", authCheck, updateUserProfile);
+router.patch("/user/update-profile", userVerify, updateUserProfile);
 router.post("/user/favorite-prod", favoriteProduct);//pending...
 
 module.exports = router;

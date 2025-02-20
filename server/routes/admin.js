@@ -7,15 +7,15 @@ const {
    changeOrderStatus,
    getOrderAdmin
 } = require("../service/adminService");
-const { authCheck, adminCheck } = require("../middlewares/authCheck");
+const { userVerify, adminVerify } = require("../middlewares/authVerify");
 
 //1. ดึงข้อมูลทั้งหมดไปแสดงที่หน้า admin
-router.get("/admin/all-users", authCheck, adminCheck, getAllUsers);
-router.get("/admin/orders", authCheck, adminCheck, getOrderAdmin);
+router.get("/admin/all-users", userVerify, adminVerify, getAllUsers);
+router.get("/admin/orders", userVerify, adminVerify, getOrderAdmin);
 
 //2. หลังดึงข้อมูลจะ update สถานะ
-router.post("/admin/change-status", authCheck, adminCheck, changeUserStatus);
-router.put("/admin/order-status", authCheck, adminCheck, changeOrderStatus);
+router.put("/admin/change-status", userVerify, adminVerify, changeUserStatus);
+router.put("/admin/order-status", userVerify, adminVerify, changeOrderStatus);
 
 module.exports = router;
 

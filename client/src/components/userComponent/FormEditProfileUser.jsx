@@ -1,3 +1,4 @@
+//parent → EditProfileUser.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -18,7 +19,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { HardDriveUpload } from "lucide-react";
 import UploadPersonPic from "./UploadPersonPic";
-import { use } from "react";
 import { updateProfileUser } from "@/api/userAuth";
 const inputUserinfo = {
    image: {},
@@ -27,7 +27,7 @@ const inputUserinfo = {
    email: "",
    password: ""
 };
-function FormEditProfileUser(props) {
+function FormEditProfileUser() {
    const { user, token } = useEcomStore((state) => state);
    const navigate = useNavigate();
    const { toast } = useToast();
@@ -35,7 +35,7 @@ function FormEditProfileUser(props) {
    const [inputForm, setInputForm] = useState(inputUserinfo);
    const [cancelImg, setCancelImg] = useState(false);
    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-   const [formEvent, setFormEvent] = useState(null); // Store the form event
+   // const [formEvent, setFormEvent] = useState(null); // Store the form event
    
 
    //useEffect fecth data from DB
@@ -62,8 +62,8 @@ function FormEditProfileUser(props) {
    //handle form submission attempt
    const handleFormSubmit = (e) => {
       e.preventDefault();
-      setFormEvent(e); // Store the event
-      setShowConfirmDialog(true); // display confirm dialog
+      // setFormEvent(e); // store the event
+      setShowConfirmDialog(true); // display confirm dialog → handleConfirmedSubmit()
    };
    //handle actual submission after confirm
    const handleConfirmedSubmit = async () => {
@@ -142,7 +142,7 @@ function FormEditProfileUser(props) {
                         name='name'
                         value={inputForm.name}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full p-2 rounded-xl Input-3Dshadow'
                         required
                      />
                   </div>
@@ -156,7 +156,7 @@ function FormEditProfileUser(props) {
                         name='email'
                         value={inputForm.email}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full p-2 rounded-xl Input-3Dshadow'
                         required
                      />
                   </div>
@@ -170,7 +170,7 @@ function FormEditProfileUser(props) {
                         name='password'
                         value={inputForm.password}
                         onChange={handleOnchange}
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full p-2 rounded-xl Input-3Dshadow'
                         required
                      />
                   </div>

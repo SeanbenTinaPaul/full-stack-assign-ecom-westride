@@ -200,11 +200,11 @@ function FormCategory() {
                      onSubmit={handleSubmit}
                      className='flex gap-4'
                   >
-                     <Input
+                     <input
                         onChange={(e) => setName(e.target.value)}
                         value={name}
                         placeholder='Enter a category name'
-                        className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        className='w-full p-2 rounded-xl Input-3Dshadow'
                      />
                      <Button
                         type='submit'

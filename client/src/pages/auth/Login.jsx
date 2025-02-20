@@ -131,7 +131,7 @@ function Login() {
                   </div>
                   <Button
                      type='submit'
-                     className='w-full'
+                     className='w-full hover:bg-slate-500 transition-all duration-300'
                   >
                      Login
                   </Button>

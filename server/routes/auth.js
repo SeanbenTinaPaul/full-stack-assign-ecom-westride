@@ -3,12 +3,12 @@ const router = express.Router();
 //import service
 const { register, logIn, currUserProfile, currAdminProfile } = require("../service/authService");
 //import middleware
-const { authCheck, adminCheck } = require("../middlewares/authCheck");
+const { userVerify, adminVerify } = require("../middlewares/authVerify");
 
 router.post("/register", register);
 router.post("/login", logIn);
-router.post("/profile-user", authCheck, currUserProfile);
-router.post("/profile-admin", authCheck, adminCheck, currAdminProfile);
+router.post("/profile-user", userVerify, currUserProfile);
+router.post("/profile-admin", userVerify, adminVerify, currAdminProfile);
 
 /*router.post('/register', (req, res) => {
     const { email, password } = req.body;

@@ -246,7 +246,7 @@ function FormProduct() {
                            value={inputForm.title}
                            placeholder='e.g. จานเมลามีน, HP Laptop'
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full p-2 rounded-xl Input-3Dshadow'
                            // className='w-full shadow-[0_0_10px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-transparent'
                            required
                         />
@@ -262,7 +262,7 @@ function FormProduct() {
                            value={inputForm.description}
                            placeholder='e.g. มีสีฟ้าหวาน, อุปกรณ์'
                            onChange={handleOnchange}
-                           className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                           className='w-full p-2 rounded-xl Input-3Dshadow overflow-auto'
                         />
                      </div>
                   </CardContent>
@@ -289,7 +289,7 @@ function FormProduct() {
                               value={inputForm.price}
                               placeholder='e.g. 5000, 99.50'
                               onChange={handleOnchange}
-                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='w-full p-2 rounded-xl Input-3Dshadow'
                               required
                            />
                         </div>
@@ -305,7 +305,7 @@ function FormProduct() {
                               value={inputForm.quantity}
                               placeholder='e.g. 150'
                               onChange={handleOnchange}
-                              className='w-full shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                              className='w-full p-2 rounded-xl Input-3Dshadow'
                               required
                            />
                         </div>
@@ -363,7 +363,7 @@ function FormProduct() {
 
                <Button
                   type='submit'
-                  className='w-52 mt-4 text-white py-2 shadow-md rounded-xl bg-gradient-to-r from-fuchsia-800 to-fuchsia-600 hover:from-fuchsia-700 hover:to-fuchsia-500'
+                  className='w-52 mt-4 py-2 shadow-md rounded-xl Btn-gradientFuchsia'
                   disabled={loading}
                >
                   {loading ? (

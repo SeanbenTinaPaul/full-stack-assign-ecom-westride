@@ -9,7 +9,7 @@ import useEcomStore from "@/store/ecom-store";
 import { View,PackageSearch } from 'lucide-react';
 const ShopUser = () => {
    const { user, token, products, getProduct } = useEcomStore((state) => state);
-   const [isFoundTextSearch, setIsFoundTextSearch] = useState(false);
+   const [isFoundSearch, setIsFoundSearch] = useState(false);
    const [whatTextSearch, setWhatTextSearch] = useState("");
 
    useEffect(() => {
@@ -37,7 +37,7 @@ const ShopUser = () => {
                </h1>
             </div>
             <SearchForProd
-               setIsFoundTextSearch={setIsFoundTextSearch}
+               setIsFoundSearch={setIsFoundSearch}
                // isFoundTextSearch={isFoundTextSearch}
                setWhatTextSearch={setWhatTextSearch}
             />
@@ -47,7 +47,7 @@ const ShopUser = () => {
             <div className=' bg-gradient-to-r from-slate-700 to-slate-500 p-6 rounded-xl mb-4 flex items-center shadow-md'>
                <p className='text-2xl font-sans font-bold  text-slate-50'>Products</p>
             </div>
-            {!isFoundTextSearch && whatTextSearch && (
+            {!isFoundSearch && whatTextSearch && (
                <section>
                   <p className='text-muted-foreground font-light mb-4'>
                      No Product found with "{whatTextSearch}"

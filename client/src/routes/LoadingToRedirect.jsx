@@ -16,19 +16,19 @@ export const LoadingToRedirect = () => {
       const interval = setInterval(() => {
          setCount((currentCount) => {
             if (currentCount === 1) {
+               // toast({
+               //    variant: "destructive",
+               //    title: "Error!",
+               //    description: "Permission Denied"
+               // });
                clearInterval(interval);
                setRedirect(true); //อนุญาตให้ redirect
             }
-            toast({
-               variant: "destructive",
-               title: "Error!",
-               description: "Permission Denied"
-            });
             return currentCount - 1; //loop count = --count
          });
       }, 1000);
      
-      return () => clearInterval(interval); // ให้ clearInterval เมื่อ component ถูก unmount
+      return () => clearInterval(interval); 
    }, []); //add [] to at end to avoid infinite loop
 
    if (redirect) {
