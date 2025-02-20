@@ -63,8 +63,4 @@
 | `/api/user/cancel-payment-intent`   | POST   | Cancel payment-intent     | `{"id":"pi_32AkjQ5H4Bas2..."}`                        |
 | `/api/user/refund-payment`          | POST   | Request for refunding after purchase success    | `{"orderId": 1}`                  |
 
-## Acknowledgments
 
-Special thanks to [Roitai-Dev's ecom-2024] for the initial reference points in:
-- Starting point database design
-- Frontend architecture patterns
