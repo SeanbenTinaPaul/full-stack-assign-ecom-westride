@@ -10,7 +10,7 @@ import { PackageSearch } from 'lucide-react';
 
 const Shop = () => {
    const { user, token, products, getProduct } = useEcomStore((state) => state);
-   const [isFoundSearch, setIsFoundSearch] = useState(false);
+   const [isFoundSearch, setIsFoundSearch] = useState(true);
    const [whatTextSearch, setWhatTextSearch] = useState("");
 
    useEffect(() => {
@@ -46,16 +46,26 @@ const Shop = () => {
             <div className='bg-gradient-to-r from-slate-700 to-slate-500 p-6 rounded-xl mb-4 flex items-center shadow-md'>
                <p className='text-2xl font-sans font-bold  text-slate-50'>Products</p>
             </div>
-            {!isFoundSearch && whatTextSearch && (
+            {!isFoundSearch &&  (
                <section>
                   <p className='text-muted-foreground font-light mb-4'>
-                     No Product found with "{whatTextSearch}"
+                     {whatTextSearch? `No Product "${whatTextSearch}" matched your search ` : "No Product matched your search"}
                   </p>
                   <p className='text-accent-foreground from-accent-foreground font-semibold'>
                      We think you might like these products
                   </p>
                </section>
             )}
+            {/* {!isFoundSearch && !whatTextSearch && (
+               <section>
+                  <p className='text-muted-foreground font-light mb-4'>
+                     No Product matched your search
+                  </p>
+                  <p className='text-accent-foreground from-accent-foreground font-semibold'>
+                     We think you might like these products
+                  </p>
+               </section>
+            )} */}
             {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
             <section className='shadow-md bg-slate-50 pt-10 rounded-xl flex flex-wrap gap-4 justify-center min-w-[300px] max-[1663px]:grid max-[1663px]:grid-cols-3 max-[1600px]:grid-flow-row max-[1366px]:grid-cols-2 max-[1366px]:justify-items-center max-[1155px]:gap-2'>
                {/* {console.log("products", products)} */}

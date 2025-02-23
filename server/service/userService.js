@@ -208,7 +208,11 @@ exports.getUserCart = async (req, res) => {
                   // ProductOnCart join กับ Product ด้วย productId
                   product: {
                      include: {
-                        discounts: true
+                        discounts: true,
+                        ratings: true,
+                        favorites: true,
+                        images: true,
+                        category: true
                      }
                   }
                }

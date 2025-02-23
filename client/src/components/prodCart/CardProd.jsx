@@ -67,7 +67,7 @@ function CardProd({ prodObj }) {
       return stars;
    };
 
-   // Safe discount amount getter
+   // Safe discount amount getter | Pending to move to backend...
    const getDiscountAmount = () => {
       //check if isAtive === true (not expired)
       //isAtive === true → can use discount
@@ -80,7 +80,7 @@ function CardProd({ prodObj }) {
       return null;
    };
 
-   //create new the price after discount OR promotion in productData for further Checkout
+   //create new the price after discount OR promotion in productData for further Checkout | Pending to move to backend...
    useEffect(() => {
       const calDiscountPrice = () => {
          const discountAmount = getDiscountAmount();
@@ -97,7 +97,7 @@ function CardProd({ prodObj }) {
             buyPriceNum = prodObj.price * (1 - prodObj.discounts[0].amount / 100);
             buyPrice = formatNumber(buyPriceNum);
          }
-
+         //this code will decide NaN or number in CartInfo.jsx + CartCheckout.jsx
          setProductData((prev) => ({
             ...prev,
             buyPrice: buyPrice,

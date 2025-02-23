@@ -15,6 +15,7 @@ import { ListChecks, Trash2 } from "lucide-react";
 function CartCheckout({ isCollapsedContext }) {
    const {
       carts,
+      fetchUserCart,
       adjustQuantity,
       removeCart,
       user,
@@ -37,6 +38,7 @@ function CartCheckout({ isCollapsedContext }) {
    // Sync with products when carts or products change
    useEffect(() => {
       getProduct(1000,1);
+      fetchUserCart();
    }, []);
 
    //fetch products every '+' and '-' clicked
@@ -202,7 +204,7 @@ function CartCheckout({ isCollapsedContext }) {
                                     {cart.title}
                                  </p>
                                  <p className='text-xs whitespace-normal break-words'>
-                                    {cart.description}
+                                    {/* {cart.description} */}
                                  </p>
                               </div>
                               {cart?.preferDiscount ? (

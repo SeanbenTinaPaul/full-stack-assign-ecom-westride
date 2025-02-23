@@ -1,5 +1,5 @@
 //perent → Shop.jsx
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,20 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/hooks/use-toast";
 import { createCartUser } from "@/api/userAuth";
 
-
 function CartInfo(props) {
    const {
       token,
       carts,
       adjustQuantity,
       removeCart,
-      toTalPrice,
       updateStatusSaveToCart,
       showLogoutConfirm,
       setShowLogoutConfirm,
       actionLogout,
-      getProduct,
-      products
+      getProduct
    } = useEcomStore((state) => state);
    //carts === [{ categoryId:, buyPriceNum:,countCart:,discounts:,promotion:, },{},..]
    const { toast } = useToast();
@@ -31,11 +28,11 @@ function CartInfo(props) {
    // console.log("carts in CartInfo", carts);
    // Sync with products when carts or products change
    const handleClickAddDelamount = () => {
-      getProduct(1000,1);
+      getProduct(1000, 1);
       // console.log("carts after click add", carts);
    };
    // Safe discount amount getter
-   const getDiscountAmount = (cart) => {
+   const getDiscountAmount = useCallback((cart) => {
       //check if isAtive === true (not expired)
       //isAtive === true → can use discount
       // console.log('check cart sample',cart)
@@ -48,9 +45,9 @@ function CartInfo(props) {
          return cart?.discounts?.[0]?.amount;
       }
       return null;
-   };
+   },[])
    //cal percent discount for badge
-   const renderPercentDiscount = (cart) => {
+   const renderPercentDiscount = useCallback((cart) => {
       const discountAmount = getDiscountAmount(cart);
       if (cart?.promotion && discountAmount) {
          //  console.log("pro vs dis", cart?.promotion ,discountAmount );
@@ -63,7 +60,12 @@ function CartInfo(props) {
          return discountAmount;
       }
       return null;
-   };
+   }, []);
+   
+   const toTalPrice = useCallback(() => {
+      let total = carts.reduce((acc, curr) => acc + curr.buyPriceNum * curr.countCart, 0);
+      return total;
+   }, [carts]);
 
    // Calculate total price
    //    useEffect(() => {
@@ -134,9 +136,9 @@ function CartInfo(props) {
                            <p className='font-medium text-sm whitespace-normal break-words'>
                               {cart.title}
                            </p>
-                           <p className='text-xs whitespace-normal break-words'>
+                           {/* <p className='text-xs whitespace-normal break-words'>
                               {cart.description}
-                           </p>
+                           </p> */}
                         </section>
                      </div>
                      {/* right : trash*/}

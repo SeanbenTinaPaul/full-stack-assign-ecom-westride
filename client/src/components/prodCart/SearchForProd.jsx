@@ -126,7 +126,7 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
       // Reset search results by fetching all products
       try {
          await getProduct(100, 1);
-         setIsFoundSearch(false);
+         setIsFoundSearch(true);
       } catch (err) {
          console.error("Reset error:", err);
       }

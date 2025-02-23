@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import CardPurchase from "@/components/userComponent/CardPurchase";
 import PaymentMethod from "@/components/userComponent/PaymentMethod";
+// import useEcomStore from "@/store/ecom-store";
 
 const Payment = () => {
+
    const [isSaveAddress, setIsSaveAddress] = useState(false);
    const [isShowCreditCard, setIsShowCreditCard] = useState(false);
 

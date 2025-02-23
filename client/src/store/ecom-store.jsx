@@ -4,11 +4,11 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware"; //ใช้เก็บข้อมูลที่ user กรอกลง inout ไว้ใน localStorage
 import { listCategory } from "../api/CategoryAuth.jsx";
 import { listProduct, seachFilterProd } from "../api/ProductAuth.jsx";
-import _, { update } from "lodash"; // for making unique el array
+// import _, { update } from "lodash"; // for making unique el array
 import { binarySearchProdId } from "@/utilities/binarySearch.js";
 const apiUrl = import.meta.env.VITE_API_URL;
 import { useLocalStorage } from "react-use";
-import { clearCartUser } from "@/api/userAuth.jsx";
+import { clearCartUser, getCartUser } from "@/api/userAuth.jsx";
 
 //set((state) => ({ carts: [...state.carts, newItem] })) === set({ carts: [...carts, newItem] })
 //get is a function that allows you to retrieve the current state of the store.
@@ -94,6 +94,47 @@ const ecomStore = (set, get) => ({
       // console.log("updateCarts", updateCarts);
       // console.log("synCart with Products", carts);
    },
+   fetchUserCart: async () => {
+      const carts = get().carts;
+      try {
+         const res = await getCartUser(get().token);
+         // console.clear();
+         console.log("cart now", carts);
+         console.log("fetchUserCart", res.data);
+         if (res.data.ProductOnCart?.length > 0 || res.data.success) {
+            if(carts.length === 0) {
+               const editKeyProdArr = res.data.ProductOnCart.map((prod) => {
+                  return {
+                     ...prod.product,
+                     id: prod.productId,
+                     countCart: prod.count,
+                     preferDiscount: prod.discount,
+                     buyPriceNum: prod.buyPriceNum,
+                  };
+               })
+               // console.log("editKeyProdArr", editKeyProdArr);
+               set({ carts: editKeyProdArr });
+            }else{
+               carts.forEach((cartItem) => {
+                  const existIndex = res.data.ProductOnCart.findIndex((prod) => prod.productId === cartItem.id);
+                  if (existIndex !== -1) {
+                     res.data.ProductOnCart[existIndex] = {
+                        ...cartItem,
+                        countCart: res.data.ProductOnCart[existIndex].count,
+                        buyPrice: cartItem.buyPrice,
+                        buyPriceNum: cartItem.buyPriceNum,
+                        preferDiscount: cartItem.preferDiscount
+                     };
+                  }
+                  // console.log("res.data.ProductOnCart", res.data.ProductOnCart);
+                  set({ carts: res.data.ProductOnCart });
+               })
+            }
+         }
+      } catch (error) {
+         console.error(error);
+      }
+   },
 
    //clik 'Add to cart' in CardProd.jsx to call this fn▼
    //productObj = 1 prod | ==={id(productId), buyPrice, buyPriceNum, promotion, avgRating}
@@ -125,7 +166,7 @@ const ecomStore = (set, get) => ({
          newCarts = [...carts, { ...productObj, countCart: 1 }];
       }
       set({ carts: newCarts });
-      // console.log("new carts", newCarts);
+      console.log("new carts", newCarts);
       get().synCartwithProducts(productObj);
    },
    //update state wheter
@@ -184,11 +225,7 @@ const ecomStore = (set, get) => ({
          }
       }
    },
-   toTalPrice: () => {
-      let total = get().carts.reduce((acc, curr) => acc + curr.buyPriceNum * curr.countCart, 0);
-      // console.log("total", total);
-      return total;
-   },
+  
    actionLogin: async (form) => {
       //1. Send req with form to backend, path : http://localhost:5000/api/login
       const res = await axios.post(`${apiUrl}/api/login`, form);
