@@ -272,6 +272,7 @@ exports.clearCart = async (req, res) => {
       const cart = await prisma.cart.findFirst({
          where: { orderedById: Number(id) }
       });
+      console.log("clearCart->", cart );
       //2. ถ้าไม่มีให้ return 400
       if (!cart) return res.status(400).json({ message: "No cart found." });
 

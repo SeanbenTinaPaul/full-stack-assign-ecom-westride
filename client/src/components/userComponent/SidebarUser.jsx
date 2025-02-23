@@ -134,6 +134,7 @@ function SidebarUser({ isCollapsed }) {
          console.log("res.data.cart", res.data.cart);
          console.log("res.data.productOnCart", res.data.productOnCart);
          if (res.data.success) {
+            updateStatusSaveToCart(true);
             toast({
                title: "Your cart is now saved.",
                description: "Feel free to browse more or come back later to complete your purchase."
@@ -323,7 +324,7 @@ function SidebarUser({ isCollapsed }) {
          >
             <AlertDialogContent>
                <AlertDialogHeader>
-                  <AlertDialogTitle>Don't Lose Your Cart!</AlertDialogTitle>
+                  <AlertDialogTitle>Don't Lose Your Cart Updated!</AlertDialogTitle>
                   <AlertDialogDescription>Place Order Before Logging Out</AlertDialogDescription>
                </AlertDialogHeader>
                <AlertDialogFooter>
@@ -332,7 +333,6 @@ function SidebarUser({ isCollapsed }) {
                   </AlertDialogCancel>
                   <AlertDialogAction
                      onClick={() => {
-                        updateStatusSaveToCart(true);
                         handleCreateCart();
                         setShowLogoutConfirm(false);
                      }}

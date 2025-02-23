@@ -114,6 +114,7 @@ const ecomStore = (set, get) => ({
                })
                // console.log("editKeyProdArr", editKeyProdArr);
                set({ carts: editKeyProdArr });
+               get().updateStatusSaveToCart(true);
             }else{
                carts.forEach((cartItem) => {
                   const existIndex = res.data.ProductOnCart.findIndex((prod) => prod.productId === cartItem.id);
@@ -154,9 +155,6 @@ const ecomStore = (set, get) => ({
       let newCarts;
       if (existProdIndex !== -1) {
          newCarts = [...carts];
-         // console.log("existProdIndex", existProdIndex);
-         // console.log(newCarts)
-         // console.log(newCarts[existProdIndex])
          newCarts[existProdIndex] = {
             ...productObj,
             countCart: (newCarts[existProdIndex].countCart || 0) + 1 //ถ้าส่ง productObj.idมาซ้ำ ด้วยการกด 'Add to cart' === +1 ให้ countCart
@@ -167,6 +165,7 @@ const ecomStore = (set, get) => ({
       }
       set({ carts: newCarts });
       console.log("new carts", newCarts);
+      get().updateStatusSaveToCart(false);
       get().synCartwithProducts(productObj);
    },
    //update state wheter
@@ -206,6 +205,8 @@ const ecomStore = (set, get) => ({
                : obj
          )
       }));
+      //force to save cart to DB again if user adjust quantity after saving them to DB
+      get().updateStatusSaveToCart(false);
    },
 
    removeCart: async (prodId) => {
@@ -213,9 +214,11 @@ const ecomStore = (set, get) => ({
       set((state) => ({
          carts: state.carts.filter((obj) => obj.id !== prodId)
       }));
+      //force to save cart to DB again if user remove items after saving them to DB
+      get().updateStatusSaveToCart(false);
       console.log("removeCart", prodId);
       //if user rm carts to empty BUT carts records is wrtitten to DB ► reset confirmation states and rm cart in DB
-      if (get().carts.length === 0 && get().isSaveToCart === true) {
+      if (get().carts.length === 0 ) {
          set({ isSaveToCart: false, showLogoutConfirm: false });
          try {
             const res = await clearCartUser(get().token);
