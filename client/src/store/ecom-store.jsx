@@ -9,6 +9,7 @@ import { binarySearchProdId } from "@/utilities/binarySearch.js";
 const apiUrl = import.meta.env.VITE_API_URL;
 import { useLocalStorage } from "react-use";
 import { clearCartUser, getCartUser } from "@/api/userAuth.jsx";
+import { listBrand } from "@/api/BrandAuth.jsx";
 
 //set((state) => ({ carts: [...state.carts, newItem] })) === set({ carts: [...carts, newItem] })
 //get is a function that allows you to retrieve the current state of the store.
@@ -18,6 +19,7 @@ const ecomStore = (set, get) => ({
    token: null,
    categories: [],
    products: [],
+   brands: [],
    carts: [],
    isSaveToCart: false,
    savedCartCount: 0, //คอขวด carts.length
@@ -96,28 +98,32 @@ const ecomStore = (set, get) => ({
    },
    fetchUserCart: async () => {
       const carts = get().carts;
+      get().getProducts(100, 1);
       try {
          const res = await getCartUser(get().token);
          // console.clear();
          console.log("cart now", carts);
          console.log("fetchUserCart", res.data);
          if (res.data.ProductOnCart?.length > 0 || res.data.success) {
-            if(carts.length === 0) {
+            if (carts.length === 0) {
                const editKeyProdArr = res.data.ProductOnCart.map((prod) => {
                   return {
                      ...prod.product,
                      id: prod.productId,
                      countCart: prod.count,
                      preferDiscount: prod.discount,
-                     buyPriceNum: prod.buyPriceNum,
+                     buyPriceNum: prod.buyPriceNum
                   };
-               })
+               });
                // console.log("editKeyProdArr", editKeyProdArr);
                set({ carts: editKeyProdArr });
                get().updateStatusSaveToCart(true);
-            }else{
+            } else {
+               console.log("fetch carts + carts", carts);
                carts.forEach((cartItem) => {
-                  const existIndex = res.data.ProductOnCart.findIndex((prod) => prod.productId === cartItem.id);
+                  const existIndex = res.data.ProductOnCart.findIndex(
+                     (prod) => prod.productId === cartItem.id
+                  );
                   if (existIndex !== -1) {
                      res.data.ProductOnCart[existIndex] = {
                         ...cartItem,
@@ -129,7 +135,7 @@ const ecomStore = (set, get) => ({
                   }
                   // console.log("res.data.ProductOnCart", res.data.ProductOnCart);
                   set({ carts: res.data.ProductOnCart });
-               })
+               });
             }
          }
       } catch (error) {
@@ -154,12 +160,14 @@ const ecomStore = (set, get) => ({
       const existProdIndex = carts.findIndex((item) => item.id === productObj.id);
       let newCarts;
       if (existProdIndex !== -1) {
+         console.log("existProdIndex");
          newCarts = [...carts];
          newCarts[existProdIndex] = {
             ...productObj,
             countCart: (newCarts[existProdIndex].countCart || 0) + 1 //ถ้าส่ง productObj.idมาซ้ำ ด้วยการกด 'Add to cart' === +1 ให้ countCart
          };
       } else {
+         console.log("NOT existProdIndex");
          // If product doesn't exist, add new entry
          newCarts = [...carts, { ...productObj, countCart: 1 }];
       }
@@ -218,7 +226,7 @@ const ecomStore = (set, get) => ({
       get().updateStatusSaveToCart(false);
       console.log("removeCart", prodId);
       //if user rm carts to empty BUT carts records is wrtitten to DB ► reset confirmation states and rm cart in DB
-      if (get().carts.length === 0 ) {
+      if (get().carts.length === 0) {
          set({ isSaveToCart: false, showLogoutConfirm: false });
          try {
             const res = await clearCartUser(get().token);
@@ -228,7 +236,7 @@ const ecomStore = (set, get) => ({
          }
       }
    },
-  
+
    actionLogin: async (form) => {
       //1. Send req with form to backend, path : http://localhost:5000/api/login
       const res = await axios.post(`${apiUrl}/api/login`, form);
@@ -278,6 +286,15 @@ const ecomStore = (set, get) => ({
          isLoggingOut: show // Reset when dialog is closed
       }),
 
+   getBrand: async () => {
+      try {
+         const res = await listBrand();
+         set({ brands: res.data });
+      } catch (err) {
+         console.log(err);
+         return undefined;
+      }
+   },
    //dropdown category
    getCategory: async () => {
       try {

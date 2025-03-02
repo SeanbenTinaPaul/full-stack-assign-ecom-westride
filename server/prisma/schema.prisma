@@ -48,7 +48,7 @@ model Product {
   favorites   Favorite[] // เพิ่ม relation กับ Favorite
   ratings     Rating[] // เพิ่ม relation กับ Rating
   avgRating   Float? // เพิ่ม col เก็บค่าเฉลี่ย rating
-  brandId     Int? // เพิ่ม col สำหรับเก็บ foreign key ของแบรนด์
+  brandId     Int?             @default(1) // เพิ่ม col สำหรับเก็บ foreign key ของแบรนด์
   brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
   createdBy   String?
   updatedBy   String?
@@ -138,8 +138,8 @@ model Image {
   updatedAt  DateTime @updatedAt
   productId  Int?
   product    Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  brandId    Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
+  // brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  // brandId    Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
 }
 
 //  Favorite feature
@@ -151,15 +151,27 @@ model Favorite {
   productId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+
+  @@unique([userId, productId]) // ป้องกันการเพิ่ม favorite ซ้ำ →  compound unique constraint
   /**
-   * // User 1 cannot have Product 1 twice in their cart/favorites
+   * where: {
+   * userId_productId: {  // This is the compound key
+   * userId: id,
+   * productId: parseInt(productId)
+   * }
+   */
+  /**
+   * /**
+   * /**
+   * // User 1 cannot have Product 1 twice in his cart/favorites
    * {userId: 1, productId: 1} ✅ // Allowed
    * {userId: 1, productId: 1} ❌ // Rejected - duplicate
    * {userId: 1, productId: 2} ✅ // Allowed - different product
    * {userId: 2, productId: 1} ✅ // Allowed - different user
    */
-
-  @@unique([userId, productId]) // ป้องกันการเพิ่ม favorite ซ้ำ
+  @@index([userId])
+  @@index([productId])
 }
 
 //  Rating feature
@@ -209,7 +221,6 @@ model Discount {
   @@index([startDate, endDate]) // เพิ่ม index เพื่อการค้นหาที่เร็วขึ้น, but not create index record
 }
 
-// For managing coupons
 model Coupon {
   id          Int          @id @default(autoincrement())
   code        String       @unique
@@ -244,8 +255,13 @@ model Brand {
   id          Int       @id @default(autoincrement())
   title       String    @unique // ชื่อ brandต้องไม่ซ้ำกัน
   description String?
-  images      Image[] // ใช้table Image เดิมสำหรับเก็บรูป brand
+  // image      Image
   products    Product[]
+  img_url     String?
+  // asset_id    String?
+  public_id   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  createdBy   String
+  updatedBy   String?
 }

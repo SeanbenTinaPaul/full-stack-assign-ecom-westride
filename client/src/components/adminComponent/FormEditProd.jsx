@@ -15,7 +15,9 @@ import {
    Image,
    FolderOpen,
    HardDriveUpload,
-   AlertCircle
+   AlertCircle,
+   BadgeCheck,
+   Slack
 } from "lucide-react";
 //Component
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -40,6 +42,7 @@ import {
    AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import UploadFile from "./UploadFile";
+import { Badge } from "../ui/badge";
 
 //everytime redirect to this page, inputProd will be reset to empty
 const inputProd = {
@@ -48,13 +51,14 @@ const inputProd = {
    price: "",
    quantity: "",
    categoryId: "",
+   brandId: "",
    images: [] //save url of images from Cloudinary→ [{url:..},{url:..}]
 };
 
 function FormEditProd() {
    const { id } = useParams(); //get '26' from 'http://localhost:5173/admin/product/26'
    const navigate = useNavigate();
-   const { token, getCategory, categories } = useEcomStore((state) => state);
+   const { token, getCategory, categories, brands, getBrand } = useEcomStore((state) => state);
    const [inputForm, setInputForm] = useState(inputProd);
    const [loading, setLoading] = useState(false);
    //  console.log('inputForm bf edit->', inputForm);
@@ -64,6 +68,7 @@ function FormEditProd() {
    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
    const [cancelImg, setCancelImg] = useState(false);
+   const [isSubmitImg, setIsSubmitImg] = useState(false);
 
    //to display default value in input box → fetch from DB (Not cloud)
    useEffect(() => {
@@ -83,8 +88,9 @@ function FormEditProd() {
          }
       };
       getCategory(); //for dropdown select Category
+      getBrand(); //for dropdown select Brand
       fetchProduct();
-   }, [getCategory, id]);
+   }, [getCategory, id, getBrand]);
    console.log("inputForm edit prod->", inputForm);
 
    //listen to keyboard event on input box(not on button) and update inputForm
@@ -102,6 +108,12 @@ function FormEditProd() {
          categoryId: value
       });
    };
+   const handleBrandChange = (value) => {
+      setInputForm({
+         ...inputForm,
+         brandId: value
+      });
+   };
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -109,17 +121,24 @@ function FormEditProd() {
       try {
          setLoading(true);
          const res = await updateProduct(token, id, inputForm);
-         toast({
-            title: "Update Success!",
-            description: `Product: ${res.data.data.title}`
-         });
-         setTimeout(() => {
-            navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
-         }, 200);
-         // setTimeout(() => {
-         //    window.location.reload();
-         // }, 1000); //"/admin/product" page will be reloaded after 1 sec
-         setLoading(false);
+         if (res.data.success === true) {
+            toast({
+               title: "Update Success!",
+               description: `Product: ${res.data.data.title}`
+            });
+            setInputForm(prev=>({
+               ...prev,
+               images: []
+            }))
+            setTimeout(() => {
+               navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
+            }, 200);
+            // setTimeout(() => {
+            //    window.location.reload();
+            // }, 1000); //"/admin/product" page will be reloaded after 1 sec
+            setLoading(false);
+            setIsSubmitImg(true);
+         }
       } catch (err) {
          console.log(err);
          toast({
@@ -140,6 +159,10 @@ function FormEditProd() {
             title: "Product Deleted Successfully",
             description: `Product: ${res.data.data.title}`
          });
+         // setInputForm(prev=>({
+         //    ...prev,
+         //    images: []
+         // }))
          setTimeout(() => {
             navigate("/admin/product"); //after click 'update Product' → sredirect to '/admin/product'
          }, 200);
@@ -247,6 +270,53 @@ function FormEditProd() {
 
                   <div className='space-y-2'>
                      <label className='flex items-center gap-2 text-sm font-medium'>
+                        <BadgeCheck className='w-4 h-4' />
+                        Brand
+                     </label>
+                     {alert}
+                     {/* แก้ปัญหาเลือก selectValue แล้วไม่แสดงชื่อ category ในช่อง
+                        1. ส่ง props ที่เป็น string ไปยัง Select()  
+                        2.เพิ่ม categories.find()
+                        */}
+                     <Select
+                        value={inputForm.brandId.toString()}
+                        onValueChange={handleBrandChange}
+                     >
+                        <SelectTrigger className='w-full rounded-xl'>
+                           <SelectValue placeholder='Select brand'>
+                              {brands.find((b) => b.id == inputForm.brandId.toString())?.name}
+                           </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                           {brands.map((item) => (
+                              <SelectItem
+                                 key={item.id}
+                                 value={item.id.toString()}
+                              >
+                                 <div className='flex items-center gap-2'>
+                                    <Badge
+                                       className='py-0 px-0 w-8 h-5 bg-card flex items-center drop-shadow'
+                                       title={item.title}
+                                    >
+                                       {item.img_url ? (
+                                          <img
+                                             src={item.img_url}
+                                             alt=''
+                                             className='w-full h-full rounded-md mx-auto object-center object-contain'
+                                          />
+                                       ) : (
+                                          <Slack className='w-4 h-4 mx-auto fill-current text-slate-500 font-thin' />
+                                       )}
+                                    </Badge>
+                                    {item.title} {item.description ? `(${item.description})` : ""}
+                                 </div>
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  </div>
+                  <div className='space-y-2'>
+                     <label className='flex items-center gap-2 text-sm font-medium'>
                         <FolderOpen className='w-4 h-4' />
                         Category
                      </label>
@@ -287,6 +357,8 @@ function FormEditProd() {
                         setInputForm={setInputForm}
                         cancelImg={cancelImg}
                         setCancelImg={setCancelImg}
+                        isSubmitImg={isSubmitImg}
+                        setIsSubmitImg={setIsSubmitImg}
                      />
                   </div>
                </CardContent>
@@ -336,15 +408,18 @@ function FormEditProd() {
                <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                     This action cannot be undone. This will permanently delete the product and
-                     remove its data from our servers.
+                     <div>
+                        This action <strong>cannot be undone</strong>. This will{" "}
+                        <strong>permanently</strong> delete the product and remove its{" "}
+                        <strong>related data</strong> from our servers.
+                     </div>
                   </AlertDialogDescription>
                </AlertDialogHeader>
                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setShowDeleteDialog(false)}>
+                  <AlertDialogCancel onClick={handleDelProduct}>Yes, delete</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => setShowDeleteDialog(false)}>
                      Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelProduct}>Yes, delete</AlertDialogAction>
+                  </AlertDialogAction>
                </AlertDialogFooter>
             </AlertDialogContent>
          </AlertDialog>

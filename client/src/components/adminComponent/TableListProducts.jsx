@@ -98,10 +98,34 @@ function TableListProducts({ products, handleDel, isRerender }) {
                      onClick={() => sortData("title")}
                   >
                      <div className='flex items-center'>
-                        Product name
+                        Product title
                         <svg
                            className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
                               sortCol === "title" && sortOrder === "asc" ? "rotate-180" : ""
+                           }`}
+                           xmlns='http://www.w3.org/2000/svg'
+                           fill='none'
+                           viewBox='0 0 24 24'
+                           stroke='currentColor'
+                        >
+                           <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                           />
+                        </svg>
+                     </div>
+                  </Table.HeadCell>
+                  <Table.HeadCell
+                     className='cursor-pointer'
+                     onClick={() => sortData("brandId")}
+                  >
+                     <div className='flex items-center truncate'>
+                        Brand ID
+                        <svg
+                           className={`w-4 h-4 ml-2  hover:text-fuchsia-700 hover:scale-125 transition-transform duration-300 ${
+                              sortCol === "brandId" && sortOrder === "asc" ? "rotate-180" : ""
                            }`}
                            xmlns='http://www.w3.org/2000/svg'
                            fill='none'
@@ -289,6 +313,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
                            />
                         </Table.Cell>
                         <Table.Cell className='whitespace-nowrap'>{row.title}</Table.Cell>
+                        <Table.Cell>{row.brandId}</Table.Cell>
                         <Table.Cell>{row.categoryId}</Table.Cell>
                         <Table.Cell>{formatNumber(row.price)}</Table.Cell>
                         <Table.Cell>{row.quantity}</Table.Cell>

@@ -16,7 +16,9 @@ import {
    Image,
    FolderOpen,
    HardDriveUpload,
-   AlertCircle
+   AlertCircle,
+   BadgeCheck,
+   Slack
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,6 +45,7 @@ import {
 //Component
 import TableListProducts from "./TableListProducts";
 import UploadFile from "./UploadFile";
+import { Badge } from "../ui/badge";
 
 const inputProd = {
    title: "",
@@ -50,6 +53,7 @@ const inputProd = {
    price: "",
    quantity: "",
    categoryId: "",
+   brandId: "",
    images: [] //save url of images from Cloudinary
 };
 
@@ -57,7 +61,9 @@ function FormProduct() {
    // const token = useEcomStore((state)=> state.token)
    // const getCategory = useEcomStore((state)=> state.getCategory)
    // const categories = useEcomStore((state)=> state.categories)
-   const { token, getCategory, categories, getProduct, products } = useEcomStore((state) => state);
+   const { token, getCategory, categories, getProduct, products, brands, getBrand } = useEcomStore(
+      (state) => state
+   );
    const [inputForm, setInputForm] = useState(inputProd);
    const [loading, setLoading] = useState(false); //for Btn loading animation
    const [isRerender, setIsRerender] = useState(false); //for TableListProducts.jsx re-render
@@ -84,7 +90,8 @@ function FormProduct() {
       getCategory().then((result) => {
          console.log("category->", result);
       });
-   }, [getCategory]);
+      getBrand();
+   }, [getCategory, getBrand]);
 
    useEffect(() => {
       getProduct(1000, 0);
@@ -103,6 +110,12 @@ function FormProduct() {
       setInputForm({
          ...inputForm,
          categoryId: value
+      });
+   };
+   const handleBrandChange = (value) => {
+      setInputForm({
+         ...inputForm,
+         brandId: value
       });
    };
 
@@ -162,26 +175,34 @@ function FormProduct() {
          console.log("res FormProduct->", res);
          //****** */
          //not (res.data.data.title) bc backend use res.send()
+
          toast({
             title: "Add Product Success!",
             description: `Product: ${res.data.title}`
          });
          // toast.success(`Add Product: ${res.data.title} Success.`);
          //refresh the list after click 'Add Product'
-         getProduct(1000,0);
-         setInputForm({
+         getProduct(1000, 0);
+         setInputForm((prev) => ({
+            ...prev,
             title: "",
             description: "",
             price: "",
             quantity: "",
+            brandId: "",
             categoryId: "",
             images: []
-         });
+         }));
 
          setLoading(false);
          setIsRerender(!isRerender); //rerender TableListProducts if click 'Add Product'
       } catch (err) {
          console.log(err);
+         toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to add product"
+         })
       }
    };
 
@@ -190,7 +211,6 @@ function FormProduct() {
       const productToDel = products.find((obj) => obj.id === id);
       setProductToRemove(productToDel);
       setShowDialog(true);
-      
    };
    //if user click 'Yes' in Toastify confirm box
    const confirmDelete = async () => {
@@ -202,7 +222,7 @@ function FormProduct() {
             title: "Product Deleted Successfully",
             description: `Product: ${res.data.data.title}`
          });
-         getProduct(1000,0);
+         getProduct(1000, 0);
          setShowDialog(false);
          setProductToRemove(null);
          // toast.success(`Delete Product: ${res.data.data.title} Success.`);
@@ -310,7 +330,54 @@ function FormProduct() {
                            />
                         </div>
                      </div>
-
+                     <div className='space-y-2'>
+                        <label className='flex items-center gap-2 text-sm font-medium'>
+                           <BadgeCheck className='w-4 h-4' />
+                           Brand
+                        </label>
+                        {alert}
+                        {/* แก้ปัญหาเลือก selectValue แล้วไม่แสดงชื่อ category ในช่อง
+                        1. ส่ง props ที่เป็น string ไปยัง Select()  
+                        2.เพิ่ม categories.find()
+                        */}
+                        <Select
+                           value={inputForm.brandId.toString()}
+                           onValueChange={handleBrandChange}
+                        >
+                           <SelectTrigger className='w-full rounded-xl'>
+                              <SelectValue placeholder='Select brand'>
+                                 {brands.find((b) => b.id == inputForm.brandId.toString())?.name}
+                              </SelectValue>
+                           </SelectTrigger>
+                           <SelectContent>
+                              {brands.map((item) => (
+                                 <SelectItem
+                                    key={item.id}
+                                    value={item.id.toString()}
+                                 >
+                                    <div className='flex items-center gap-2'>
+                                       <Badge
+                                          className='py-0 px-0 w-8 h-5 bg-card flex items-center drop-shadow'
+                                          title={item.title}
+                                       >
+                                          {item.img_url ? (
+                                             <img
+                                                src={item.img_url}
+                                                alt=''
+                                                className='w-full h-full rounded-md mx-auto object-center object-contain'
+                                             />
+                                          ) : (
+                                             <Slack className='w-4 h-4 mx-auto fill-current text-slate-500 font-thin' />
+                                          )}
+                                       </Badge>
+                                       {item.title}{" "}
+                                       {item.description ? `(${item.description})` : ""}
+                                    </div>
+                                 </SelectItem>
+                              ))}
+                           </SelectContent>
+                        </Select>
+                     </div>
                      <div className='space-y-2'>
                         <label className='flex items-center gap-2 text-sm font-medium'>
                            <FolderOpen className='w-4 h-4' />
@@ -384,21 +451,24 @@ function FormProduct() {
                   <AlertDialogHeader>
                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete the product and
-                        remove its data from our servers.
+                        <div>
+                           This action <strong>cannot be undone</strong>. This will{" "}
+                           <strong>permanently</strong> delete the product and remove its{" "}
+                           <strong>related data</strong> from our servers.
+                        </div>
                      </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                     <AlertDialogCancel onClick={() => setShowDialog(false)}>
+                     <AlertDialogCancel onClick={confirmDelete}>Yes, delete</AlertDialogCancel>
+                     <AlertDialogAction onClick={() => setShowDialog(false)}>
                         Cancel
-                     </AlertDialogCancel>
-                     <AlertDialogAction onClick={confirmDelete}>
-                        Yes, delete
                      </AlertDialogAction>
                   </AlertDialogFooter>
                </AlertDialogContent>
             </AlertDialog>
+
             {/* Table */}
+
             <div className='mt-4 pt-6 max-w-full max-h-[80vh] mx-auto overflow-hidden overflow-y-auto overflow-x-auto'>
                <TableListProducts
                   products={products}

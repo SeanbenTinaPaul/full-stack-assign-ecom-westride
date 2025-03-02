@@ -15,7 +15,7 @@ exports.createPayment = async (req, res) => {
       });
       console.log("cart for payment->", cart);
 
-      const convertToTHBforCloud = cart.cartTotal * 100;
+      const convertToTHBforCloud = parseInt((cart.cartTotal * 100));
       // Create a PaymentIntent with the order amount and currency
       //ต้องเรียก api นี้จึงจะ display <Elements> ใน PaymentMethod.jsx
       const paymentIntent = await stripe.paymentIntents.create({
@@ -135,14 +135,17 @@ exports.reqRefund = async (req, res) => {
      
       res.status(200).json({
          success: true,
-         message: "Refund Success."
+         message: "Refund Success.",
+         confirmEmail: refund.next_action.display_details.email_sent.email_sent_to,
+         expireAT: refund.next_action.display_details.expires_at,
+
          // data: refund
       });
    } catch (err) {
-      console.log(err);
+      console.log('pay->',err);
       res.status(500).json({
          success: false,
-         message: "Error!!! Cannot Refund."
+         message: err.message
       });
    }
 };

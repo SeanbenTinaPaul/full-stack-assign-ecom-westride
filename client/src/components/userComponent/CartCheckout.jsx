@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/hooks/use-toast";
 
-import { ListChecks, Trash2 } from "lucide-react";
+import { ListChecks, Trash2, Slack } from "lucide-react";
 
 function CartCheckout({ isCollapsedContext }) {
    const {
@@ -18,9 +18,7 @@ function CartCheckout({ isCollapsedContext }) {
       fetchUserCart,
       adjustQuantity,
       removeCart,
-      user,
       token,
-      products,
       getProduct,
       updateStatusSaveToCart
    } = useEcomStore((state) => state);
@@ -29,7 +27,7 @@ function CartCheckout({ isCollapsedContext }) {
    const [total, setTotal] = useState(0);
    const navigate = useNavigate();
    const { toast } = useToast();
-   const [scrolledToBottom, setScrolledToBottom] = useState(false);//true→fully show | false→hide some part
+   const [scrolledToBottom, setScrolledToBottom] = useState(false); //true→fully show | false→hide some part
    // const sidebarWidth = isCollapsedContext ? "6rem" : "16rem"; //for moving last <main>
 
    // console.log(user);
@@ -37,13 +35,13 @@ function CartCheckout({ isCollapsedContext }) {
 
    // Sync with products when carts or products change
    useEffect(() => {
-      getProduct(1000,1);
+      getProduct(1000, 1);
       fetchUserCart();
    }, []);
 
    //fetch products every '+' and '-' clicked
    const handleClickAddDelamount = () => {
-      getProduct(1000,1);
+      getProduct(1000, 1);
       // console.log("carts after click add", carts);
    };
    //check if scrolled to bottom
@@ -67,7 +65,7 @@ function CartCheckout({ isCollapsedContext }) {
    const handleCreateCart = async () => {
       try {
          const res = await createCartUser(token, { carts });
-         if(res.status===400){
+         if (res.status === 400) {
             toast({
                title: "We're sorry!",
                description: `${res.data.message} Please remove or adjust quantity to proceed with the checkout.`
@@ -162,7 +160,10 @@ function CartCheckout({ isCollapsedContext }) {
       <div className='flex flex-col min-h-screen relative ml-14 pb-[calc(100vh-40rem)] max-md:pb-[calc(100vh-20rem)] max-lg:pb-[calc(100vh-25rem)] max-xl:pb-[calc(100vh-25rem)] max-2xl:pb-[calc(100vh-25rem)] max-[1920px]:pb-[calc(100vh-25rem)]'>
          {/* header */}
          <div className='flex p-4 mt-6 mb-4 bg-gradient-to-r from-slate-700 to-slate-500 gap-2 items-center rounded-xl shadow-md'>
-            <ListChecks size={24} className="text-card"/>
+            <ListChecks
+               size={24}
+               className='text-card'
+            />
             <p className='text-lg font-semibold text-card'>Product List: {carts.length}</p>
          </div>
 
@@ -170,6 +171,7 @@ function CartCheckout({ isCollapsedContext }) {
          <main className='p-10 h-full rounded-xl shadow-md bg-gradient-to-r from-slate-100 to-card'>
             {/* left */}
             <div>
+               {console.log("carts in checkout->", carts)}
                {carts.map((cart) => (
                   <div
                      key={cart.id}
@@ -205,6 +207,30 @@ function CartCheckout({ isCollapsedContext }) {
                                  </p>
                                  <p className='text-xs whitespace-normal break-words'>
                                     {/* {cart.description} */}
+                                 </p>
+                              </div>
+                              <div className='flex justify-start items-start gap-2 mb-4'>
+                                 <Badge className='py-0 px-0 w-10 h-6 bg-card flex items-center drop-shadow'>
+                                    {cart.brand?.img_url ? (
+                                       <img
+                                          src={cart.brand?.img_url}
+                                          alt=''
+                                          className='w-full h-full rounded-md mx-auto object-center object-contain'
+                                          title={
+                                             cart.brand?.title === "AMD"
+                                                ? "ใครไม่ D ?"
+                                                : cart.brand?.title
+                                          }
+                                       />
+                                    ) : (
+                                       <Slack className='w-5 h-5 mx-auto fill-current text-slate-500 font-thin' />
+                                    )}
+                                    {/* <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p> */}
+                                 </Badge>
+                                 <p className='text-base font-light text-gray-500 '>
+                                    {cart.brand?.title == "No brand"
+                                       ? "Exclusive Selection"
+                                       : cart.brand?.title}
                                  </p>
                               </div>
                               {cart?.preferDiscount ? (
@@ -275,7 +301,7 @@ function CartCheckout({ isCollapsedContext }) {
          {/* w-full overflow-hidden transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)] */}
          <main
             className={`
-               fixed bottom-0 ${isCollapsedContext ? 'left-24':'left-64'} right-4 
+               fixed bottom-0 ${isCollapsedContext ? "left-24" : "left-64"} right-4 
                bg-white/80 backdrop-blur-md transition-all duration-500 ease-in-out 
                shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]
                p-4 rounded-t-xl transform

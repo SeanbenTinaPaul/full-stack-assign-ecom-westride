@@ -16,17 +16,17 @@ import {
 } from "@/components/ui/alert-dialog";
 
 function TableUersAdmin(props) {
-   const { token } = useEcomStore((state) => state);
+   const { token, user } = useEcomStore((state) => state);
    const { toast } = useToast();
    //Sort centent
    const [sortCol, setSortCol] = useState("");
    const [sortOrder, setSortOrder] = useState("asc");
 
    const [tableData, setTableData] = useState([]);
-   
+
    const [searchTerm, setSearchTerm] = useState("");
    //Selection row
-   const [selectedRows, setSelectedRows] = useState([]);//for checkbox
+   const [selectedRows, setSelectedRows] = useState([]); //for checkbox
    const [selectedEnabled, setSelectedEnabled] = useState(true);
    const [selecteRole, setSelectedRole] = useState("user");
    //Pagiantion
@@ -113,7 +113,7 @@ function TableUersAdmin(props) {
 
    // Filter data based on search term | get searchTerm included in tableData
    //tableData === [{col-key:contnt-value},{},{}]
-   //searchTerm==='' → filteredData contains all obj ► empty string ('') is considered to be included in any string for includes(). 
+   //searchTerm==='' → filteredData contains all obj ► empty string ('') is considered to be included in any string for includes().
    const filteredData = tableData?.filter((obj) =>
       Object.values(obj).some((value) =>
          value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -337,7 +337,9 @@ function TableUersAdmin(props) {
                      {paginatedData?.map((item) => (
                         <tr
                            key={item.id}
-                           className=' bg-card border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
+                           className={`bg-card border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
+                              user.id === item.id ? "bg-slate-100" : ""
+                           }`}
                         >
                            <td className='w-4 p-4'>
                               <div className='flex items-center'>
@@ -349,7 +351,9 @@ function TableUersAdmin(props) {
                                  />
                               </div>
                            </td>
-                           <td className='px-6 py-4'>{item.id}</td>
+                           <td className={`px-6 py-4 ${user.id === item.id ? "bg-slate-100" : ""}`}>
+                              {user.id === item.id ? item.id + " (You)" : item.id}
+                           </td>
                            <td className='px-6 py-4'>{item.name}</td>
                            <td className='px-6 py-4'>{item.email}</td>
                            <td

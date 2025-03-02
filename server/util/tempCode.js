@@ -106,3 +106,45 @@ WHERE "Product"."categoryId" = $1 AND "Product"."quantity" > 0
 ORDER BY "Product"."updatedAt" DESC
 LIMIT $2
 */
+
+if (existFav?.isActive) {
+   await prisma.favorite.update({
+      where: {
+         id: existFav.id
+      },
+      data: {
+         isActive: false
+      }
+   });
+   return res.status(200).json({
+      success: true,
+      message: `Removed productID: ${existFav.id} from favorites`,
+      isFavorited: false
+   });
+} else if (existFav && !existFav?.isActive) {
+   await prisma.favorite.update({
+      where: {
+         id: existFav.id
+      },
+      data: {
+         isActive: true
+      }
+   });
+   return res.status(200).json({
+      success: true,
+      message: `Add productID: ${existFav.id} to favorites`,
+      isFavorited: true
+   });
+} else {
+   await prisma.favorite.create({
+      data: {
+         userId: id,
+         productId: parseInt(productId)
+      }
+   });
+   return res.status(200).json({
+      success: true,
+      message: `Add productId: ${productId} to favorites`,
+      isFavorited: true
+   });
+}

@@ -272,7 +272,7 @@ exports.clearCart = async (req, res) => {
       const cart = await prisma.cart.findFirst({
          where: { orderedById: Number(id) }
       });
-      console.log("clearCart->", cart );
+      console.log("clearCart->", cart);
       //2. ถ้าไม่มีให้ return 400
       if (!cart) return res.status(400).json({ message: "No cart found." });
 
@@ -594,7 +594,7 @@ exports.addProdRating = async (req, res) => {
                });
             })
          );
-         return createRating; 
+         return createRating;
          //return this to save to transactionResult | without this, transactionResult===undefinded
       });
 
@@ -611,7 +611,6 @@ exports.addProdRating = async (req, res) => {
       });
    }
 };
-
 
 //req.body ► picture ,name, email, password
 //req.user.id
@@ -691,43 +690,67 @@ exports.favoriteProduct = async (req, res) => {
    const { productId } = req.body;
    const { id } = req.user;
    try {
-      const user = await prisma.user.findUnique({
-         where: { id: id },
-         include: {
-            //favorites Favorite[]
-            favorites: true
+      const hasProduct = await prisma.product.findFirst({
+         where: {
+            id: parseInt(productId)
          }
       });
-      if (!user) return res.status(404).json({ message: "User not found" });
-
-      const product = await prisma.product.findUnique({
-         where: { id: productId }
-      });
-      if (!product) return res.status(404).json({ message: "Product not found" });
-      //some() return true or false
-      const isFavorite = user.favorites.some((fav) => fav.productId === productId);
-      if (isFavorite) {
-         await prisma.user.update({
-            where: { id: id },
-            data: {
-               favorites: {
-                  //use disconnect: instead of delete: to aviod rm product from DB
-                  disconnect: { productId: productId }
-               }
-            }
-         });
-         return res.status(200).json({ message: `${product.title} removed from favorites` });
-      } else {
-         await prisma.user.update({
-            where: { id: id },
-            data: {
-               favorites: {
-                  connect: { productId: productId }
-               }
-            }
-         });
-         return res.status(200).json({ message: `${product.title} added to favorites` });
+      if (!hasProduct) {
+         return res.status(400).json({ message: "Product not found" });
       }
+
+      const existFav = await prisma.favorite.findFirst({
+         where: {
+            userId: id,
+            productId: parseInt(productId)
+         },
+         select: {
+            id: true,
+            isActive: true,
+            product: {
+               select: {
+                  title: true
+               }
+            }
+         }
+      });
+      console.log("existFav->", existFav);
+
+      //handle toggle with .upsert() + isActive col
+      const favorite = await prisma.favorite.upsert({
+         where: {
+            userId_productId: {
+               userId: id,
+               productId: parseInt(productId)
+            }
+         },
+         //→ .update({where:{..}, data:{..}})
+         update: {
+            isActive: existFav ? !existFav.isActive : true
+         },
+         //→ .create({data:{..}})
+         create: {
+            userId: id,
+            productId: parseInt(productId),
+            isActive: true
+         },
+         select: {
+            isActive: true,
+            product: {
+               select: {
+                  title: true
+               }
+            }
+         }
+      });
+
+      return res.status(200).json({
+         success: true,
+         message: favorite.isActive
+            ? `Added ${favorite.product.title} to favorites`
+            : `Removed ${favorite.product.title} from favorites`,
+         isFavorited: favorite.isActive
+      });
    } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Server Error" });

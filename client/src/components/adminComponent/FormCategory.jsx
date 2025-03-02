@@ -262,16 +262,19 @@ function FormCategory() {
                            <AlertDialogHeader>
                               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                 This action cannot be undone. This will permanently delete your
-                                 category and remove its data from our servers.
+                                 <div>
+                                    This action <strong>cannot be undone</strong>. This will{" "}
+                                    <strong>permanently</strong> delete your category and remove its{" "}
+                                    <strong>related products</strong> from our servers.
+                                 </div>
                               </AlertDialogDescription>
                            </AlertDialogHeader>
                            <AlertDialogFooter>
-                              <AlertDialogCancel onClick={() => setShowDialog(false)}>
-                                 Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogAction onClick={confirmRemove}>
+                              <AlertDialogCancel onClick={confirmRemove}>
                                  Yes, delete
+                              </AlertDialogCancel>
+                              <AlertDialogAction onClick={() => setShowDialog(false)}>
+                                 Cancel, keep it
                               </AlertDialogAction>
                            </AlertDialogFooter>
                         </AlertDialogContent>

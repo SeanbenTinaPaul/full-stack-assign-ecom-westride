@@ -25,7 +25,14 @@ import useEcomStore from "../../store/ecom-store";
 //use for making text color auto-contrast
 import { calculateTextColor } from "../../utilities/useContrastText";
 
-function UploadFile({ inputForm, setInputForm, cancelImg, setCancelImg }) {
+function UploadFile({
+   inputForm,
+   setInputForm,
+   cancelImg,
+   setCancelImg,
+   isSubmitImg,
+   setIsSubmitImg
+}) {
    const token = useEcomStore((state) => state.token);
    const [isLoading, setIsLoading] = useState(false);
    const [bgColors, setBgColors] = useState({}); // Store text color for each image
@@ -111,10 +118,10 @@ function UploadFile({ inputForm, setInputForm, cancelImg, setCancelImg }) {
 
             setIsLoading(true);
 
-            //Image Resize and upload | 300,480,720,900,1080,1200,1440,1920 | JPEG, PNG, WEBP 
+            //Image Resize and upload | 300,480,720,900,1080,1200,1440,1920 | JPEG, PNG, WEBP
             Resizer.imageFileResizer(
                fileList[i],
-               1080, 
+               1080,
                1080,
                "WEBP",
                100,
@@ -290,7 +297,13 @@ function UploadFile({ inputForm, setInputForm, cancelImg, setCancelImg }) {
          cleanup();
          setCancelImg(false);
       }
-   }, [cancelImg, token, imgDataArr]);
+      if (isSubmitImg) {
+         if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+         }
+         setIsSubmitImg(false);
+      }
+   }, [cancelImg, isSubmitImg, token, imgDataArr]);
 
    // if (cancelImg) {
    //    for (let i = 0; i < imgDataArr.length; i++) {
@@ -395,7 +408,9 @@ UploadFile.propTypes = {
    setInputForm: PropTypes.func,
    dominantColor: PropTypes.any,
    cancelImg: PropTypes.bool,
-   setCancelImg: PropTypes.func
+   setCancelImg: PropTypes.func,
+   isSubmitImg: PropTypes.bool,
+   setIsSubmitImg: PropTypes.func
 };
 
 export default UploadFile;

@@ -34,16 +34,17 @@ exports.getAllUsers = async (req, res) => {
 exports.changeUserStatus = async (req, res) => {
    try {
       const { userIdArr, userEnabled, userRole } = req.body;
+      const booleanEnabled = JSON.parse(userEnabled);
       const { email } = req.user;
       const user = await prisma.user.updateMany({
          where: { id: { in: userIdArr.map((id) => parseInt(id)) } },
-         data: { enabled: userEnabled, role: userRole, updatedBy: email }
+         data: { enabled: booleanEnabled, role: userRole, updatedBy: email }
       });
 
       res.status(200).json({
          success: true,
-         message: `Updated ID: ${userIdArr.join(", ")} status to ${userRole}. Enabled: ${
-            userEnabled ? "enabled" : "disabled"
+         message: `Updated ID: ${userIdArr.join(", ")} status to "${userRole}". Enabled: ${
+            booleanEnabled ? '"Yes"' : '"No"'
          }.`
       });
    } catch (err) {
@@ -66,7 +67,7 @@ exports.changeOrderStatus = async (req, res) => {
 
       res.status(200).json({
          success: true,
-         message: `${countOrderUpdate.count} order(s) successfully updated to - ${orderStatus} -`,
+         message: `${countOrderUpdate.count} order(s) successfully updated to "${orderStatus}" `,
          data: countOrderUpdate
       });
    } catch (err) {

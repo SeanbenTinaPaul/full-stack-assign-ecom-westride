@@ -16,7 +16,8 @@ import {
    User,
    Slack,
    ChevronDown,
-   ChevronUp
+   ChevronUp,
+   Heart 
 } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { Badge } from "@/components/ui/badge";
@@ -61,6 +62,11 @@ const navItems = [
       title: "History",
       url: "history",
       icon: History
+   },
+   {
+      title: "Favorites",
+      url: "favorite",
+      icon: Heart 
    }
 ];
 

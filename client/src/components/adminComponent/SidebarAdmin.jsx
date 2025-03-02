@@ -13,7 +13,8 @@ import {
    Gem,
    ArchiveRestore,
    Grid2x2Plus,
-   ClipboardCopy
+   ClipboardCopy,
+   BadgeCheck 
 } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 const navItems = [
@@ -34,11 +35,11 @@ const navItems = [
    //    url: "manage",
    //    icon: ChartNoAxesGantt
    // },
-   // {
-   //    title: "Brand Store",
-   //    url: "brand-store",
-   //    icon: ArchiveRestore
-   // },
+   {
+      title: "Brand",
+      url: "brand",
+      icon: BadgeCheck 
+   },
    {
       title: "Category",
       url: "category",

@@ -59,10 +59,10 @@ function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
       }
    };
    return (
-      <div className='mx-auto min-w-[600px] pt-6'>
+      <div className='mx-auto max-w-[500px] pt-6'>
          <main className='flex justify-center flex-wrap gap-4'>
             {/* left :Address*/}
-            <article className='w-1/2'>
+            <article className='w-full'>
                <div className='p-4 rounded-xl border shadow-md space-y-4 bg-card'>
                   <div className='flex items-center gap-2'>
                      <MapPinHouse
@@ -90,7 +90,7 @@ function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
             </article>
             {/* right:Summary */}
             {carts.length > 0 && isSaveToCart && savedCartCount > 0 && (
-               <article className='w-1/2'>
+               <article className='w-full'>
                   <div className='p-4 rounded-xl border shadow-md space-y-4 bg-card'>
                      <div className='flex items-center gap-2'>
                         <ShoppingBasket

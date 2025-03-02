@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, Boxes, DollarSign } from "lucide-react";
+import { Check, Boxes, DollarSign, BadgeCheck, Award, Bitcoin } from "lucide-react";
 
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
@@ -16,14 +16,24 @@ import { formatNumber } from "@/utilities/formatNumber";
 let seachBody = {
    query: "",
    category: [],
+   brand: [],
    price: []
 };
 
 function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
-   const { token, products, getProduct, getSeachFilterProd, getCategory, categories } =
-      useEcomStore((state) => state);
+   const {
+      token,
+      products,
+      getProduct,
+      getSeachFilterProd,
+      getCategory,
+      categories,
+      brands,
+      getBrand
+   } = useEcomStore((state) => state);
    const [textSearch, setTextSearch] = useState(""); //for text search
    const [selectedCate, setSelectedCate] = useState([]); // Track selected category IDs
+   const [selectedBrand, setSelectedBrand] = useState([]); // Track selected brand IDs
    const [priceRange, setPriceRange] = useState([0, 50000]); // for price range slider
    const [resetKey, setResetKey] = useState(0); //to reset key of <Slider/> in order to force Slider re-render, then reset the range bar
    const [searchTerms, setSearchTerms] = useState(seachBody);
@@ -31,6 +41,7 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
    useEffect(() => {
       getCategory();
       getProduct(100, 1);
+      getBrand();
    }, []);
    //1. search by text
    //req.body → { "query": "core" }
@@ -70,6 +81,25 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
       setSelectedCate(updateCate);
    };
 
+   const handleCheckBrand = (e) => {
+      const brandId = parseInt(e.target.value); //value='' of <input/>
+      const isChecked = e.target.checked; //true or false
+      let updateBrand = []; //reset every click at checkbox
+      // console.log(cateId);
+
+      if (isChecked) {
+         updateBrand = [...selectedBrand, brandId];
+         //not use {...prev, "category": selectedCate} bc selectedCate will be updated nxet render
+         setSearchTerms((prev) => ({ ...prev, brand: updateBrand }));
+      } else {
+         //ถ้า unchecked → เอาเลข id นั้นมา filter ออกจาก [] ที่ใช้เก็บเลข id ตั้งแต่ render รอบก่อน
+         updateBrand = selectedBrand.filter((id) => id !== brandId);
+         setSearchTerms((prev) => ({ ...prev, brand: updateBrand }));
+      }
+      //to decide if display a symbol cheked or unchecked
+      setSelectedBrand(updateBrand);
+   };
+
    //3. search by price
    //req.body → { "price": [100, 600] }
 
@@ -86,7 +116,11 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
       try {
          //if no search input → just display all products
          //empty str is false, empty arr is true
-         if (!searchTerms.query && searchTerms.category.length === 0) {
+         if (
+            !searchTerms.query &&
+            searchTerms.category.length === 0 &&
+            searchTerms.brand.length === 0
+         ) {
             getProduct(100, 1);
             setIsFoundSearch(true);
          }
@@ -114,9 +148,11 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
       // Reset all form states
       setTextSearch("");
       setSelectedCate([]);
+      setSelectedBrand([]);
       setSearchTerms({
          query: "",
          category: [],
+         brand: [],
          price: []
       });
       setWhatTextSearch("");
@@ -133,7 +169,7 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
    };
 
    return (
-      <div className='h-full w-full  p-4 rounded-xl bg-gradient-to-tr from-card to-slate-100'>
+      <div className='h-full w-full p-4 rounded-xl bg-gradient-to-tr from-card to-slate-100 overflow-auto scrollbar-none'>
          <form
             onSubmit={(e) => handleSumitSearch(e)}
             className='flex flex-col gap-2 '
@@ -145,6 +181,45 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
                placeholder='e.g. ขาหมู, core i7'
                className='w-full mb-4 bg-gradient-to-tr from-card to-slate-100 p-2 rounded-xl Input-3Dshadow'
             />
+            <div className='mb-4'>
+               {/* {console.log('categories search',categories)} */}
+               <div className='flex gap-2 items-center mb-2'>
+                  <BadgeCheck
+                     size={20}
+                     className='text-slate-700'
+                  />
+                  <h1 className='text-lg font-semibold text-slate-700'>Brand</h1>
+               </div>
+               <div>
+                  {brands.map((obj) => (
+                     <div
+                        key={obj.id}
+                        className='flex gap-2 items-center'
+                     >
+                        {/* <input
+                           type='checkbox'
+                           value={obj.id}
+                           checked={selectedCate.includes(obj.id)}
+                           onChange={(e) => handleCheckCate(e)}
+                        /> */}
+                        <Checkbox
+                           className='w-4 h-4 bg-white border border-gray-300 rounded-sm'
+                           id={`brand-${obj.id}`}
+                           checked={selectedBrand.includes(obj.id)}
+                           onCheckedChange={(checked) => {
+                              handleCheckBrand({
+                                 target: {
+                                    value: obj.id,
+                                    checked: checked
+                                 }
+                              });
+                           }}
+                        />
+                        <label>{obj.title == 'No brand' ? 'Exclusive Selection' : obj.title}</label>
+                     </div>
+                  ))}
+               </div>
+            </div>
             <div className='mb-4'>
                {/* {console.log('categories search',categories)} */}
                <div className='flex gap-2 items-center mb-2'>
@@ -191,7 +266,7 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
             <div>
                {/* Price range */}
                <div className='flex gap-2 items-center mb-2'>
-                  <DollarSign
+                  <Bitcoin
                      size={20}
                      className='text-slate-700'
                   />
@@ -238,7 +313,7 @@ function SearchForProd({ setIsFoundSearch, setWhatTextSearch }) {
                variant='secondary'
                type='button'
                onClick={handleReset}
-               className='w-full shadow-md rounded-xl bg-slate-50'
+               className='w-full mb-4 shadow-md rounded-xl bg-slate-50'
             >
                Reset
             </Button>

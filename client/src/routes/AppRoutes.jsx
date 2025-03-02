@@ -11,7 +11,7 @@ import Register from "../pages/auth/Register";
 
 import LayoutAdmin from "../layouts/LayoutAdmin";
 import { ProtectRouteAdmin } from "./ProtectRouteAdmin";
-import BrandAdmin from "../pages/admin/BrandStore";
+import BrandAdmin from "../pages/admin/Brand";
 import Dashboard from "../pages/admin/Dashboard";
 import CategoryAdmin from "../pages/admin/Category";
 import ProductAdmin from "../pages/admin/Product";
@@ -30,6 +30,7 @@ import UpdateOrder from "@/pages/admin/UpdateOrder";
 import EditProfileUser from "@/pages/user/EditProfileUser";
 import ViewProdPageUser from "@/pages/user/ViewProdPageUser";
 import ViewProdPage from "@/pages/ViewProdPage";
+import FavoriteUser from "@/pages/user/FavoriteUser";
 
 //แบ่งหน้า: 1. public 2. private
 //กลุ่มหน้า public ▼
@@ -56,13 +57,13 @@ const router = createBrowserRouter([
       children: [
          // { index: true, element: <Dashboard /> },
          { index: true, element: <ManageAdmin /> },
-         // { path: "brand-store", element: <BrandAdmin /> },
+         { path: "brand", element: <BrandAdmin /> },
          // { path: "manage", element: <ManageAdmin /> },
          { path: "category", element: <CategoryAdmin /> },
          { path: "product", element: <ProductAdmin /> },
          { path: "product/:id", element: <EditProdAdmin /> },
          { path: "orders", element: <UpdateOrder /> },
-         { path: "promotion", element: <PromotionAdmin /> },
+         { path: "promotion", element: <PromotionAdmin /> }
       ]
       //then go to LayoutAdmin > SidebarAdmin → add these children to pages
    },
@@ -77,6 +78,7 @@ const router = createBrowserRouter([
          { path: "cart", element: <CartUser /> },
          { path: "payment", element: <Payment /> },
          { path: "history", element: <HistoryUser /> },
+         { path: "favorite", element: <FavoriteUser /> }, //pending...
          { path: "editprofile", element: <EditProfileUser /> },
          { path: "view-product/:id", element: <ViewProdPageUser /> }
       ]

@@ -102,7 +102,7 @@ function CartInfo(props) {
    };
 
    return (
-      <div className='h-full w-full bg-gradient-to-r from-card to-slate-100 p-4 rounded-xl shadow-md'>
+      <div className='h-[90dvh] w-full bg-gradient-to-r from-card to-slate-100 p-4 rounded-xl shadow-md overflow-y-auto scrollbar-none'>
          {/* Border */}
          <main className=' bg-gradient-to-r from-card to-slate-100 p-2 rounded-lg Input-3Dshadow'>
             {/* card */}

@@ -9,8 +9,17 @@ import { HardDriveDownload, ImageDown, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { delImg, uploadFiles } from "@/api/ProductAuth";
 import { calculateTextColor } from "@/utilities/useContrastText";
+import { use } from "react";
 
-function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
+function UploadPersonPic({
+   inputForm,
+   setInputForm,
+   cancelImg,
+   setCancelImg,
+   width = 720,
+   height = 720,
+   quality = 100
+}) {
    const { token, user } = useEcomStore((state) => state);
    const [isLoading, setIsLoading] = useState(false);
    const [bgColors, setBgColors] = useState({}); //Store text color for each image
@@ -23,7 +32,7 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
       // console.log("inputForm before img upload->", inputForm);
       const file = e.target.files[0];
       // console.log("file->", file);
-
+      if (!file) return;
       setIsLoading(true);
       if (!file.type.startsWith("image/")) {
          setIsLoading(false);
@@ -46,24 +55,28 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
 
       //// for image files section ////
       setIsLoading(true);
-      //Image Resize and upload | 300,480,720,900,1080,1200,1440,1920 | JPEG, PNG, WEBP 
+      //Image Resize and upload | 300,480,720,900,1080,1200,1440,1920 | JPEG, PNG, WEBP
       Resizer.imageFileResizer(
          file,
-         720,
-         720,
+         width,
+         height,
          "WEBP",
-         100,
+         quality,
          0,
          async (binaryPic) => {
             try {
                // Del previous image if exists
-               if (inputForm.image?.public_id) {
-                  // console.log("Deleting previous image:", inputForm.image.public_id);
-                  await delImg(token, inputForm.image.public_id);
+               if (inputForm.image?.public_id || inputForm.public_id) {
+                  console.log("Deleting previous image:", inputForm.image.public_id);
+                  await delImg(token, inputForm.image?.public_id || inputForm.public_id);
                }
                const res = await uploadFiles(token, binaryPic);
                //  console.log("res upload img in cloud", res);
-               setInputForm({ ...inputForm, image: res.data.data });
+               setInputForm((prev) => ({
+                  ...prev,
+                  image: res.data.data,
+                  previousImgId: res.data.data.public_id
+               }));
                setPreviousImgId(res.data.data.public_id);
                setIsLoading(false);
                toast({
@@ -78,16 +91,21 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
                   title: "Failed to upload image",
                   description: "Failed to upload image"
                });
+            } finally {
+               setIsLoading(false);
             }
          },
          "base64"
       );
    };
+   // useEffect(() => {
+   //    console.log("previousImgId->", previousImgId);
+   // }, [setPreviousImgId, previousImgId, cancelImg]);
 
    const handleDelImg = async (public_id) => {
       try {
          const res = await delImg(token, public_id);
-         //  console.log("res del img in cloud", res);
+         console.log("res del img in cloud", res);
          setInputForm({
             ...inputForm,
             image: "",
@@ -99,17 +117,33 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
          }
       } catch (err) {
          console.log(err);
+      } finally {
+         setIsLoading(false);
       }
    };
    //Del all new added images in Cloudinary if user click 'Cancel'
    //and setInputForm({images: []}) but leave only existing images
    useEffect(() => {
       if (cancelImg) {
+         console.log("Canceling image upload");
          const cleanup = async () => {
             try {
                // Delete newly uploaded images from cloud
-               if (previousImgId) {
-                  await delImg(token, previousImgId);
+               // console.log("previous image:::", previousImgId);
+               // console.log("inputForm.previousImgId image:::", inputForm.previousImgId);
+               if (previousImgId || inputForm.previousImgId) {
+                  const res = await delImg(token, previousImgId || inputForm.previousImgId);
+                  console.log("res del img in cloud", res);
+                  setInputForm((prev) => ({
+                     ...prev,
+                     description: "",
+                     title: "",
+                     id: null,
+                     image: "",
+                     public_id: "",
+                     previousImgId: null,
+                     image_url: ""
+                  }));
                }
                // Reset file input
                if (fileInputRef.current) {
@@ -127,7 +161,7 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
          cleanup();
          setCancelImg(false);
       }
-   }, [cancelImg, token, inputForm.image]);
+   }, [cancelImg, token, inputForm?.image]);
    const handleCalculateTextColor = (imgElement, assetId) => {
       const contrastColor = calculateTextColor(imgElement);
       setBgColors((prev) => ({ ...prev, [assetId]: contrastColor }));
@@ -144,20 +178,25 @@ function UploadPersonPic({ inputForm, setInputForm, cancelImg, setCancelImg }) {
                </div>
             )}
             {/* display selected(uploaded) images */}
-            {console.log("inputForm->", inputForm)}
-            {console.log("user->", user)}
+            {/* {console.log("inputForm->", inputForm)} */}
+            {/* {console.log("user->", user)} */}
             {inputForm.image && (
                <div
-                  key={inputForm.image?.asset_id}
+                  key={inputForm?.image?.asset_id}
                   className='relative  hover:z-22'
                >
                   <img
-                  // inputForm.image?.url if just uploaded | inputForm.image if from DB (from token)
-                     src={inputForm.image?.url || inputForm.image}
+                     // inputForm.image?.url if just uploaded | inputForm.image if from DB (from token)
+                     src={inputForm.image?.url || inputForm?.image}
                      alt='user-img'
                      className='h-32 object-cover scale-150 rounded-full hover:rounded-lg hover:shadow-lg hover:scale-[250%] transition-all duration-500 ease-in-out'
                      crossOrigin='anonymous' // Needed for Color Thief
-                     onLoad={(e) => handleCalculateTextColor(e.target, inputForm.image?.asset_id || inputForm.public_id)}
+                     onLoad={(e) =>
+                        handleCalculateTextColor(
+                           e.target,
+                           inputForm.image?.asset_id || inputForm.public_id
+                        )
+                     }
                   />
                   <span
                      title='Delete picture'
@@ -194,7 +233,10 @@ UploadPersonPic.propTypes = {
    inputForm: PropTypes.object,
    setInputForm: PropTypes.func,
    cancelImg: PropTypes.bool,
-   setCancelImg: PropTypes.func
+   setCancelImg: PropTypes.func,
+   width: PropTypes.number,
+   height: PropTypes.number,
+   quality: PropTypes.number
 };
 
 export default UploadPersonPic;

@@ -8,7 +8,7 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 //icons
-import { Heart, ShoppingCart, Star, StarHalf } from "lucide-react";
+import { Heart, ShoppingCart, Star, StarHalf, Slack } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 
 import { motion } from "motion/react";
@@ -16,7 +16,7 @@ import { motion } from "motion/react";
 //-------------------------------------------------------------------
 
 function CardProd({ prodObj }) {
-   const { addToCart, user, synCartwithProducts } = useEcomStore((state) => state); //getProduct from DB → set to carts in LocalStorage
+   const { addToCart, user, token, synCartwithProducts } = useEcomStore((state) => state); //getProduct from DB → set to carts in LocalStorage
    const [isFavorite, setIsFavorite] = useState(false);
    //to save price after discount + promotion → for further Checkout
    const [productData, setProductData] = useState(prodObj);
@@ -150,11 +150,15 @@ function CardProd({ prodObj }) {
          <div>
             {/* {console.log("prodObj", prodObj)} */}
             {/* {console.log("productData", productData)} */}
-            <Card className='flex flex-col w-72 h-96 bg-gradient-to-br from-card to-slate-100 max-lg:w-36 max-lg:h-52 max-lg:relative overflow-hidden border-none'>
+            <Card className='lg:flex lg:flex-col w-36 h-52 lg:w-72 lg:h-[395px] bg-gradient-to-br from-card to-slate-100 relative lg:static overflow-hidden border-none'>
                {/* Product Image+fav+badge */}
-               <div className='relative h-52 max-lg:h-28'>
+               <div className='relative lg:h-52 h-28'>
                   <Link
-                     to={user ? `/user/view-product/${prodObj.id}` : `/view-product/${prodObj.id}`}
+                     to={
+                        user && token
+                           ? `/user/view-product/${prodObj.id}`
+                           : `/view-product/${prodObj.id}`
+                     }
                   >
                      <img
                         src={prodObj?.images?.[0]?.url || ""}
@@ -164,36 +168,55 @@ function CardProd({ prodObj }) {
                      />
                   </Link>
                   {(prodObj?.promotion || getDiscountAmount()) && (
-                     <Badge className='absolute top-2 right-2 bg-red-500 px-1'>
+                     <Badge className='absolute top-2 right-2 lg:top-4 lg:right-4 bg-red-500 px-1'>
                         -{renderPercentDiscount()}%
                      </Badge>
                   )}
                   {/* fav btn */}
-                  <Button
-                     variant='ghost'
-                     size='icon'
-                     onClick={handleFavorite}
-                     className={`absolute top-2 left-2 hover:bg-white/80`}
-                  >
-                     <Heart
-                        className={`w-5 h-5  ${
-                           isFavorite ? "text-red-500 fill-current" : "text-gray-500"
-                        }`}
-                     />
-                  </Button>
+                  {user && (
+                     <Button
+                        variant='ghost'
+                        size='icon'
+                        onClick={handleFavorite}
+                        className={`absolute top-2 left-2 hover:bg-white/80`}
+                     >
+                        <Heart
+                           className={`w-5 h-5  ${
+                              isFavorite ? "text-red-500 fill-current" : "text-gray-500"
+                           }`}
+                        />
+                     </Button>
+                  )}
                </div>
                {/*title + description+ brand  */}
                <div className='flex flex-col flex-1 min-h-0 '>
                   {/* <div className="border-2 border-red-300  flex flex-col justify-between h-full"> */}
                   {/*className='space-y-1 px-4 py-2 max-lg:py-1 max-lg:px-2'  */}
-                  <CardHeader className='h-24 px-4 py-2 max-lg:py-1 max-lg:px-2 '>
+                  <CardHeader className='lg:h-24 lg:px-4 lg:py-2 py-1 px-2 '>
                      {/* className='flex justify-between items-start' */}
                      <div className='flex justify-between items-start '>
-                        <h3 className='font-medium text-sm max-lg:text-xs truncate'>
+                        <h3 className='lg:font-medium lg:text-sm text-xs truncate'>
                            {prodObj.title}
                         </h3>
-
-                        <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p>
+                        <Badge className='py-0 px-0 -mb-1 w-8 h-5 lg:w-10 lg:h-6 bg-card flex items-center drop-shadow'>
+                           {prodObj.brand?.img_url ? (
+                              <img
+                                 src={prodObj.brand?.img_url}
+                                 alt=''
+                                 className='w-full h-full rounded-md mx-auto object-center object-contain'
+                                 title={
+                                    prodObj.brand?.title === "AMD"
+                                       ? "ใครไม่ D ?"
+                                       : prodObj.brand?.title
+                                 }
+                              />
+                           ) : (
+                              <div className="mx-auto" title='Exclusive Selection'>
+                                 <Slack className='w-4 h-4 lg:w-5 lg:h-5 mx-auto fill-current text-slate-500 font-thin' />
+                              </div>
+                           )}
+                           {/* <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p> */}
+                        </Badge>
                      </div>
                      <p className='text-sm text-gray-500 max-lg:hidden truncate'>
                         sold {prodObj.sold}
@@ -201,26 +224,30 @@ function CardProd({ prodObj }) {
                   </CardHeader>
 
                   {/* price + discount + rating */}
-                  <CardContent className=' mt-auto pb-2 px-4 my-0 pt-0 max-lg:px-2 max-lg:ml-1 max-lg:absolute max-lg:top-[138px]'>
-                     <div className='flex items-center space-x-2 max-lg:h-[44px] max-lg:flex-col max-lg:space-x-1 max-lg:space-y-1 max-lg:items-start max-lg:justify-end'>
+                  <CardContent className=' mt-auto pb-2 lg:px-4 my-0 pt-0 px-2 ml-1 absolute lg:static top-[138px]'>
+                     <div className='flex lg:space-x-2 h-[44px] flex-col space-x-1 space-y-1 items-start justify-end '>
                         {/* ราคาหลังหัก promotion */}
-                        <span className='text-xl font-bold text-blue-600 max-lg:text-sm'>
+                        <span className='lg:text-xl font-bold text-blue-600 text-sm'>
                            ฿
                            {prodObj?.promotion || getDiscountAmount()
                               ? renderDiscountPrice(prodObj?.price)
                               : formatNumber(prodObj?.price)}
                         </span>
                         {/* ราคาจริง มีขีด line-through */}
-                        <span className='text-sm text-gray-500 line-through max-lg:text-xs '>
+                        <span className='lg:text-sm text-gray-500 line-through text-xs '>
                            {prodObj?.promotion || getDiscountAmount()
                               ? `฿${formatNumber(prodObj?.price)}`
                               : ""}
                         </span>
                      </div>
-                     <div className='mt-1 mb-0 flex items-center space-x-1 max-lg:space-x-0 max-ld:top-[138px] max-lg:left-2'>
+                     <div className='mt-1 mb-0 flex items-center lg:space-x-1 space-x-0 top-[138px] left-2'>
                         {renderStar(prodObj.avgRating)}
-                        <span className='text-sm text-gray-500 ml-1 max-lg:text-xs '>
-                           {prodObj.avgRating?.toFixed(1)}
+                        <span
+                           className={`lg:text-sm text-gray-500 ml-1 text-xs ${
+                              prodObj.avgRating ? "" : "text-transparent"
+                           }`}
+                        >
+                           {prodObj.avgRating?.toFixed(1) || 0}
                         </span>
                      </div>
                   </CardContent>
@@ -233,17 +260,17 @@ function CardProd({ prodObj }) {
                            to='/login'
                            className='w-full'
                         >
-                           <Button className='w-full max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'>
-                              <ShoppingCart className='w-4 h-4 mr-2 max-lg:mr-0 ' />
+                           <Button className='w-8 h-8 lg:w-full lg:rounded-xl absolute lg:static top-[168px] lg:top-0 right-2 lg:right-0 hover:bg-slate-500 '>
+                              <ShoppingCart className='w-4 h-4 lg:mr-2 mr-0 ' />
                               <span className='inline max-lg:hidden'>Add to cart</span>
                            </Button>
                         </Link>
                      ) : (
                         <Button
                            onClick={() => addToCart(productData)}
-                           className='w-full rounded-xl max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'
+                           className='w-full lg:rounded-xl max-lg:w-8 max-lg:h-8 max-lg:absolute max-lg:top-[168px] max-lg:right-2 hover:bg-slate-500'
                         >
-                           <ShoppingCart className='w-4 h-4 mr-2 max-lg:mr-0 ' />
+                           <ShoppingCart className='w-4 h-4 lg:mr-2 mr-0' />
                            <span className='inline max-lg:hidden'>Add to cart</span>
                         </Button>
                      )}

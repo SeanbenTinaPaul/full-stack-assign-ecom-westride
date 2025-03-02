@@ -4,7 +4,7 @@ const cloudinary = require("cloudinary").v2; // import { v2 as cloudinary } from
 exports.createProd = async (req, res) => {
    try {
       const { email } = req.user;
-      const { title, description, price, quantity, categoryId, images } = req.body;
+      const { title, description, price, quantity, categoryId, images, brandId } = req.body;
       // console.log('req.body.images->', images)
       //verify res.body data if they are not null or undefined
       if (!title || !price || !quantity || !categoryId || Number(categoryId) === 0) {
@@ -30,7 +30,8 @@ exports.createProd = async (req, res) => {
                   secure_url: obj.secure_url
                }))
             },
-            createdBy: email
+            createdBy: email,
+            brandId: parseInt(brandId)
          }
       });
 
@@ -99,7 +100,8 @@ exports.listProd = async (req, res) => {
             images: true,
             discounts: true,
             favorites: true,
-            ratings: true
+            ratings: true,
+            brand: true
 
             /*
                 model Product {
@@ -132,6 +134,7 @@ exports.readAprod = async (req, res) => {
          //เพิ่มเพื่อดึงข้อมูลจากตาราง category...
          include: {
             category: true,
+            discounts: true,
             images: true,
             ratings: {
                orderBy: {
@@ -148,7 +151,9 @@ exports.readAprod = async (req, res) => {
                   }
                }
                // orderBy: { createdAt: "desc" }
-            }
+            },
+            brand: true,
+            favorites: true
             // orderItems: true
             /*
                 model Product {
@@ -250,7 +255,7 @@ exports.updateProd = async (req, res) => {
    try {
       //req.body === inputForm → form in Frontend
       const { email } = req.user;
-      const { title, description, price, quantity, categoryId, images } = req.body;
+      const { title, description, price, quantity, categoryId, images, brandId } = req.body;
 
       // ดึงข้อมูลปัจจุบันจากฐานข้อมูล
       //findUnique === SELECT * from TableName WHERE id = ?
@@ -310,6 +315,7 @@ exports.updateProd = async (req, res) => {
             categoryId:
                categoryId !== undefined ? parseInt(categoryId) : existingProduct.categoryId,
             updatedBy: email,
+            brandId: brandId !== undefined ? parseInt(brandId) : existingProduct.brandId,
             //เป็น one-to-many จึงต้องใช้ object ในการเก็บค่า ***เดี๋ยวกลับมาทำ
             // 1 product มีหลาย images
             // ถ้าเพิ่มรูปใน table 'Product' จะเพิ่มใน table 'Image' ด้วย
@@ -417,7 +423,14 @@ exports.displayProdBy = async (req, res) => {
          },
          take: limit,
          orderBy: { [sort]: order },
-         include: { category: true, images: true, discounts: true }
+         include: {
+            category: true,
+            images: true,
+            discounts: true,
+            favorites: true,
+            ratings: true,
+            brand: true
+         }
       });
       res.status(200).json({
          success: true,
@@ -451,13 +464,13 @@ exports.displayProdByUser = async (req, res) => {
          }
       });
 
-      //{'1': 5, '2': 3} count categoryId found  in table Order 
+      //{'1': 5, '2': 3} count categoryId found  in table Order
       const catcount = {};
       //order === each records in table Order
       for (const order of favCatArr) {
          //const product === each ProductOnOrder
          for (const product of order.products) {
-            //.product → table Product 
+            //.product → table Product
             const catId = product.product.categoryId;
             if (catId) {
                catcount[catId] = (catcount[catId] || 0) + 1;
@@ -469,7 +482,7 @@ exports.displayProdByUser = async (req, res) => {
       const topCat = Object.entries(catcount)
          .sort(([, a], [, b]) => b - a) //sort by value
          .slice(0, 5) //[['1', 5], ['2', 3], [], [], []]
-         .map(([catId]) => parseInt(catId));//[catId] = pair[0] | [, a] = pair[1]
+         .map(([catId]) => parseInt(catId)); //[catId] = pair[0] | [, a] = pair[1]
 
       if (topCat.length === 0) {
          return res.status(200).json({
@@ -497,7 +510,10 @@ exports.displayProdByUser = async (req, res) => {
             include: {
                category: true,
                images: true,
-               discounts: true
+               discounts: true,
+               favorites: true,
+               ratings: true,
+               brand: true
             }
          });
 
@@ -621,7 +637,7 @@ const handleCategory = async (req, res, categoryIdArr) => {
 //req.body === {category: [7,1], query: 'tes', price: [0, 100]}
 exports.searchFilters = async (req, res) => {
    try {
-      const { query, category, price } = req.body;
+      const { query, category, price, brand } = req.body;
 
       /*1. สร้าง obj เก็บค่าล่วงหน้า สำหรับส่งไป query DB โดย
       ตั้งชื่อ key ให้เหมือนชื่อคอลัมน์ใน DB และ method ของ prisma
@@ -657,6 +673,18 @@ exports.searchFilters = async (req, res) => {
             lte: parseFloat(price[1])
          };
       }
+      if (brand && brand.length > 0) {
+         whereConditions.brandId = {
+            in: brand.map((id) => {
+               const intId = parseInt(id);
+               if (isNaN(intId)) {
+                  throw new Error(`Invalid brand id: ${id}`); //=== return console.log(err) in json
+               } else {
+                  return intId;
+               }
+            })
+         };
+      }
 
       const products = await prisma.product.findMany({
          where: whereConditions,
@@ -665,7 +693,8 @@ exports.searchFilters = async (req, res) => {
             images: true,
             discounts: true,
             favorites: true,
-            ratings: true
+            ratings: true,
+            brand: true
          }
       });
 

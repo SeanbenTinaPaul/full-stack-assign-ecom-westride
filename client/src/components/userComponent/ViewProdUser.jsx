@@ -8,7 +8,16 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 //icons
-import { Heart, ShoppingCart, Star, StarHalf, ChevronLeft, ShoppingBasket,Hourglass  } from "lucide-react";
+import {
+   Heart,
+   ShoppingCart,
+   Star,
+   StarHalf,
+   ChevronLeft,
+   ShoppingBasket,
+   Hourglass,
+   Slack
+} from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { createCartUser } from "@/api/userAuth";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -25,10 +34,12 @@ const inputProd = {
    price: "",
    quantity: "",
    categoryId: "",
+   brandId: "",
    countCart: 0,
    images: [], //save url of images from Cloudinary→ [{url:..},{url:..}]
    avgRating: 0,
-   comment: ""
+   comment: "",
+   discounts:[]
 };
 
 function ViewProdUser(props) {
@@ -38,6 +49,7 @@ function ViewProdUser(props) {
       getCategory,
       getProduct,
       categories,
+      brands,
       addToCart,
       synCartwithProducts,
       carts,
@@ -77,6 +89,7 @@ function ViewProdUser(props) {
       //not display 0 , not excess than stock from db
       if (newCount < 1 || newCount > productData.quantity) return;
       setQuantity(newCount);
+      adjustQuantity(productData.id, newCount);
       getProduct(1000, 1); //to update fresh stock from db
    };
    // 'Add to Cart' btn - keeps user on current page
@@ -86,7 +99,7 @@ function ViewProdUser(props) {
          ...productData,
          countCart: quantity
       };
-
+      console.log("productForCart", productForCart);
       addToCart(productForCart);
 
       toast({
@@ -118,7 +131,7 @@ function ViewProdUser(props) {
          addToCart(productForCart);
          // structure data for backend
          /*
-         need req.body.carts: [{id, countCart, count, price, buyPriceNum, discount, productId},{..}]
+         need req.body.carts: [{id, countCart, count, price, buyPriceNum, preferDiscount, productId},{..}]
          */
          const cartData = {
             carts: [
@@ -129,7 +142,7 @@ function ViewProdUser(props) {
                   count: quantity,
                   price: productData.price,
                   buyPriceNum: buyPriceNum,
-                  discount: preferDiscount
+                  preferDiscount: preferDiscount
                }
             ]
          };
@@ -167,7 +180,7 @@ function ViewProdUser(props) {
       }
    };
 
-   //2. Safe discount amount getter
+   //2. safe discount amount getter
    const getDiscountAmount = useCallback(() => {
       const today = new Date();
       const startDate = new Date(productData?.discounts?.[0]?.startDate);
@@ -199,23 +212,6 @@ function ViewProdUser(props) {
 
       return { buyPrice: buyPrice, buyPriceNum: buyPriceNum, preferDiscount: preferDiscount };
    }, [productData?.price, productData?.promotion, getDiscountAmount]);
-   // Sync with cart data
-   useEffect(() => {
-      if (!productData?.id) return;
-
-      const cartItem = carts.find((item) => item.id === productData.id);
-      const { buyPrice, buyPriceNum, preferDiscount } = calDiscountedPrice();
-
-      setProductData((prev) => ({
-         ...prev,
-         countCart: cartItem?.countCart || 0,
-         buyPrice,
-         buyPriceNum,
-         preferDiscount
-      }));
-   }, [productData?.id, carts, calDiscountedPrice]);
-
-   
 
    const handleGoBack = async () => {
       try {
@@ -240,14 +236,35 @@ function ViewProdUser(props) {
          try {
             setIsLoading(true);
             const res = await readProduct(id);
-            // console.log("res data readProd->", res.data);
-            setProductData(res.data.data);
+            console.log("res data readProd->", res.data);
+            setProductData({ ...productData, ...res.data.data });
             setImagArr(res.data.data.images);
             setRatingCount(res.data.globalRatingCount);
             setRatingInfo({ ...res.data.ratingInfo });
             setRateAndComment(res.data.data.ratings);
             setProdOnOrder(res.data.prodOnOrder);
             await getCategory(); //random solution to trigger contents in navigte path to rerender
+
+            // const fetchedProduct = res.data.data; // Your fetched product data
+            // const cartItem = carts.find((item) => item.id === fetchedProduct.id);
+            // if (cartItem) {
+            //    setProductData({
+            //       ...fetchedProduct,
+            //       countCart: cartItem.countCart,
+            //       buyPrice: cartItem.buyPrice,
+            //       buyPriceNum: cartItem.buyPriceNum,
+            //       preferDiscount: cartItem.preferDiscount
+            //    });
+            // } else {
+            //    const { buyPrice, buyPriceNum, preferDiscount } = calDiscountedPrice();
+            //    setProductData({
+            //       ...fetchedProduct,
+            //       countCart: 0,
+            //       buyPrice,
+            //       buyPriceNum,
+            //       preferDiscount
+            //    });
+            // }
          } catch (err) {
             console.error("Error fetching product:", err);
             toast({
@@ -265,14 +282,72 @@ function ViewProdUser(props) {
       fetchData();
 
       // Cleanup function
-      return () => {
-         setProductData(inputProd);
-         setIsFavorite(false);
-      };
-   }, [id, getCategory, navigate]);
+      // return () => {
+      //    setProductData(inputProd);
+      //    setIsFavorite(false);
+      // };
+   }, []);
+   // Sync with cart data
+   useEffect(() => {
+      if (!productData?.id) return;
+
+      const cartItem = carts.find((item) => item.id === productData.id);
+
+      console.log("carts", carts);
+      if (cartItem) {
+         //if this prod already in carts arr
+         console.log("cartItem", cartItem);
+         const hasChanges =
+            cartItem.countCart !== productData.countCart ||
+            cartItem.buyPrice !== productData.buyPrice ||
+            cartItem.buyPriceNum !== productData.buyPriceNum ||
+            cartItem.preferDiscount !== productData.preferDiscount;
+
+         if (hasChanges) {
+            console.log("Updating productData with cart values");
+            setProductData((prevData) => ({
+               ...prevData,
+               countCart: cartItem.countCart,
+               buyPrice: cartItem.buyPrice,
+               buyPriceNum: cartItem.buyPriceNum,
+               preferDiscount: cartItem.preferDiscount
+            }));
+            setQuantity(cartItem.countCart);
+         }
+      } else {
+         //if this prod not in carts arr
+         const { buyPrice, buyPriceNum, preferDiscount } = calDiscountedPrice();
+         console.log("no cartItem");
+         const hasChanges =
+            productData.countCart !== 0 ||
+            productData.buyPrice !== buyPrice ||
+            productData.buyPriceNum !== buyPriceNum ||
+            productData.preferDiscount !== preferDiscount;
+
+         if (hasChanges) {
+            console.log("Resetting productData to default values");
+            setProductData((prevData) => ({
+               ...prevData,
+               countCart: 0,
+               buyPrice,
+               buyPriceNum,
+               preferDiscount
+            }));
+         }
+      }
+   }, [carts, productData?.id, calDiscountedPrice]);
+
+   useEffect(() => {
+      console.log("productData updated:", productData);
+   }, [productData]);
+
    // Show loading state
    if (isLoading) {
-      return <div className='mt-10 ml-4 py-6 px-4'><Hourglass className="animate-bounceScale inline-block"/> Loading...</div>;
+      return (
+         <div className='mt-10 ml-4 py-6 px-4'>
+            <Hourglass className='animate-bounceScale inline-block' /> Loading...
+         </div>
+      );
    }
 
    //1.cal promotion vs discount price
@@ -300,6 +375,7 @@ function ViewProdUser(props) {
 
    return (
       <div className='mt-10 ml-4 py-6 px-4'>
+         {console.log("productData", productData)}
          <div className='flex items-center justify-center mb-4 pr-1 w-10 h-10 bg-card rounded-full opacity-70 hover:opacity-100 hover:scale-110'>
             <div
                //  to={"/user/shop"}
@@ -319,7 +395,10 @@ function ViewProdUser(props) {
                   thumbsSwiper={thumbsSwiper}
                >
                   {imagArr?.map((image) => (
-                     <SwiperSlide key={image.id} className='swiper-slide'>
+                     <SwiperSlide
+                        key={image.id}
+                        className='swiper-slide'
+                     >
                         <img
                            src={image?.url}
                            alt='No image'
@@ -363,8 +442,21 @@ function ViewProdUser(props) {
                   <section>
                      <header className='h-24 px-4 py-2  '>
                         {/* className='flex justify-between items-start' */}
-                        <div className='flex justify-between items-start '>
-                           <p className='text-base font-medium text-gray-500 s'>Brand title</p>
+                        <div className='flex justify-start items-start gap-2 mb-4'>
+                        <Badge className='py-0 px-0 w-10 h-6 bg-card flex items-center drop-shadow'>
+                           {productData.brand?.img_url ? (
+                              <img
+                                 src={productData.brand?.img_url}
+                                 alt=''
+                                 className='w-full h-full rounded-md mx-auto object-center object-contain'
+                                 title={productData.brand?.title === "AMD" ? "ใครไม่ D ?" : productData.brand?.title}
+                              />
+                           ) : (
+                              <Slack className='w-5 h-5 mx-auto fill-current text-slate-500 font-thin' />
+                           )}
+                           {/* <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p> */}
+                        </Badge>
+                           <p className='text-base font-medium text-gray-500 s'>{productData.brand?.title == 'No brand' ? 'Exclusive Selection' : productData.brand?.title}</p>
                         </div>
                         <p className='text-base font-normal text-gray-500 '>
                            sold : {productData.sold}
@@ -475,7 +567,7 @@ function ViewProdUser(props) {
             </article>
          </main>
          {/*Global rating  */}
-         <main className="mt-4">
+         <main className='mt-4'>
             <GlobalRating
                ratingCount={ratingCount}
                ratingInfo={ratingInfo}

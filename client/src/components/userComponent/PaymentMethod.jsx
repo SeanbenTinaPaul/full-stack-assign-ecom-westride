@@ -49,7 +49,7 @@ function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {
    }, [token, isSaveAddress]);
 
    return (
-      <div className='min-w-[600px]'>
+      <div className='min-w-[500px] '>
          {isSaveAddress && clientSecret && (
             <Elements
                options={{ clientSecret, appearance, loader }}

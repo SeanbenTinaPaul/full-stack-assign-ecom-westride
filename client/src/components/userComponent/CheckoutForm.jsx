@@ -25,7 +25,7 @@ expire date : 12/34
 security code : 567
 */
 export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
-   const { token, resetCartsAfterPurchas,updateStatusSaveToCart } = useEcomStore((state) => state);
+   const { token, resetCartsAfterPurchas, updateStatusSaveToCart } = useEcomStore((state) => state);
    const navigate = useNavigate();
    const { toast } = useToast();
    const stripe = useStripe();
@@ -94,10 +94,11 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
             const res = await saveOrderUser(token, payload);
             console.log("res.data CheckoutForm", res.data);
             resetCartsAfterPurchas(res.data.prodIdPaid);
-            updateStatusSaveToCart(false);//reset isSaveToCart , carts is empty now so user need to save cart again
+            updateStatusSaveToCart(false); //reset isSaveToCart , carts is empty now so user need to save cart again
             navigate("/user/history");
          } catch (err) {
             console.error(err);
+            setIsLoading(false);
             throw err; //to stop continue executing
          }
       }
@@ -109,7 +110,8 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
       //   console.log("paymentIntentData", paymentIntentData);
       try {
          const res = await reqCancelPayment(token, paymentIntentData);
-         //  console.log("res.data reqCancelPayment", res.data);
+         console.log("paymentIntentData->", paymentIntentData);
+         console.log("res.data reqCancelPayment", res.data);
          setShowConfirmDialog(false);
          navigate("/user/history");
       } catch (err) {
@@ -126,7 +128,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
          <form
             id='payment-form'
             onSubmit={handleSubmit}
-            className='bg-card p-4 rounded-xl shadow-md'
+            className='bg-card p-4 mt-6 rounded-xl shadow-md'
          >
             <PaymentElement
                id='payment-element'

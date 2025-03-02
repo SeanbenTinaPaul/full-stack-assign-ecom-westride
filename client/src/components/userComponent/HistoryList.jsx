@@ -40,11 +40,11 @@ function HistoryList(props) {
          setOrderList(res.data.data);
       } catch (err) {
          console.error("Error fetching orders:", err);
-         toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to load order history"
-         });
+         // toast({
+         //    variant: "destructive",
+         //    title: "Error",
+         //    description: "Failed to load order history"
+         // });
       }
    };
 
@@ -58,11 +58,25 @@ function HistoryList(props) {
          const res = await reqRefund(token, orderId);
          console.log("res.data refund", res.data);
          if (res.data.success) {
-            await fetchOrderList();//refresh orderList
-            toast({
-               title: "Refund requested successfully",
-               description: "Your refund request has been processed"
-            });
+            await fetchOrderList(); //refresh orderList
+            if (res.data.confirmEmail && res.data.expireAT) {
+               const unixTimestamp = res.data.expireAT;
+               const date = new Date(unixTimestamp * 1000);
+               const formattedDate = date.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+               });
+               toast({
+                  title: `Please check ${res.data.confirmEmail} to complete your refund request`,
+                  description: `Stripe needs your bank account details by ${formattedDate} \n**TEST MODE: Please note that we need a fake bank account, not a real one.**`
+               });
+            } else {
+               toast({
+                  title: "Refund requested successfully",
+                  description: "Your refund request has been processed"
+               });
+            }
          }
          setShowConfirmDialog(false);
          setSelectedOrderId(null);
@@ -71,7 +85,7 @@ function HistoryList(props) {
          toast({
             variant: "destructive",
             title: "Error",
-            description: "Failed to process refund request"
+            description: err.response.data.message || "Failed to request refund"
          });
       } finally {
          setIsLoading(false);
@@ -201,257 +215,270 @@ function HistoryList(props) {
             <header className='text-lg font-semibold '>Purchase History</header>
          </div>
          {/* cover all */}
-         <main>
-            {/* card */}
-            {orderList?.map((order) => (
-               <div key={order.id}>
-                  <article className='flex flex-col gap-2 p-6  bg-gradient-to-r from-card to-slate-100 rounded-t-xl shadow-md'>
-                     {/* header */}
-                     <header className='flex justify-between'>
-                        <div className='mb-2'>
-                           <p className='text-sm font-semibold'>Order date</p>
-                           <p className='font-light text-xs'>
-                              {new Date(order.createdAt).toLocaleString("en-uk", {
-                                 timeZone: "Asia/Bangkok",
-                                 day: "2-digit",
-                                 month: "short",
-                                 year: "numeric",
-                                 hour: "2-digit",
-                                 minute: "2-digit",
-                                 hour12: true
-                              })}
-                           </p>
-                        </div>
-                        <div
-                           className={`h-fit w-fit px-2 py-1 rounded-full text-center text-xs font-medium ${
-                              order.orderStatus === "Completed"
-                                 ? "text-green-700 bg-green-100"
-                                 : order.orderStatus === "Not Process"
-                                 ? "text-yellow-700 bg-yellow-100"
-                                 : "text-gray-500 bg-gray-200"
-                           }`}
-                        >
-                           {order.orderStatus}
-                        </div>
-                     </header>
-                     <div>
-                        <table className='table-fixed w-full bg-gradient-to-r from-card to-slate-100 text-card-foreground rounded-lg'>
-                           <thead className='border-b'>
-                              <tr className='text-left text-sm'>
-                                 <th>Product title</th>
-                                 <th>Price</th>
-                                 <th>Quantity</th>
-                                 <th>Total</th>
-                              </tr>
-                           </thead>
-                           <tbody>
-                              {order?.products?.map((product) => (
-                                 <tr key={product.id}>
-                                    <td>{product.product.title}</td>
-                                    <td>฿{formatNumber(product.price)}</td>
-                                    <td>{product.count}</td>
-                                    <td>฿{formatNumber(product.price * product.count)}</td>
+         {orderList?.length > 0 ? (
+            <main>
+               {/* card */}
+               {orderList?.map((order) => (
+                  <div key={order.id}>
+                     <article className='flex flex-col gap-2 p-6  bg-gradient-to-r from-card to-slate-100 rounded-t-xl shadow-md'>
+                        {/* header */}
+                        <header className='flex justify-between'>
+                           <div className='mb-2'>
+                              <p className='text-sm font-semibold'>Order date</p>
+                              <p className='font-light text-xs'>
+                                 {new Date(order.createdAt).toLocaleString("en-uk", {
+                                    timeZone: "Asia/Bangkok",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true
+                                 })}
+                              </p>
+                           </div>
+                           <div
+                              className={`h-fit w-fit px-2 py-1 rounded-full text-center text-xs font-medium ${
+                                 order.orderStatus === "Completed"
+                                    ? "text-green-700 bg-green-100"
+                                    : order.orderStatus === "Not Process"
+                                    ? "text-yellow-700 bg-yellow-100"
+                                    : "text-gray-500 bg-gray-200"
+                              }`}
+                           >
+                              {order.orderStatus}
+                           </div>
+                        </header>
+                        <div>
+                           <table className='table-fixed w-full bg-gradient-to-r from-card to-slate-100 text-card-foreground rounded-lg'>
+                              <thead className='border-b'>
+                                 <tr className='text-left text-sm'>
+                                    <th>Product title</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
                                  </tr>
-                              ))}
-                           </tbody>
-                        </table>
-                     </div>
-                     {/* total  */}
-                     <footer className='flex justify-between items-end'>
-                        {order.orderStatus === "Completed" ? (
-                           <div className='w-full'>
-                              {new Date().getTime() - new Date(order.createdAt).getTime() <=
-                              3 * 24 * 60 * 60 * 1000 ? (
-                                 <div className='flex gap-2 items-center mt-4 '>
-                                    <Button
-                                       variant='secondary'
-                                       type='button'
-                                       className=' py-2 shadow-md rounded-xl bg-slate-50'
-                                       onClick={() => {
-                                          setSelectedOrderId(order.id);
-                                          setShowConfirmDialog(true);
-                                       }}
-                                    >
-                                       Refund My Order
-                                    </Button>
-                                    <p className='font-light text-xs text-gray-500'>
-                                       (3-day guarantee)
+                              </thead>
+                              <tbody>
+                                 {order?.products?.map((product) => (
+                                    <tr key={product.id}>
+                                       <td>{product.product.title}</td>
+                                       <td>฿{formatNumber(product.price)}</td>
+                                       <td>{product.count}</td>
+                                       <td>฿{formatNumber(product.price * product.count)}</td>
+                                    </tr>
+                                 ))}
+                              </tbody>
+                           </table>
+                        </div>
+                        {/* total  */}
+                        <footer className='flex justify-between items-end'>
+                           {order.orderStatus === "Completed" ? (
+                              <div className='w-full'>
+                                 {new Date().getTime() - new Date(order.createdAt).getTime() <=
+                                 3 * 24 * 60 * 60 * 1000 ? (
+                                    <div className='flex gap-2 items-center mt-4 '>
+                                       <Button
+                                          variant='secondary'
+                                          type='button'
+                                          className=' py-2 shadow-md rounded-xl bg-slate-50'
+                                          onClick={() => {
+                                             setSelectedOrderId(order.id);
+                                             setShowConfirmDialog(true);
+                                          }}
+                                       >
+                                          Refund My Order
+                                       </Button>
+                                       <p className='font-light text-xs text-gray-500'>
+                                          (3-day guarantee)
+                                       </p>
+                                    </div>
+                                 ) : (
+                                    <div className='w-full text-sm text-gray-500'>
+                                       Refunding expired
+                                    </div>
+                                 )}
+                              </div>
+                           ) : order.orderStatus === "Refunded" ? (
+                              <div className=' w-fit font-light text-sm text-gray-500 whitespace-nowrap'>
+                                 You got ฿{formatNumber(order?.refundAmount)} back (
+                                 {new Date(order?.updatedAt).toLocaleString("en-uk", {
+                                    timeZone: "Asia/Bangkok",
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true
+                                 })}
+                                 )
+                              </div>
+                           ) : (
+                              ""
+                           )}
+                           <div className='w-fit flex flex-col items-end'>
+                              <p className='font-normal whitespace-nowrap'>Net Total</p>
+                              <p className='font-medium'>฿{formatNumber(order.cartTotal)}</p>
+                           </div>
+                        </footer>
+                     </article>
+                     <Button
+                        variant='secondary'
+                        type='button'
+                        className={`w-full rounded-t-none shadow-md bg-slate-50 hover:bg-slate-100 transition-all duration-700 ${
+                           isCollapsedByOrderId[order.id] ? "mb-0" : "mb-4"
+                        }`}
+                        onClick={() => toggleCollapse(order.id)}
+                     >
+                        {isCollapsedByOrderId[order.id] ? (
+                           <ChevronUp />
+                        ) : (
+                           <div className='flex gap-1 items-center text-xs text-gray-500'>
+                              Share your thoughts!
+                              <ChevronDown />
+                           </div>
+                        )}
+                     </Button>
+                     {/* comment and rate */}
+
+                     <section
+                        className={`overflow-hidden w-full mb-4 -mt-3  rounded-xl shadow-md bg-gradient-to-r from-card to-slate-100 transition-all duration-300 ${
+                           isCollapsedByOrderId[order.id]
+                              ? "max-h-[1000px] h-auto p-6 "
+                              : " max-h-0 h-0"
+                        }`}
+                     >
+                        {order?.products?.map((obj) => (
+                           <div
+                              key={"rate" + obj.id}
+                              className='mb-4'
+                           >
+                              <div className='font-semibold mt-3'>{obj.product.title}</div>
+                              {obj.product.ratings.find((r) => r.orderId === obj.orderId) ? (
+                                 <div>
+                                    <p className='text-sm text-gray-500'>You rated this product.</p>
+                                    <p className='flex gap-1 items-center text-sm text-gray-500'>
+                                       <strong>Score</strong>:{" "}
+                                       {
+                                          obj.product.ratings.find((r) => r.orderId === obj.orderId)
+                                             .rating
+                                       }{" "}
+                                       <Star
+                                          size={15}
+                                          className='text-yellow-500 fill-current'
+                                       />
+                                    </p>
+                                    <p className='text-sm text-gray-500'>
+                                       <strong>Comment</strong>:{" "}
+                                       <p className='w-full p-2 h-auto rounded-xl Input-3Dshadow overflow-auto'>
+                                          {
+                                             obj.product.ratings.find(
+                                                (r) => r.orderId === obj.orderId
+                                             ).comment
+                                          }
+                                       </p>
+                                    </p>
+                                 </div>
+                              ) : order.orderStatus !== "Completed" ? (
+                                 <div className='text-sm text-gray-500'>
+                                    <p>Not available!</p>
+                                    <p>
+                                       Rate this product <strong>before</strong> requesting a{" "}
+                                       <strong>refund</strong> or after your order is complete!
                                     </p>
                                  </div>
                               ) : (
-                                 <div className='w-full text-sm text-gray-500'>
-                                    Refunding expired
+                                 <div>
+                                    <div>
+                                       <StarRating
+                                          onRatingChange={handleRatingStar}
+                                          rating={
+                                             ratings[`${order.id}-${obj.productId}`]?.rating || 0
+                                          }
+                                          prodId={obj.productId}
+                                          orderId={order.id}
+                                       />
+                                    </div>
+                                    <textarea
+                                       value={
+                                          ratings[`${obj.orderId}-${obj.productId}`]?.comment || ""
+                                       }
+                                       onChange={(e) =>
+                                          handleComment(obj.orderId, obj.productId, e.target.value)
+                                       }
+                                       placeholder='Rate now and help others! This feature is only available before refunds or after order completion'
+                                       className='w-full p-2 h-12 rounded-xl Input-3Dshadow overflow-auto'
+                                    />
                                  </div>
                               )}
                            </div>
-                        ) : order.orderStatus === "Refunded" ? (
-                           <div className=' w-fit font-light text-sm text-gray-500 whitespace-nowrap'>
-                              You got ฿{formatNumber(order?.refundAmount)} back (
-                              {new Date(order?.updatedAt).toLocaleString("en-uk", {
-                                 timeZone: "Asia/Bangkok",
-                                 day: "2-digit",
-                                 month: "short",
-                                 year: "numeric",
-                                 hour: "2-digit",
-                                 minute: "2-digit",
-                                 hour12: true
-                              })}
-                              )
-                           </div>
-                        ) : (
-                           ""
-                        )}
-                        <div className='w-fit flex flex-col items-end'>
-                           <p className='font-normal whitespace-nowrap'>Net Total</p>
-                           <p className='font-medium'>฿{formatNumber(order.cartTotal)}</p>
-                        </div>
-                     </footer>
-                  </article>
-                  <Button
-                     variant='secondary'
-                     type='button'
-                     className={`w-full rounded-t-none shadow-md bg-slate-50 hover:bg-slate-100 transition-all duration-700 ${
-                        isCollapsedByOrderId[order.id] ? "mb-0" : "mb-4"
-                     }`}
-                     onClick={() => toggleCollapse(order.id)}
-                  >
-                     {isCollapsedByOrderId[order.id] ? (
-                        <ChevronUp />
-                     ) : (
-                        <div className='flex gap-1 items-center text-xs text-gray-500'>
-                           Share your thoughts!
-                           <ChevronDown />
-                        </div>
-                     )}
-                  </Button>
-                  {/* comment and rate */}
-
-                  <section
-                     className={`overflow-hidden w-full mb-4 -mt-3  rounded-xl shadow-md bg-gradient-to-r from-card to-slate-100 transition-all duration-300 ${
-                        isCollapsedByOrderId[order.id]
-                           ? "max-h-[1000px] h-auto p-6 "
-                           : " max-h-0 h-0"
-                     }`}
-                  >
-                     {order?.products?.map((obj) => (
-                        <div
-                           key={"rate" + obj.id}
-                           className='mb-4'
-                        >
-                           <div className='font-semibold mt-3'>{obj.product.title}</div>
-                           {obj.product.ratings.find((r) => r.orderId === obj.orderId) ? (
-                              <div>
-                                 <p className='text-sm text-gray-500'>You rated this product.</p>
-                                 <p className='flex gap-1 items-center text-sm text-gray-500'>
-                                    <strong>Score</strong>:{" "}
-                                    {
-                                       obj.product.ratings.find((r) => r.orderId === obj.orderId)
-                                          .rating
-                                    }{" "}
-                                    <Star
-                                       size={15}
-                                       className='text-yellow-500 fill-current'
-                                    />
-                                 </p>
-                                 <p className='text-sm text-gray-500'>
-                                    <strong>Comment</strong>:{" "}
-                                    <p className='w-full p-2 h-auto rounded-xl Input-3Dshadow overflow-auto'>
-                                       {
-                                          obj.product.ratings.find((r) => r.orderId === obj.orderId)
-                                             .comment
-                                       }
-                                    </p>
-                                 </p>
-                              </div>
-                           ) : order.orderStatus !== "Completed" ? (
-                              <div className='text-sm text-gray-500'>
-                                 <p>Not available!</p>
-                                 <p>
-                                    Rate this product <strong>before</strong> requesting a{" "}
-                                    <strong>refund</strong> or after your order is complete!
-                                 </p>
-                              </div>
-                           ) : (
-                              <div>
-                                 <div>
-                                    <StarRating
-                                       onRatingChange={handleRatingStar}
-                                       rating={ratings[`${order.id}-${obj.productId}`]?.rating || 0}
-                                       prodId={obj.productId}
-                                       orderId={order.id}
-                                    />
-                                 </div>
-                                 <textarea
-                                    value={
-                                       ratings[`${obj.orderId}-${obj.productId}`]?.comment || ""
-                                    }
-                                    onChange={(e) =>
-                                       handleComment(obj.orderId, obj.productId, e.target.value)
-                                    }
-                                    placeholder='Rate now and help others! This feature is only available before refunds or after order completion'
-                                    className='w-full p-2 h-12 rounded-xl Input-3Dshadow overflow-auto'
-                                 />
-                              </div>
-                           )}
-                        </div>
-                     ))}
-                     <Button
-                        type='button'
-                        className={` rounded-xl hover:bg-slate-500 ${
-                           order?.products
-                              ?.map((obj) =>
-                                 obj.product.ratings.find(
-                                    (r) =>
-                                       r.orderId === obj.orderId && r.productId === obj.productId
+                        ))}
+                        <Button
+                           type='button'
+                           className={` rounded-xl hover:bg-slate-500 ${
+                              order?.products
+                                 ?.map((obj) =>
+                                    obj.product.ratings.find(
+                                       (r) =>
+                                          r.orderId === obj.orderId && r.productId === obj.productId
+                                    )
                                  )
-                              )
-                              .every((r) => r) || order.orderStatus !== "Completed"
-                              ? "hidden"
-                              : ""
-                        }`}
-                        onClick={() => handleFeedback(order.id)}
-                        disabled={isLoading}
-                     >
-                        Submit feedback
-                     </Button>
-                  </section>
+                                 .every((r) => r) || order.orderStatus !== "Completed"
+                                 ? "hidden"
+                                 : ""
+                           }`}
+                           onClick={() => handleFeedback(order.id)}
+                           disabled={isLoading}
+                        >
+                           Submit feedback
+                        </Button>
+                     </section>
+                  </div>
+               ))}
+               <AlertDialog
+                  open={showConfirmDialog}
+                  onOpenChange={setShowConfirmDialog}
+               >
+                  <AlertDialogContent>
+                     <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure to refund your order ?</AlertDialogTitle>
+                        <AlertDialogDescription className='space-y-3'>
+                           <div>
+                              Please note that a <strong>5%</strong> fee applies to refunds, and we
+                              trust you to return the products to us.
+                           </div>
+                           <div>
+                              ( We know that we don't have a delivery tracking. So, just pretend
+                              that we have it. )
+                           </div>
+                           <div>If you're sure, we'll process your refund.</div>
+                        </AlertDialogDescription>
+                     </AlertDialogHeader>
+                     <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => handleRefund(selectedOrderId)}>
+                           Yes, process my refund
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                           onClick={() => {
+                              setShowConfirmDialog(false);
+                              setSelectedOrderId(null);
+                           }}
+                        >
+                           No, keep my order
+                        </AlertDialogAction>
+                     </AlertDialogFooter>
+                  </AlertDialogContent>
+               </AlertDialog>
+            </main>
+         ) : (
+            <main className='flex flex-col items-center justify-center h-screen'>
+               <div className='flex flex-col items-center justify-center'>
+                  <h1 className='text-2xl font-bold'>
+                     Welcome to the family! Discover your new favorite products now!
+                  </h1>
                </div>
-            ))}
-            <AlertDialog
-               open={showConfirmDialog}
-               onOpenChange={setShowConfirmDialog}
-            >
-               <AlertDialogContent>
-                  <AlertDialogHeader>
-                     <AlertDialogTitle>Are you sure to refund your order ?</AlertDialogTitle>
-                     <AlertDialogDescription className='space-y-3'>
-                        <div>
-                           Please note that a <strong>5%</strong> fee applies to refunds, and we
-                           trust you to return the products to us.
-                        </div>
-                        <div>
-                           ( We know that we don't have a delivery tracking. So, just pretend that
-                           we have it. )
-                        </div>
-                        <div>If you're sure, we'll process your refund.</div>
-                     </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                     <AlertDialogCancel onClick={() => handleRefund(selectedOrderId)}>
-                        Yes, process my refund
-                     </AlertDialogCancel>
-                     <AlertDialogAction
-                        onClick={() => {
-                           setShowConfirmDialog(false);
-                           setSelectedOrderId(null);
-                        }}
-                     >
-                        No, keep my order
-                     </AlertDialogAction>
-                  </AlertDialogFooter>
-               </AlertDialogContent>
-            </AlertDialog>
-         </main>
+            </main>
+         )}
       </div>
    );
 }

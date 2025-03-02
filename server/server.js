@@ -16,7 +16,7 @@ app.use(helmet()); //ไว้ล่างของ const app = express();
 
 const limiter = rateLimit({
    windowMs: 1 * 60 * 1000, // 1 minutes และจะรีเซ็ตโควต้าให้อัตโนมัติทุกๆ 1 นาที
-   limit: 500, // Limit each IP to 100 requests per `window` (reset after 1 minutes).
+   limit: 1000, // Limit each IP to 100 requests per `window` (reset after 1 minutes).
    standardHeaders: "draft-7", //'draft-7'หากต้องการใช้ header มาตรฐานล่าสุด.
    legacyHeaders: false, // เปลียนเป็น true หากต้องการใช้ header ที่เก่า
    handler: (req, res) => {

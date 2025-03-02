@@ -22,7 +22,7 @@ import useEcomStore from "@/store/ecom-store";
 import { bulkDiscount } from "@/api/ProductAuth";
 
 function FormPromotion() {
-   const { getProduct, products, token } = useEcomStore();
+   const { getProduct, products, token } = useEcomStore(state=>state);
    const { toast } = useToast();
    const tableRef = useRef(null); //for clear checkbox in table
    // const [products, setProducts] = useState([]); //for fetching all products from DB
@@ -40,7 +40,7 @@ function FormPromotion() {
          try {
             // const res = await getProduct(100);
             // setProducts(res.data);
-            getProduct(1000,0);
+            getProduct(1000, 0);
          } catch (error) {
             console.error(error);
             toast({
@@ -154,6 +154,35 @@ function FormPromotion() {
                   onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                >
                   Price
+                  <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
+                     <svg
+                        className='w-4 h-4'
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        stroke='currentColor'
+                     >
+                        <path
+                           strokeLinecap='round'
+                           strokeLinejoin='round'
+                           strokeWidth={2}
+                           d='M8 9l4-4 4 4m0 6l-4 4-4-4'
+                        />
+                     </svg>
+                  </div>
+               </Button>
+            );
+         }
+      },
+      {
+         accessorKey: "brandId",
+         header: ({ column }) => {
+            return (
+               <Button
+                  variant='ghost'
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+               >
+                  Brand ID
                   <div className='w-full flex justify-center hover:text-fuchsia-700  hover:scale-125 active:rotate-180 transition-transform duration-200'>
                      <svg
                         className='w-4 h-4'
@@ -524,7 +553,7 @@ function FormPromotion() {
             setSelectedProducts([]);
             setDiscountAmount("");
             setDescription("");
-            getProduct(1000,0);
+            getProduct(1000, 0);
          }
       } catch (error) {
          console.error(error);
@@ -613,18 +642,17 @@ function FormPromotion() {
                            />
                         </div>
                      </div>
+                     <div className='space-y-2'>
+                        <label className='text-sm font-medium'>Description</label>
+                        <Input
+                           value={description}
+                           onChange={(e) => setDescription(e.target.value)}
+                           placeholder='e.g. New Year Sale, Summer Collection'
+                           className='transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
+                        />
+                     </div>
                   </div>
                )}
-
-               <div className='space-y-2'>
-                  <label className='text-sm font-medium'>Description</label>
-                  <Input
-                     value={description}
-                     onChange={(e) => setDescription(e.target.value)}
-                     placeholder='e.g. New Year Sale, Summer Collection'
-                     className='transition-all duration-300 shadow-[inset_0_1px_4px_0_rgba(0,0,0,0.1)] border-transparent p-2 rounded-xl focus:ring-1 focus:ring-purple-500 focus:border-transparent hover:shadow-[inset_0_2px_6px_0_rgba(0,0,0,0.15)]'
-                  />
-               </div>
             </CardContent>
          </Card>
          {/* Table*********** */}
