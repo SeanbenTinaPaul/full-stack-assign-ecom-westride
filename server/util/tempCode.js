@@ -148,3 +148,127 @@ if (existFav?.isActive) {
       isFavorited: true
    });
 }
+
+
+//------------------------------------------------------------------------------
+//handle toggle with upsert() and isActive column
+      const favorite = await prisma.favorite.upsert({
+         where: {
+            userId_productId: {
+               userId: id,
+               productId: parseInt(productId)
+            }
+         },
+         //→ .update({where:{..}, data:{..}}) | exist → toggle | not exist → true
+         update: {
+            isActive: existFav ? !existFav.isActive : true
+         },
+         //→ .create({data:{..}})
+         create: {
+            userId: id,
+            productId: parseInt(productId),
+            isActive: true
+         },
+         select: {
+            isActive: true,
+            product: {
+               select: {
+                  title: true
+               }
+            }
+         }
+      });
+
+      return res.status(200).json({
+         success: true,
+         message: favorite.isActive
+            ? `Added ${favorite.product.title} to favorites`
+            : `Removed ${favorite.product.title} from favorites`,
+         isFavorited: favorite.isActive
+      });
+
+      //-----------------------------------------------------------------
+      //not used
+const handleQuery = async (req, res, query) => {
+   try {
+      const products = await prisma.product.findMany({
+         where: {
+            title: {
+               contains: query
+            }
+         },
+         include: {
+            category: true,
+            images: true
+         }
+      });
+      res.send(products);
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Search Error" });
+   }
+};
+/* 
+SELECT * 
+FROM "Product"
+WHERE "title" ILIKE '%' || $1 || '%';
+คำอธิบาย:
+SELECT * FROM "Product":
+
+ดึงข้อมูลทั้งหมดจากตาราง Product.
+WHERE "title" ILIKE '%' || $1 || '%':
+
+ค้นหาในคอลัมน์ title ที่มีข้อความบางส่วน (substring) ตรงกับตัวแปร $1.
+คำสั่ง ILIKE ใช้สำหรับการค้นหาที่ไม่คำนึงถึงตัวพิมพ์เล็ก/ใหญ่ (case-insensitive).
+สัญลักษณ์ % หมายถึง wildcard สำหรับการจับข้อความที่อยู่ก่อนหรือหลังคำที่ค้นหา.
+$1:
+
+ตัวแปรที่ใช้แทนค่า query ที่ส่งมาจากผู้ใช้งาน เช่น "apple", "phone", หรือคำค้นหาอื่น.
+*/
+//not used
+const handlePrice = async (req, res, priceRange) => {
+   try {
+      const products = await prisma.product.findMany({
+         where: {
+            price: {
+               gte: priceRange[0],
+               lte: priceRange[1]
+            }
+         },
+         include: {
+            category: true,
+            images: true
+         }
+      });
+      res.send(products);
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({
+         success: false,
+         message: "Search Error"
+      });
+   }
+};
+//not used...
+const handleCategory = async (req, res, categoryIdArr) => {
+   try {
+      const products = await prisma.product.findMany({
+         where: {
+            categoryId: {
+               in: categoryIdArr.map((id) => Number(id))
+            }
+         },
+         include: {
+            category: true,
+            images: true
+         }
+      });
+      res.send(products);
+   } catch (err) {
+      console.log(err);
+      res.status(500).json({
+         success: false,
+         message: "Search Error"
+      });
+   }
+};

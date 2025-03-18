@@ -7,6 +7,7 @@ import { LoadingToRedirect } from "./LoadingToRedirect";
 
 export const ProtectRouteAdmin = ({ element }) => {
    const [pass, setPass] = useState(false);
+   const [loading, setLoading] = useState(true);
 
    const user = useEcomStore((state) => state.user);
    const token = useEcomStore((state) => state.token);
@@ -15,27 +16,37 @@ export const ProtectRouteAdmin = ({ element }) => {
    //ใช้เช็คว่า user มีข้อมูลไหม และ token มีข้อมูลไหม
    //เมื่อเข้ามาที่ ProtecRouterAdmin จะใหเทำงานอัตโนมัติ
    useEffect(() => {
-      if (user && token) {
-         //send to backend
-         currentAdmin(token)
+      const checkAuth = async () => {
+         // if (!user || !token) return;
+
+         try {
+            //send to backend
             //we can use then and catch alternative to try and catch
             //if cuurentUser() works ► go to then()
-            .then((res) => {
-               if(res.data.success){
-                   setPass(true)
-               }else{
-                   setPass(false)//if currentAdmin() recieve res.status(401)
-               }
-            })
-            .catch((err) => setPass(false));//if currentAdmin() recieve res.status(401) 
-      }
-   }, []);
+            const res = await currentAdmin(token);
+            //if currentAdmin() recieve res.status(200)
+            if (res.data.success) {
+               setPass(true);
+            } else {
+               setPass(false); //if currentAdmin() recieve res.status(401)
+            }
+         } catch (err) {
+            setPass(false);
+         } finally {
+            setLoading(false);
+         }
+      
+      };
+      checkAuth();
+   }, [user, token]);
+
+   if (loading) {
+      return null; // Show nothing while checking auth
+   }
 
    return pass ? element : <LoadingToRedirect />; // element ► <LayoutUser />
 };
 
 ProtectRouteAdmin.propTypes = {
-   element: propTypes.element.isRequired,
+   element: propTypes.element.isRequired
 };
-
-

@@ -1,5 +1,5 @@
 //parent → ShopUser.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { formatNumber } from "@/utilities/formatNumber";
@@ -12,19 +12,44 @@ import { Heart, ShoppingCart, Star, StarHalf, Slack } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 
 import { motion } from "motion/react";
+import { toggleFavoriteUser } from "@/api/userAuth";
+import { useToast } from "@/components/hooks/use-toast";
 
 //-------------------------------------------------------------------
 
 function CardProd({ prodObj }) {
-   const { addToCart, user, token, synCartwithProducts } = useEcomStore((state) => state); //getProduct from DB → set to carts in LocalStorage
+   const { addToCart, user, token, synCartwithProducts, getProduct } = useEcomStore(
+      (state) => state
+   ); //getProduct from DB → set to carts in LocalStorage
    const [isFavorite, setIsFavorite] = useState(false);
    //to save price after discount + promotion → for further Checkout
    const [productData, setProductData] = useState(prodObj);
-   //click heart or not
-   const handleFavorite = () => {
-      setIsFavorite(!isFavorite);
-   };
+   const { toast } = useToast();
 
+   //click heart or not
+   const handleFavorite = async () => {
+      if (!user || !token) return;
+      setIsFavorite(!isFavorite);
+      const res = await toggleFavoriteUser(token, prodObj.id);
+      getProduct(100, 1);
+      if (!res.data.success) {
+         setIsFavorite((prevState) => !prevState); //set back to previous state if error
+         toast({
+            title: "Warning!",
+            description: res.data.message
+         });
+      }
+   };
+   const setFav = useCallback(() => {
+      if (!user || !token) return;
+      const favorites = prodObj.favorites;
+      // console.log("favorites", favorites);
+      for (const favObj of favorites) {
+         favObj?.userId == user.id && prodObj.id == favObj?.productId
+            ? setIsFavorite(true)
+            : setIsFavorite(false);
+      }
+   }, [isFavorite]);
    //render star
    const renderStar = (rate) => {
       const stars = [];
@@ -113,6 +138,7 @@ function CardProd({ prodObj }) {
       // useEffect() is designed to handle side effects, such as updating the global state, making API calls, or setting timers.
       // console.log("productData", productData)
       synCartwithProducts(productData);
+      if (user && token) setFav();
    }, [prodObj, productData]);
 
    //cal promotion va discount price
@@ -211,7 +237,10 @@ function CardProd({ prodObj }) {
                                  }
                               />
                            ) : (
-                              <div className="mx-auto" title='Exclusive Selection'>
+                              <div
+                                 className='mx-auto'
+                                 title='Exclusive Selection'
+                              >
                                  <Slack className='w-4 h-4 lg:w-5 lg:h-5 mx-auto fill-current text-slate-500 font-thin' />
                               </div>
                            )}

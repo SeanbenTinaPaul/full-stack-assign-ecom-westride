@@ -24,6 +24,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 
 import { motion } from "motion/react";
 import { readProduct } from "@/api/ProductAuth";
+import { toggleFavoriteUser } from "@/api/userAuth";
 import { SwiperSlide } from "swiper/react";
 import CarouselThumnailProd from "@/utilities/CarouselThumnailProd";
 import GlobalRating from "@/components/userComponent/GlobalRating";
@@ -39,7 +40,7 @@ const inputProd = {
    images: [], //save url of images from Cloudinary→ [{url:..},{url:..}]
    avgRating: 0,
    comment: "",
-   discounts:[]
+   discounts: []
 };
 
 function ViewProdUser(props) {
@@ -48,10 +49,7 @@ function ViewProdUser(props) {
       token,
       getCategory,
       getProduct,
-      categories,
-      brands,
       addToCart,
-      synCartwithProducts,
       carts,
       adjustQuantity,
       updateStatusSaveToCart
@@ -63,8 +61,8 @@ function ViewProdUser(props) {
    const [isFavorite, setIsFavorite] = useState(false);
    //to save price after discount + promotion → for further Checkout
    const [productData, setProductData] = useState(inputProd);
-   const [totalNet, setTotalNet] = useState(0);
    //click heart or not
+
    // Add loading state
    const [isLoading, setIsLoading] = useState(true);
    const [quantity, setQuantity] = useState(1);
@@ -78,10 +76,6 @@ function ViewProdUser(props) {
    const [ratingInfo, setRatingInfo] = useState({});
    const [rateAndComment, setRateAndComment] = useState([]);
    const [prodOnOrder, setProdOnOrder] = useState([]);
-
-   const handleFavorite = () => {
-      setIsFavorite(!isFavorite);
-   };
 
    // quantity change locally without affecting cart
    const handleQuantityChange = (change) => {
@@ -237,7 +231,7 @@ function ViewProdUser(props) {
             setIsLoading(true);
             const res = await readProduct(id);
             console.log("res data readProd->", res.data);
-            setProductData({ ...productData, ...res.data.data });
+            setProductData((prev) => ({ ...prev, ...res.data.data }));
             setImagArr(res.data.data.images);
             setRatingCount(res.data.globalRatingCount);
             setRatingInfo({ ...res.data.ratingInfo });
@@ -280,12 +274,6 @@ function ViewProdUser(props) {
       };
 
       fetchData();
-
-      // Cleanup function
-      // return () => {
-      //    setProductData(inputProd);
-      //    setIsFavorite(false);
-      // };
    }, []);
    // Sync with cart data
    useEffect(() => {
@@ -338,8 +326,31 @@ function ViewProdUser(props) {
    }, [carts, productData?.id, calDiscountedPrice]);
 
    useEffect(() => {
-      console.log("productData updated:", productData);
-   }, [productData]);
+      console.log("productData updated:", productData.favorites);
+      if (!user || !token || !productData.favorites) return;
+
+      const favArr = productData.favorites;
+      // console.log("fav", favArr);
+      // console.log("productData for fav", productData);
+      const isFavorite = favArr.some(
+         (favObj) => favObj?.userId == user.id && productData.id == favObj?.productId
+      );
+      setIsFavorite(isFavorite);
+   }, [productData, setIsFavorite, user, token]);
+
+   const handleFavorite = async () => {
+      if (!user || !token) return;
+      setIsFavorite(!isFavorite);
+      const res = await toggleFavoriteUser(token, productData.id);
+      console.log("toggleFavoriteUser", res);
+      if (!res.data.success) {
+         setIsFavorite((prevState) => !prevState); //set back to previous state if error
+         toast({
+            title: "Warning!",
+            description: res.data.message
+         });
+      }
+   };
 
    // Show loading state
    if (isLoading) {
@@ -443,20 +454,28 @@ function ViewProdUser(props) {
                      <header className='h-24 px-4 py-2  '>
                         {/* className='flex justify-between items-start' */}
                         <div className='flex justify-start items-start gap-2 mb-4'>
-                        <Badge className='py-0 px-0 w-10 h-6 bg-card flex items-center drop-shadow'>
-                           {productData.brand?.img_url ? (
-                              <img
-                                 src={productData.brand?.img_url}
-                                 alt=''
-                                 className='w-full h-full rounded-md mx-auto object-center object-contain'
-                                 title={productData.brand?.title === "AMD" ? "ใครไม่ D ?" : productData.brand?.title}
-                              />
-                           ) : (
-                              <Slack className='w-5 h-5 mx-auto fill-current text-slate-500 font-thin' />
-                           )}
-                           {/* <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p> */}
-                        </Badge>
-                           <p className='text-base font-medium text-gray-500 s'>{productData.brand?.title == 'No brand' ? 'Exclusive Selection' : productData.brand?.title}</p>
+                           <Badge className='py-0 px-0 w-10 h-6 bg-card flex items-center drop-shadow'>
+                              {productData.brand?.img_url ? (
+                                 <img
+                                    src={productData.brand?.img_url}
+                                    alt=''
+                                    className='w-full h-full rounded-md mx-auto object-center object-contain'
+                                    title={
+                                       productData.brand?.title === "AMD"
+                                          ? "ใครไม่ D ?"
+                                          : productData.brand?.title
+                                    }
+                                 />
+                              ) : (
+                                 <Slack className='w-5 h-5 mx-auto fill-current text-slate-500 font-thin' />
+                              )}
+                              {/* <p className='text-sm text-gray-500 max-lg:text-xs'>Brand title</p> */}
+                           </Badge>
+                           <p className='text-base font-medium text-gray-500 s'>
+                              {productData.brand?.title == "No brand"
+                                 ? "Exclusive Selection"
+                                 : productData.brand?.title}
+                           </p>
                         </div>
                         <p className='text-base font-normal text-gray-500 '>
                            sold : {productData.sold}

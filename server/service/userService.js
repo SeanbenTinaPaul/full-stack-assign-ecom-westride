@@ -685,7 +685,7 @@ exports.updateUserProfile = async (req, res) => {
       return res.status(500).json({ success: false, message: "Server Error ╬" });
    }
 };
-//pending...
+
 exports.favoriteProduct = async (req, res) => {
    const { productId } = req.body;
    const { id } = req.user;
@@ -698,6 +698,21 @@ exports.favoriteProduct = async (req, res) => {
       if (!hasProduct) {
          return res.status(400).json({ message: "Product not found" });
       }
+      //allow only 5 favorite/userId
+      const isExceedLimit = await prisma.favorite.findMany({
+         where: {
+            userId: id,
+         },
+         take: 5 //LIMIT
+      });
+      const isUserSendToUnFav = isExceedLimit.find((fav) => fav.productId === parseInt(productId));
+      if (isExceedLimit.length >= 5 && !isUserSendToUnFav) {
+         return res.status(200).json({
+            success: false,
+            message: "You can only add up to 5 favorite products"
+         });
+      }
+      //use delete and create a new record instead
 
       const existFav = await prisma.favorite.findFirst({
          where: {
@@ -706,7 +721,6 @@ exports.favoriteProduct = async (req, res) => {
          },
          select: {
             id: true,
-            isActive: true,
             product: {
                select: {
                   title: true
@@ -715,42 +729,40 @@ exports.favoriteProduct = async (req, res) => {
          }
       });
       console.log("existFav->", existFav);
-
-      //handle toggle with .upsert() + isActive col
-      const favorite = await prisma.favorite.upsert({
-         where: {
-            userId_productId: {
-               userId: id,
-               productId: parseInt(productId)
+      if(existFav){
+         //user send to unfav
+         await prisma.favorite.delete({
+            where: {
+               id: existFav.id
             }
-         },
-         //→ .update({where:{..}, data:{..}})
-         update: {
-            isActive: existFav ? !existFav.isActive : true
-         },
-         //→ .create({data:{..}})
-         create: {
-            userId: id,
-            productId: parseInt(productId),
-            isActive: true
-         },
-         select: {
-            isActive: true,
-            product: {
-               select: {
-                  title: true
+         });
+         return res.status(200).json({
+            success: true,
+            message: `Removed ${existFav.product.title} from favorites`,
+            isFavorited: false
+         })
+      }else{
+         //user send to fav
+         const newFav = await prisma.favorite.create({
+            data: {
+               userId: id,
+               productId: parseInt(productId),
+            },
+            select: {
+               product: {
+                  select: {
+                     title: true
+                  }
                }
             }
-         }
-      });
-
-      return res.status(200).json({
-         success: true,
-         message: favorite.isActive
-            ? `Added ${favorite.product.title} to favorites`
-            : `Removed ${favorite.product.title} from favorites`,
-         isFavorited: favorite.isActive
-      });
+         });
+         return res.status(200).json({
+            success: true,
+            message: `Added ${newFav.product.title} to favorites`,
+            isFavorited: true
+         })
+      }
+      
    } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Server Error" });

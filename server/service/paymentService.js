@@ -30,7 +30,7 @@ exports.createPayment = async (req, res) => {
             enabled: true
          }
       });
-
+      console.log('paymentIntent->',paymentIntent)
       res.status(200).json({
          success: true,
          message: "Create Payment Success.",
@@ -142,7 +142,7 @@ exports.reqRefund = async (req, res) => {
          // data: refund
       });
    } catch (err) {
-      console.log('pay->',err);
+      console.log('err in refund->',err);
       res.status(500).json({
          success: false,
          message: err.message

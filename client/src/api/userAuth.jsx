@@ -64,3 +64,10 @@ export const addRatingUser = async (token, payload) => {
       }
    });
 }
+export const toggleFavoriteUser = async (token, productId)=> {
+   return await axios.post(`${apiUrl}/api/user/favorite`, {productId}, {
+      headers: {
+         Authorization: `Bearer ${token}`
+      }
+   });
+}

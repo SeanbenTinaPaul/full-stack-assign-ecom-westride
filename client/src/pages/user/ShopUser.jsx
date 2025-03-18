@@ -63,7 +63,7 @@ const ShopUser = () => {
                </section>
             )}
             {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
-            <section className='overflow-y-scroll scrollbar-none -mr-3 hover:scrollbar-thin hover:-mr-4 transition-all duration-700 h-[88dvh] py-10 xl:py-16 shadow-md bg-slate-50 rounded-xl flex flex-wrap gap-4 justify-center min-w-[350px] md:px-1  lg:gap-6 xl:gap-8 xl:px-6 2xl:gap-16 3xl:gap-20'>
+            <section className='overflow-y-scroll scrollbar-thin -mr-3  h-[88dvh] py-10 xl:py-16 shadow-md bg-slate-50 rounded-xl flex flex-wrap gap-4 justify-center min-w-[350px] md:px-1  lg:gap-6 xl:gap-8 xl:px-6 2xl:gap-16 3xl:gap-20'>
                {/* {console.log("products", products)} */}
                {Array.isArray(products) ? (
                   products.map((obj) => (

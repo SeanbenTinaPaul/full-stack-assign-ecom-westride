@@ -87,7 +87,7 @@ exports.listProd = async (req, res) => {
       console.log("leastStock->", leastStock);
       const products = await prisma.product.findMany({
          where: {
-            quantity: { gte: leastStock }
+            quantity: { gte: parseInt(leastStock) }
          },
          take: parseInt(count),
          orderBy: {
@@ -549,91 +549,6 @@ exports.displayProdByUser = async (req, res) => {
 1. ตามที่พิมพ์ลงช่อง input
 2. ตามติ๊ก ✔ ช่อง category
 3. ตามราคา */
-//not used
-const handleQuery = async (req, res, query) => {
-   try {
-      const products = await prisma.product.findMany({
-         where: {
-            title: {
-               contains: query
-            }
-         },
-         include: {
-            category: true,
-            images: true
-         }
-      });
-      res.send(products);
-   } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: "Search Error" });
-   }
-};
-/* 
-SELECT * 
-FROM "Product"
-WHERE "title" ILIKE '%' || $1 || '%';
-คำอธิบาย:
-SELECT * FROM "Product":
-
-ดึงข้อมูลทั้งหมดจากตาราง Product.
-WHERE "title" ILIKE '%' || $1 || '%':
-
-ค้นหาในคอลัมน์ title ที่มีข้อความบางส่วน (substring) ตรงกับตัวแปร $1.
-คำสั่ง ILIKE ใช้สำหรับการค้นหาที่ไม่คำนึงถึงตัวพิมพ์เล็ก/ใหญ่ (case-insensitive).
-สัญลักษณ์ % หมายถึง wildcard สำหรับการจับข้อความที่อยู่ก่อนหรือหลังคำที่ค้นหา.
-$1:
-
-ตัวแปรที่ใช้แทนค่า query ที่ส่งมาจากผู้ใช้งาน เช่น "apple", "phone", หรือคำค้นหาอื่น.
-*/
-//not used
-const handlePrice = async (req, res, priceRange) => {
-   try {
-      const products = await prisma.product.findMany({
-         where: {
-            price: {
-               gte: priceRange[0],
-               lte: priceRange[1]
-            }
-         },
-         include: {
-            category: true,
-            images: true
-         }
-      });
-      res.send(products);
-   } catch (err) {
-      console.log(err);
-      res.status(500).json({
-         success: false,
-         message: "Search Error"
-      });
-   }
-};
-//not used...
-const handleCategory = async (req, res, categoryIdArr) => {
-   try {
-      const products = await prisma.product.findMany({
-         where: {
-            categoryId: {
-               in: categoryIdArr.map((id) => Number(id))
-            }
-         },
-         include: {
-            category: true,
-            images: true
-         }
-      });
-      res.send(products);
-   } catch (err) {
-      console.log(err);
-      res.status(500).json({
-         success: false,
-         message: "Search Error"
-      });
-   }
-};
-
 //req.body === {category: [7,1], query: 'tes', price: [0, 100]}
 exports.searchFilters = async (req, res) => {
    try {

@@ -6,7 +6,7 @@ import SearchForProd from "@/components/prodCart/SearchForProd";
 //Global state
 import useEcomStore from "@/store/ecom-store";
 //component ui
-import { PackageSearch } from 'lucide-react';
+import { PackageSearch } from "lucide-react";
 
 const Shop = () => {
    const { user, token, products, getProduct } = useEcomStore((state) => state);
@@ -16,7 +16,7 @@ const Shop = () => {
    useEffect(() => {
       const fetchProducts = async () => {
          try {
-            await getProduct(100,1);
+            await getProduct(100, 1);
          } catch (err) {
             console.error("Error fetching products:", err);
          }
@@ -31,9 +31,11 @@ const Shop = () => {
          {/* search bar */}
          {/* To make dev responsive → rm "min-w-[...px]" from all div */}
          <article className='w-1/5 min-w-[200px] h-screen pb-0 flex flex-col bg-[#E5E5E5]'>
-            <div className="rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-card  shadow-md ">
-            <PackageSearch className="drop-shadow-sm"/>
-               <h1 className='text-xl text-slate-700 font-sans font-semibold drop-shadow-sm'>Search product</h1>
+            <div className='rounded-xl mt-4 mb-4 p-2 gap-2 flex items-center bg-card  shadow-md '>
+               <PackageSearch className='drop-shadow-sm' />
+               <h1 className='text-xl text-slate-700 font-sans font-semibold drop-shadow-sm'>
+                  Search product
+               </h1>
             </div>
             <SearchForProd
                setIsFoundSearch={setIsFoundSearch}
@@ -46,10 +48,12 @@ const Shop = () => {
             <div className='bg-gradient-to-r from-slate-700 to-slate-500 p-6 rounded-xl mb-4 flex items-center shadow-md'>
                <p className='text-2xl font-sans font-bold  text-slate-50'>Products</p>
             </div>
-            {!isFoundSearch &&  (
+            {!isFoundSearch && (
                <section>
                   <p className='text-muted-foreground font-light mb-4'>
-                     {whatTextSearch? `No Product "${whatTextSearch}" matched your search ` : "No Product matched your search"}
+                     {whatTextSearch
+                        ? `No Product "${whatTextSearch}" matched your search `
+                        : "No Product matched your search"}
                   </p>
                   <p className='text-accent-foreground from-accent-foreground font-semibold'>
                      We think you might like these products
@@ -67,7 +71,7 @@ const Shop = () => {
                </section>
             )} */}
             {/* //To make dev responsive → rm "min-w-[...px]" from all div */}
-            <section className='overflow-y-scroll scrollbar-none hover:scrollbar-thin hover:-mr-1 transition-all duration-500 h-[88dvh] py-10 xl:py-16 shadow-md bg-slate-50 rounded-xl flex flex-wrap gap-4 justify-center min-w-[350px] md:px-1  lg:gap-6 xl:gap-16 2xl:gap-10' >
+            <section className='overflow-y-scroll scrollbar-thin  h-[88dvh] py-10 xl:py-16 shadow-md bg-slate-50 rounded-xl flex flex-wrap gap-4 justify-center min-w-[350px] md:px-1  lg:gap-6 xl:gap-16 2xl:gap-10'>
                {/* {console.log("products", products)} */}
                {Array.isArray(products) ? (
                   products.map((obj) => (

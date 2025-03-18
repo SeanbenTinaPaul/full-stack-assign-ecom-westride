@@ -24,6 +24,7 @@ import { delImg, uploadFiles } from "../../api/ProductAuth";
 import useEcomStore from "../../store/ecom-store";
 //use for making text color auto-contrast
 import { calculateTextColor } from "../../utilities/useContrastText";
+import { validateBannerDimension } from "@/utilities/validateBannerDimension";
 
 function UploadFile({
    inputForm,
@@ -46,8 +47,8 @@ function UploadFile({
    // console.log("inputForm before img upload->", inputForm);
    // console.log("imgDataArr->", imgDataArr);
 
-   const handleOnChange = (e) => {
-      console.log("inputForm after img upload->", inputForm);
+   const handleOnChange = async (e) => {
+      // console.log("inputForm after img upload->", inputForm);
       //IF fileInputRef.current.value = "" → fileList.length === 0
       const fileList = e.target.files;
       // setIsLoading(true);
@@ -67,8 +68,8 @@ function UploadFile({
 
       //after user click select some images → fileList === true
       if (fileList) {
-         console.log("fileList come->", fileList);
-         console.log("fileList len come->", fileList.length);
+         // console.log("fileList come->", fileList);
+         // console.log("fileList len come->", fileList.length);
          setIsLoading(true);
          let successCount = 0; // Count the number of successful uploads
 
@@ -112,6 +113,28 @@ function UploadFile({
                }, 4000);
                continue; //skip Resizer.imageFileResizer()
                // toast.error(`${fileList[i].name} is not image file`);
+            }
+
+            //check isBanner
+            // banner category===38, validate dimensions
+            if (inputForm.categoryId === 38) {
+            try {
+                  await validateBannerDimension(fileList[i]);
+               } catch (error) {
+                  setIsLoading(false);
+                  setAlert(
+                     <Alert variant='destructive'>
+                        <AlertCircle className='h-4 w-4' />
+                        <AlertTitle>Invalid Banner Dimensions</AlertTitle>
+                        <AlertDescription>{error.message}</AlertDescription>
+                     </Alert>
+                  );
+                  totalImages--;
+                  setImageCount(totalImages);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                  setTimeout(() => setAlert(null), 4000);
+                  continue;
+               }
             }
 
             //// for image files section ////
@@ -209,12 +232,12 @@ function UploadFile({
    const handleDelImg = (public_id) => {
       delImg(token, public_id)
          .then((res) => {
-            console.log("res del img in cloud", res);
+            // console.log("res del img in cloud", res);
             //filteredImg → remaining images
             const filteredImg = imgDataArr.filter((obj) => {
                return obj.public_id !== public_id;
             });
-            console.log(filteredImg);
+            // console.log(filteredImg);
             // Update inputForm with remaining images
             setInputForm({
                ...inputForm,
@@ -236,7 +259,7 @@ function UploadFile({
             // });
             /// Reset file input if no images left
 
-            console.log("filteredImg.length->", filteredImg.length);
+            // console.log("filteredImg.length->", filteredImg.length);
             // If no images remain, ensure everything is reset
             if (filteredImg.length === 0) {
                setImageCount(0);
@@ -342,7 +365,7 @@ function UploadFile({
             )}
             {/* display selected(uploaded) images */}
             {/*access url -> inputForm.images[i].data.url */}
-            {console.log("inputForm.images", inputForm.images)}
+            {/* {console.log("inputForm.images", inputForm.images)} */}
             {inputForm.images &&
                inputForm.images.map((obj) => {
                   return (

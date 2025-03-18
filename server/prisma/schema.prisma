@@ -151,7 +151,6 @@ model Favorite {
   productId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
 
   @@unique([userId, productId]) // ป้องกันการเพิ่ม favorite ซ้ำ →  compound unique constraint
   /**
@@ -162,6 +161,7 @@ model Favorite {
    * }
    */
   /**
+   * /**
    * /**
    * /**
    * // User 1 cannot have Product 1 twice in his cart/favorites
