@@ -14,6 +14,8 @@ app.use(express.json({ limit: "20mb" }));
 app.use(cors());
 app.use(helmet()); //ไว้ล่างของ const app = express();
 
+const port = process.env.PORT || 3000;
+
 const limiter = rateLimit({
    windowMs: 1 * 60 * 1000, // 1 minutes และจะรีเซ็ตโควต้าให้อัตโนมัติทุกๆ 1 นาที
    limit: 1000, // Limit each IP to 100 requests per `window` (reset after 1 minutes).
@@ -52,6 +54,6 @@ app.all("*", (req, res) => {
 });
 
 // 2. start server
-app.listen(process.env.PORT, () => {
-   console.log("Server is running on port..", process.env.PORT);
+app.listen(port, () => {
+   console.log("Server is running on port..", port);
 });
