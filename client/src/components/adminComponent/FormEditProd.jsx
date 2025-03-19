@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom"; //to get id from url 
 //Global state
 import useEcomStore from "../../store/ecom-store";
 //API
-import { createProduct, readProduct, updateProduct, delProduct } from "../../api/ProductAuth";
+import { readProduct, updateProduct, delProduct } from "../../api/ProductAuth";
 //icons
 import {
    Package,
@@ -15,7 +15,6 @@ import {
    Image,
    FolderOpen,
    HardDriveUpload,
-   AlertCircle,
    BadgeCheck,
    Slack
 } from "lucide-react";
@@ -30,7 +29,6 @@ import {
    SelectTrigger,
    SelectValue
 } from "@/components/ui/select";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
    AlertDialog,
    AlertDialogAction,
@@ -75,7 +73,7 @@ function FormEditProd() {
       const fetchProduct = async () => {
          try {
             const res = await readProduct(id);
-            console.log("res edit prod->", res.data);
+            // console.log("res edit prod->", res.data);
             // res.data = { data: res.data.data };//remove 'success: true' key from {}
             setInputForm(res.data.data); //ทำให้เติม value ในช่อง form by default เมื่อเข้ามาในหน้านี้
          } catch (err) {
@@ -91,11 +89,11 @@ function FormEditProd() {
       getBrand(); //for dropdown select Brand
       fetchProduct();
    }, [getCategory, id, getBrand]);
-   console.log("inputForm edit prod->", inputForm);
+   // console.log("inputForm edit prod->", inputForm);
 
    //listen to keyboard event on input box(not on button) and update inputForm
    const handleOnchange = (e) => {
-      console.log(e.target.name, e.target.value);
+      // console.log(e.target.name, e.target.value);
       setInputForm({
          ...inputForm,
          [e.target.name]: e.target.value
@@ -117,7 +115,7 @@ function FormEditProd() {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log("inputForm->", inputForm);
+      // console.log("inputForm->", inputForm);
       try {
          setLoading(true);
          const res = await updateProduct(token, id, inputForm);

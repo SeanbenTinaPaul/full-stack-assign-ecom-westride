@@ -34,8 +34,17 @@ exports.getAllUsers = async (req, res) => {
 exports.changeUserStatus = async (req, res) => {
    try {
       const { userIdArr, userEnabled, userRole } = req.body;
-      const booleanEnabled = JSON.parse(userEnabled);
-      const { email } = req.user;
+      const booleanEnabled = JSON.parse(userEnabled); //make "true" → true
+      const { email, id } = req.user;
+
+      //change himself not allowed
+      if (userIdArr.includes(id)) {
+         return res.status(400).json({
+            success: false,
+            message: "You cannot change your own status."
+         });
+      }
+
       const user = await prisma.user.updateMany({
          where: { id: { in: userIdArr.map((id) => parseInt(id)) } },
          data: { enabled: booleanEnabled, role: userRole, updatedBy: email }
@@ -51,7 +60,7 @@ exports.changeUserStatus = async (req, res) => {
       console.log(err);
       res.status(500).json({
          success: false,
-         message: "Error!!! Cannot change status."
+         message: "Failed to update user status"
       });
    }
 };

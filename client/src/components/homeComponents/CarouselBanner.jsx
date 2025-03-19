@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -11,9 +11,8 @@ import 'swiper/css/thumbs';
 
 // import required modules
 import { Autoplay, Pagination, Navigation,FreeMode,Thumbs } from "swiper/modules";
-import axios from "axios";
 
-import { getImgFromCloud,readProduct } from "@/api/ProductAuth";
+import { readProduct } from "@/api/ProductAuth";
 
 function CarouselBanner(props) {
    const [imagArr, setImagArr] = useState([]);
@@ -32,6 +31,9 @@ function CarouselBanner(props) {
       };
       fetchImg();
    }, []);
+
+   // dup slide if less
+   const slides = imagArr.length < 5 ? [...imagArr, ...imagArr] : imagArr;
 
    return (
       <div className='w-full mt-10 ml-4 py-6 px-4 rounded-xl bg-gradient-to-r from-card to-slate-100 shadow-md '>
@@ -92,7 +94,7 @@ function CarouselBanner(props) {
             }}
             //for thumbnail
             onSwiper={setThumbsSwiper}
-            loop={true}
+            loop={slides.length >= 5}
             freeMode={true}
             watchSlidesProgress={true}
             // speed={800}

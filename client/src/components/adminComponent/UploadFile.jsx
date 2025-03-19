@@ -4,20 +4,10 @@ import PropTypes from "prop-types";
 import Resizer from "react-image-file-resizer";
 //icons
 import IconX from "../../utilities/IconX";
-import { HardDriveDownload, ImageDown, AlertCircle } from "lucide-react";
+import { ImageDown, AlertCircle } from "lucide-react";
 import { useToast } from "@/components/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-   AlertDialog,
-   AlertDialogAction,
-   AlertDialogCancel,
-   AlertDialogContent,
-   AlertDialogDescription,
-   AlertDialogFooter,
-   AlertDialogHeader,
-   AlertDialogTitle,
-   AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
+
 //API
 import { delImg, uploadFiles } from "../../api/ProductAuth";
 //Global state
@@ -86,7 +76,7 @@ function UploadFile({
 
          // loop to upload each image
          for (let i = 0; i < fileList.length; i++) {
-            console.log(`fileList[${i}]->`, fileList[i]);
+            // console.log(`fileList[${i}]->`, fileList[i]);
             //validate if it is image → type: "image/jpeg" , "image/png"
             if (!fileList[i].type.startsWith("image/")) {
                setIsLoading(false);
@@ -118,7 +108,7 @@ function UploadFile({
             //check isBanner
             // banner category===38, validate dimensions
             if (inputForm.categoryId === 38) {
-            try {
+               try {
                   await validateBannerDimension(fileList[i]);
                } catch (error) {
                   setIsLoading(false);
@@ -185,13 +175,13 @@ function UploadFile({
                            setImageCount(totalImages);
                         }
 
-                        console.log("imgDataArr->", imgDataArr);
+                        // console.log("imgDataArr->", imgDataArr);
                         imgDataArr.push(res.data.data);
                         setInputForm({
                            ...inputForm,
                            images: imgDataArr
                         });
-                        console.log("imgDataArr-++>", imgDataArr);
+                        // console.log("imgDataArr-++>", imgDataArr);
                         setIsLoading(false);
                      })
                      .catch((err) => {

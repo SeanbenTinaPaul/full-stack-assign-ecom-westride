@@ -12,7 +12,7 @@ function NewProd(props) {
       const fetchProducts = async () => {
          try {
             const res = await displayProdBy("updatedAt", "desc", 10);
-            console.log("res displayProdBy->", res.data.data);
+            // console.log("res displayProdBy->", res.data.data);
             setProdArr(res.data.data);
          } catch (err) {
             console.error("Error fetching products:", err);

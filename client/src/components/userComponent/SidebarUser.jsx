@@ -94,7 +94,6 @@ function SidebarUser({ isCollapsed }) {
       token,
       carts,
       isSaveToCart,
-      savedCartCount,
       actionLogout,
       setShowLogoutConfirm,
       handleDirectLogout,
@@ -137,8 +136,8 @@ function SidebarUser({ isCollapsed }) {
    const handleCreateCart = async () => {
       try {
          const res = await createCartUser(token, { carts });
-         console.log("res.data.cart", res.data.cart);
-         console.log("res.data.productOnCart", res.data.productOnCart);
+         // console.log("res.data.cart", res.data.cart);
+         // console.log("res.data.productOnCart", res.data.productOnCart);
          if (res.data.success) {
             updateStatusSaveToCart(true);
             toast({

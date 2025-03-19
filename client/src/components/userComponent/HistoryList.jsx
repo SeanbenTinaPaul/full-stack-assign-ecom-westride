@@ -36,7 +36,7 @@ function HistoryList(props) {
    const fetchOrderList = async () => {
       try {
          const res = await getOrderUser(token);
-         console.log("res.data OrderList", res.data.data);
+         // console.log("res.data OrderList", res.data.data);
          setOrderList(res.data.data);
       } catch (err) {
          console.error("Error fetching orders:", err);
@@ -56,7 +56,7 @@ function HistoryList(props) {
       try {
          setIsLoading(true);
          const res = await reqRefund(token, orderId);
-         console.log("res.data refund", res.data);
+         // console.log("res.data refund", res.data);
          if (res.data.success) {
             await fetchOrderList(); //refresh orderList
             if (res.data.confirmEmail && res.data.expireAT) {
@@ -105,7 +105,7 @@ function HistoryList(props) {
              }                      
    */
    const handleRatingStar = (orderId, prodId, rating) => {
-      console.log("handleRatingStar", orderId, prodId, rating);
+      // console.log("handleRatingStar", orderId, prodId, rating);
       //add new obj or update old one But for only 1 prod
       //need to [`${orderId}-${prodId}`] bc not a single page per prod
       setRatings((prev) => ({
@@ -119,7 +119,7 @@ function HistoryList(props) {
       }));
    };
    const handleComment = (orderId, prodId, comment) => {
-      console.log("handleComment", orderId, prodId, comment);
+      // console.log("handleComment", orderId, prodId, comment);
       setRatings((prev) => ({
          ...prev,
          [`${orderId}-${prodId}`]: {
@@ -148,10 +148,10 @@ function HistoryList(props) {
          }
 
          const payload = { ratings: orderRatings };
-         console.log("orderId->", orderId);
-         console.log("payload->", payload);
+         // console.log("orderId->", orderId);
+         // console.log("payload->", payload);
          const res = await addRatingUser(token, payload);
-         console.log("res.data", res);
+         // console.log("res.data", res);
          //delete key:value from ratings obj after api addRating
          if (res.data.success) {
             setRatings((prev) => {

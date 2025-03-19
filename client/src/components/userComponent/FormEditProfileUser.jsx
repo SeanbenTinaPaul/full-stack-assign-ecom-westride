@@ -53,7 +53,7 @@ function FormEditProfileUser() {
    }, [user]);
 
    const handleOnchange = (e) => {
-        console.log(e.target.name, e.target.value);
+      //   console.log(e.target.name, e.target.value);
       setInputForm({
          ...inputForm,
          [e.target.name]: e.target.value
@@ -68,10 +68,10 @@ function FormEditProfileUser() {
    //handle actual submission after confirm
    const handleConfirmedSubmit = async () => {
       setLoading(true);
-      console.log("Submitting form with data:", inputForm);
+      // console.log("Submitting form with data:", inputForm);
       try {
          const res = await updateProfileUser(token, inputForm);
-         console.log("Profile updated res->", res);
+         // console.log("Profile updated res->", res);
          setShowConfirmDialog(false);
          if (res.data.success) {
             toast({

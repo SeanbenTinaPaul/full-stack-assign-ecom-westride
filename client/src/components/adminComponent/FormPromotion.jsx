@@ -521,7 +521,7 @@ function FormPromotion() {
 
    // //// Apply ส่วนลด
    const handleApplyDiscount = async () => {
-      console.log("selectedProducts", selectedProducts);
+      // console.log("selectedProducts", selectedProducts);
       if (!discountAmount || selectedProducts.length === 0) {
          toast({
             variant: "destructive",
@@ -540,7 +540,7 @@ function FormPromotion() {
             description,
             isPromotion
          };
-         console.log("discountData", discountData);
+         // console.log("discountData", discountData);
 
          const res = await bulkDiscount(token, discountData);
          if (res.data) {

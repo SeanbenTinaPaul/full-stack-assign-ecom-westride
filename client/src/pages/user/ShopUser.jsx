@@ -8,7 +8,7 @@ import useEcomStore from "@/store/ecom-store";
 //component ui
 import { View, PackageSearch } from "lucide-react";
 const ShopUser = () => {
-   const { user, token, products, getProduct } = useEcomStore((state) => state);
+   const { user, products, getProduct } = useEcomStore((state) => state);
    const [isFoundSearch, setIsFoundSearch] = useState(true);
    const [whatTextSearch, setWhatTextSearch] = useState("");
 

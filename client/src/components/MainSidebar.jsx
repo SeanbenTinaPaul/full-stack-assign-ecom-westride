@@ -2,7 +2,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
+import { Home, Store, UserPlus, LogIn, Slack } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { Badge } from "./ui/badge";
 
@@ -18,11 +18,7 @@ const navItems = [
       url: "shop",
       icon: Store
    },
-   // {
-   //    title: "Cart",
-   //    url: "cart",
-   //    icon: ShoppingCart
-   // }
+  
 ];
 
 const authItems = [

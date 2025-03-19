@@ -19,16 +19,10 @@ import { useToast } from "@/components/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
 import {
-   Package,
    PackagePlus,
    FileText,
-   DollarSign,
-   Package2,
-   FolderOpen,
-   Image,
    Trash2,
    AlertCircle,
-   Terminal,
    Pencil,
    Slack
 } from "lucide-react";
@@ -54,8 +48,8 @@ function FormBrandAdmin(props) {
    }, [token, getBrand, setBrandForm, brandForm, setCancelImg, cancelImg]);
 
    const handleEdit = (id, title, description, img_url, public_id) => {
-      console.log("id->", id, title);
-      console.log("brands->", brands);
+      // console.log("id->", id, title);
+      // console.log("brands->", brands);
       setIsEdit(true);
       // setBrandForm({});
       setBrandForm((prev) => ({
@@ -98,9 +92,9 @@ function FormBrandAdmin(props) {
             }, 4000);
             return;
          }
-         console.log("brandForm->", brandForm);
+         // console.log("brandForm->", brandForm);
          const res = await createBrand(token, brandForm);
-         console.log("res create brand->", res);
+         // console.log("res create brand->", res);
          toast({
             title: "You've added a brand!",
             description: `ID: ${res.data.id} Brand: ${res.data.title}`
@@ -130,7 +124,7 @@ function FormBrandAdmin(props) {
       setShowDialog(true);
    };
    const confirmUpdate = async () => {
-      console.log("brandForm->", brandForm);
+      // console.log("brandForm->", brandForm);
 
       try {
          const res = await updateBrand(token, brandForm);
@@ -168,7 +162,7 @@ function FormBrandAdmin(props) {
    };
    const confirmRemove = async () => {
       try {
-         console.log("brandToRm->", brandToRm);
+         // console.log("brandToRm->", brandToRm);
          const res = await removeBrand(token, brandToRm.id);
          if (res.status === 200) {
             toast({

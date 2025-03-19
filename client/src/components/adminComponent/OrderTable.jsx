@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { getOrdersAdmin, updateOrderStatAdmin } from "@/api/adminAuth";
 import useEcomStore from "@/store/ecom-store";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/hooks/use-toast";
 import { formatNumber } from "@/utilities/formatNumber";
 

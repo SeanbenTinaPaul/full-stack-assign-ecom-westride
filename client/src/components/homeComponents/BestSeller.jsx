@@ -10,7 +10,7 @@ function BestSeller(props) {
       const fetchProducts = async () => {
          try {
             const res = await displayProdBy("sold", "desc", 5);
-            console.log("res BestSeller->", res.data.data);
+            // console.log("res BestSeller->", res.data.data);
             setProdArr(res.data.data);
          } catch (err) {
             console.error("Error fetching products:", err);

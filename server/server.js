@@ -1,8 +1,8 @@
-// 1. import express
+// 1. import expres
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
-const { readdirSync } = require("fs"); //ใช้ในการอ่านทุกๆไฟล์ใน 1 โฟลเดอร์
+const { readdirSync } = require("fs"); //ใช้ในการอ่านทุกๆไฟล์ใน 1 โฟลเดอร์v
 const cors = require("cors"); //อนุญาตให้ server และ client ติดต่อกันได้ผ่าน domain name
 const helmet = require("helmet"); //ป้องกัน man-in-the-middle attack โดยการดักจับ req และ res ในรูปแบบ HTTP Header
 const { rateLimit } = require("express-rate-limit"); //limit request

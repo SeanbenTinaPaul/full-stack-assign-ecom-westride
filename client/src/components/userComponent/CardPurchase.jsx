@@ -10,8 +10,8 @@ import { useToast } from "@/components/hooks/use-toast";
 import ShippingFee from "@/utilities/ShippingFee";
 import { MapPinHouse, ShoppingBasket } from "lucide-react";
 
-function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
-   const { token, carts, isSaveToCart, updateStatusSaveToCart, savedCartCount } = useEcomStore(
+function CardPurchase({ setIsSaveAddress }) {
+   const { token, carts, isSaveToCart, savedCartCount } = useEcomStore(
       (state) => state
    );
    const { toast } = useToast();
@@ -53,7 +53,7 @@ function CardPurchase({ setIsSaveAddress, isSaveAddress }) {
       try {
          const res = await saveAddressUser(token, address);
          setIsSaveAddress(true);
-         console.log("res.data", res.data);
+         // console.log("res.data", res.data);
       } catch (err) {
          console.log(err);
       }

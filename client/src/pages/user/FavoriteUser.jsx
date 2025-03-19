@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import useEcomStore from "../../store/ecom-store";
 import CardProd from "@/components/prodCart/CardProd";
-import { ListChecks, FolderHeart, ScanHeart, BookDashed } from "lucide-react";
-import { get } from "lodash";
+import { ScanHeart, BookDashed } from "lucide-react";
 
 function FavoriteUser(props) {
    const { user, token, products, getProduct } = useEcomStore((state) => state);

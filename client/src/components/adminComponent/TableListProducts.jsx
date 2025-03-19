@@ -24,7 +24,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
 
    const location = useLocation(); //to listen to location change
 
-   console.log("prod in table", products); //products===[{images:[{url:..}],...}, {}]
+   // console.log("prod in table", products); //products===[{images:[{url:..}],...}, {}]
    // console.log('data',data)
 
    /*
@@ -36,7 +36,7 @@ function TableListProducts({ products, handleDel, isRerender }) {
       const fetchProduct = async () => {
          try {
             const res = await getProduct(1000, 0);
-            console.log("res from TableListProducts->", res.data);
+            // console.log("res from TableListProducts->", res.data);
             if (res && res.data) {
                setTableData(res.data);
             } else {

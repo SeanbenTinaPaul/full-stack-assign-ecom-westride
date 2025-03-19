@@ -72,8 +72,8 @@ function CartCheckout({ isCollapsedContext }) {
             });
             return;
          }
-         console.log("res.data.cart", res.data.cart);
-         console.log("res.data.productOnCart", res.data.productOnCart);
+         // console.log("res.data.cart", res.data.cart);
+         // console.log("res.data.productOnCart", res.data.productOnCart);
          updateStatusSaveToCart(true);
          if (res.data.success) {
             navigate("/user/payment");
@@ -171,7 +171,7 @@ function CartCheckout({ isCollapsedContext }) {
          <main className='p-10 h-full rounded-xl shadow-md bg-gradient-to-r from-slate-100 to-card'>
             {/* left */}
             <div>
-               {console.log("carts in checkout->", carts)}
+               {/* {console.log("carts in checkout->", carts)} */}
                {carts.map((cart) => (
                   <div
                      key={cart.id}

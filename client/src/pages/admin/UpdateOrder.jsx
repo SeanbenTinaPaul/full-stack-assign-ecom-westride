@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import OrderTable from "@/components/adminComponent/OrderTable";
-import {FileCheck} from 'lucide-react'
 
 function UpdateOrder(props) {
    return (

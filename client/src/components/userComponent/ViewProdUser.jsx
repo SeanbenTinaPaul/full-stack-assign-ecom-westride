@@ -8,16 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 //icons
-import {
-   Heart,
-   ShoppingCart,
-   Star,
-   StarHalf,
-   ChevronLeft,
-   ShoppingBasket,
-   Hourglass,
-   Slack
-} from "lucide-react";
+import { Heart, ShoppingCart, ChevronLeft, ShoppingBasket, Hourglass, Slack } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 import { createCartUser } from "@/api/userAuth";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -93,7 +84,7 @@ function ViewProdUser(props) {
          ...productData,
          countCart: quantity
       };
-      console.log("productForCart", productForCart);
+      // console.log("productForCart", productForCart);
       addToCart(productForCart);
 
       toast({
@@ -230,7 +221,7 @@ function ViewProdUser(props) {
          try {
             setIsLoading(true);
             const res = await readProduct(id);
-            console.log("res data readProd->", res.data);
+            // console.log("res data readProd->", res.data);
             setProductData((prev) => ({ ...prev, ...res.data.data }));
             setImagArr(res.data.data.images);
             setRatingCount(res.data.globalRatingCount);
@@ -281,10 +272,10 @@ function ViewProdUser(props) {
 
       const cartItem = carts.find((item) => item.id === productData.id);
 
-      console.log("carts", carts);
+      // console.log("carts", carts);
       if (cartItem) {
          //if this prod already in carts arr
-         console.log("cartItem", cartItem);
+         // console.log("cartItem", cartItem);
          const hasChanges =
             cartItem.countCart !== productData.countCart ||
             cartItem.buyPrice !== productData.buyPrice ||
@@ -292,7 +283,7 @@ function ViewProdUser(props) {
             cartItem.preferDiscount !== productData.preferDiscount;
 
          if (hasChanges) {
-            console.log("Updating productData with cart values");
+            // console.log("Updating productData with cart values");
             setProductData((prevData) => ({
                ...prevData,
                countCart: cartItem.countCart,
@@ -305,7 +296,7 @@ function ViewProdUser(props) {
       } else {
          //if this prod not in carts arr
          const { buyPrice, buyPriceNum, preferDiscount } = calDiscountedPrice();
-         console.log("no cartItem");
+         // console.log("no cartItem");
          const hasChanges =
             productData.countCart !== 0 ||
             productData.buyPrice !== buyPrice ||
@@ -313,7 +304,7 @@ function ViewProdUser(props) {
             productData.preferDiscount !== preferDiscount;
 
          if (hasChanges) {
-            console.log("Resetting productData to default values");
+            // console.log("Resetting productData to default values");
             setProductData((prevData) => ({
                ...prevData,
                countCart: 0,
@@ -326,7 +317,7 @@ function ViewProdUser(props) {
    }, [carts, productData?.id, calDiscountedPrice]);
 
    useEffect(() => {
-      console.log("productData updated:", productData.favorites);
+      // console.log("productData updated:", productData.favorites);
       if (!user || !token || !productData.favorites) return;
 
       const favArr = productData.favorites;
@@ -342,7 +333,7 @@ function ViewProdUser(props) {
       if (!user || !token) return;
       setIsFavorite(!isFavorite);
       const res = await toggleFavoriteUser(token, productData.id);
-      console.log("toggleFavoriteUser", res);
+      // console.log("toggleFavoriteUser", res);
       if (!res.data.success) {
          setIsFavorite((prevState) => !prevState); //set back to previous state if error
          toast({
@@ -386,7 +377,6 @@ function ViewProdUser(props) {
 
    return (
       <div className='mt-10 ml-4 py-6 px-4'>
-         {console.log("productData", productData)}
          <div className='flex items-center justify-center mb-4 pr-1 w-10 h-10 bg-card rounded-full opacity-70 hover:opacity-100 hover:scale-110'>
             <div
                //  to={"/user/shop"}

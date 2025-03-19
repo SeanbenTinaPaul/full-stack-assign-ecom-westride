@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
+import { Slack } from "lucide-react";
 // import { toast } from "react-toastify";//ใช้แสดงข้อความแจ้งเตือน (toast message) บนเว็บไซต์
 import useEcomStore from "../../store/ecom-store";
 import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
@@ -15,8 +15,8 @@ function Login() {
    const { toast } = useToast();
    const actionLogin = useEcomStore((state) => state.actionLogin); //ยังไม่ใช่การ call function actionLogin() นะ
 
-   const user = useEcomStore((state) => state.user); //ลองดึงข้อมูล user(เดิมที่เก็บไว้) มาจาก hook (ไม่ใส่ก็ได้)
-   console.log("user->", user);
+   // const user = useEcomStore((state) => state.user); //ลองดึงข้อมูล user(เดิมที่เก็บไว้) มาจาก hook (ไม่ใส่ก็ได้)
+   // console.log("user->", user);
 
    //form สำหรับส่งไป backend ► const { email, password } = req.body
    const [form, setForm] = useState({
@@ -40,7 +40,7 @@ function Login() {
 
          //redirect หน้าpage หลัง login ตาม payload.role
          const role = res.data.payload.role;
-         console.log("role-->", role);
+         // console.log("role-->", role);
          roleRedirect(role);
 
          //toast → มี popup เด้งแจ้งเตือน
@@ -81,10 +81,10 @@ function Login() {
    const roleRedirect = (role) => {
       if (role === "admin") {
          navigate("/admin");
-      } else if(role==="user"){
+      } else if (role === "user") {
          navigate("/user");
          // navigate(-1); //กลับไป previous url
-      }else{
+      } else {
          navigate(-1); //กลับไป previous url
       }
    };
@@ -96,8 +96,9 @@ function Login() {
                <CardTitle>Login</CardTitle>
                <CardDescription>
                   {
-                     <div className="flex gap-2 items-center">
-                        <Slack className="w-8 h-8 drop-shadow-md"/> <span>Enter your email and password to access your account</span>
+                     <div className='flex gap-2 items-center'>
+                        <Slack className='w-8 h-8 drop-shadow-md' />{" "}
+                        <span>Enter your email and password to access your account</span>
                      </div>
                   }
                </CardDescription>

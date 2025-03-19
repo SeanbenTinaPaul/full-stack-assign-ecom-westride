@@ -69,7 +69,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
       // your `return_url`. For some payment methods like iDEAL, your customer will
       // be redirected to an intermediate site first to authorize the payment, then
       // redirected to the `return_url`.
-      console.log("payload", payload);
+      // console.log("payload", payload);
       if (payload.paymentIntent.status !== "succeeded") {
          // console.log("payment staus wrong", payload.paymentIntent.status);
          toast({
@@ -92,7 +92,7 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
          //create Order record in DB
          try {
             const res = await saveOrderUser(token, payload);
-            console.log("res.data CheckoutForm", res.data);
+            // console.log("res.data CheckoutForm", res.data);
             resetCartsAfterPurchas(res.data.prodIdPaid);
             updateStatusSaveToCart(false); //reset isSaveToCart , carts is empty now so user need to save cart again
             navigate("/user/history");
@@ -110,8 +110,8 @@ export default function CheckoutForm({ isSaveAddress, paymentIntentData }) {
       //   console.log("paymentIntentData", paymentIntentData);
       try {
          const res = await reqCancelPayment(token, paymentIntentData);
-         console.log("paymentIntentData->", paymentIntentData);
-         console.log("res.data reqCancelPayment", res.data);
+         // console.log("paymentIntentData->", paymentIntentData);
+         // console.log("res.data reqCancelPayment", res.data);
          setShowConfirmDialog(false);
          navigate("/user/history");
       } catch (err) {

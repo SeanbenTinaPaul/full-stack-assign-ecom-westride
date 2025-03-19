@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 //component UI
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -16,27 +15,18 @@ import {
    AlertDialogFooter,
    AlertDialogHeader,
    AlertDialogTitle,
-   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/hooks/use-toast";
 //api
 import { createCategory, removeCategory } from "../../api/CategoryAuth";
 //Global state
 import useEcomStore from "../../store/ecom-store";
-//toast
-// import { toast } from "react-toastify";
 //icons
 import {
-   Package,
    PackagePlus,
    FileText,
-   DollarSign,
-   Package2,
-   FolderOpen,
-   Image,
    Trash2,
    AlertCircle,
-   Terminal
 } from "lucide-react";
 
 function FormCategory() {
@@ -50,7 +40,7 @@ function FormCategory() {
    //ถ้าโหลด<FormCategory /> ที่Category.jsx จะทําการเรียกใช้ฟังก์ชัน getCategory() อัตโนมัติ
    const categories = useEcomStore((state) => state.categories);
    const getCategory = useEcomStore((state) => state.getCategory);
-   console.log(categories);
+   // console.log(categories);
    const { toast } = useToast();
    const [alert, setAlert] = useState(null); //for alert Warning!
    const [showDialog, setShowDialog] = useState(false); //for alert Confirm
@@ -68,7 +58,7 @@ function FormCategory() {
 
    useEffect(() => {
       getCategory().then((result) => {
-         console.log("category->", result);
+         // console.log("category->", result);
       });
    }, [getCategory]);
 
@@ -97,7 +87,7 @@ function FormCategory() {
          //เอา name(string ธรรมดา) มาครอบ {..} ► ได้ { name: <string value> }
          //ระวัง: ถ้าส่งตรงนี้ไป จะได้ไปสร้างข้อมูลใน DB
          const res = await createCategory(token, { name });
-         console.log(res.data.name);
+         // console.log(res.data.name);
 
          toast({
             title: "Add Category Success!",

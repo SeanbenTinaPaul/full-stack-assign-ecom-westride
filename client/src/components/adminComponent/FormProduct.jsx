@@ -1,8 +1,5 @@
 //parent → ProductAdmin.jsx
-import React, { useState, useEffect, useRef } from "react";
-// import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-//(optional) provides the default styles for the toast notifications
+import React, { useState, useEffect } from "react";
 //Global state
 import useEcomStore from "../../store/ecom-store";
 //API
@@ -40,7 +37,6 @@ import {
    AlertDialogFooter,
    AlertDialogHeader,
    AlertDialogTitle,
-   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 //Component
 import TableListProducts from "./TableListProducts";
@@ -67,7 +63,7 @@ function FormProduct() {
    const [inputForm, setInputForm] = useState(inputProd);
    const [loading, setLoading] = useState(false); //for Btn loading animation
    const [isRerender, setIsRerender] = useState(false); //for TableListProducts.jsx re-render
-   const fileInputRef = useRef(null);
+   // const fileInputRef = useRef(null);
    //// ShadCN toast section ////
    const { toast } = useToast();
    const [alert, setAlert] = useState(null); //for alert Warning!
@@ -88,7 +84,7 @@ function FormProduct() {
    */
    useEffect(() => {
       getCategory().then((result) => {
-         console.log("category->", result);
+         // console.log("category->", result);
       });
       getBrand();
    }, [getCategory, getBrand]);
@@ -99,7 +95,7 @@ function FormProduct() {
 
    //when filling each key in input box
    const handleOnchange = (e) => {
-      console.log(e.target.name, e.target.value);
+      // console.log(e.target.name, e.target.value);
       setInputForm({
          ...inputForm,
          [e.target.name]: e.target.value
@@ -122,7 +118,7 @@ function FormProduct() {
    //when click 'Add Product' → record in DB
    const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log("inputForm->", inputForm);
+      // console.log("inputForm->", inputForm);
       /* 
         const titleInput = inputForm.title;
         const priceInput = inputForm.price;
@@ -172,7 +168,7 @@ function FormProduct() {
       try {
          setLoading(true);
          const res = await createProduct(token, inputForm);
-         console.log("res FormProduct->", res);
+         // console.log("res FormProduct->", res);
          //****** */
          //not (res.data.data.title) bc backend use res.send()
 
@@ -216,7 +212,7 @@ function FormProduct() {
    const confirmDelete = async () => {
       try {
          const res = await delProduct(token, productToRemove.id);
-         console.log("res del product->", res);
+         // console.log("res del product->", res);
          /***** */
          toast({
             title: "Product Deleted Successfully",

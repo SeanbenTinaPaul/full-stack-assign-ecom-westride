@@ -12,7 +12,7 @@ import CheckoutForm from "./CheckoutForm";
 const stripePromise = loadStripe(secretKeyAPI);
 
 //------------------------------------------------------------------------------------------
-function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {
+function PaymentMethod({ isSaveAddress }) {
    //เก็บ clientSecret from res.data.clientSecret
    const { token } = useEcomStore((state) => state);
    const [clientSecret, setClientSecret] = useState("");
@@ -34,7 +34,7 @@ function PaymentMethod({ setIsSaveAddress, isSaveAddress }) {
                //Save transaction in cloud ONLY (status : incomplete)
                //await stripe.paymentIntents.create()
                const res = await createPaymentUser(token);
-               console.log("res.data createPaymentUser", res.data);
+               // console.log("res.data createPaymentUser", res.data);
                //key man to display <Elements> is clientSecret must be → ${id}_secret_${secret}
                setClientSecret(res.data.clientSecret);
                setPaymentIntentData(res.data.paymentIntent);

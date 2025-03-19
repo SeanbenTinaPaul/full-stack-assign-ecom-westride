@@ -40,7 +40,7 @@ function TableUersAdmin(props) {
       const fetchOrders = async () => {
          try {
             const res = await getAllUserAdmin(token);
-            console.log("user manage res.data", res.data);
+            // console.log("user manage res.data", res.data);
             setTableData(res.data.data);
          } catch (err) {
             console.log(err);
@@ -84,7 +84,7 @@ function TableUersAdmin(props) {
    const handleBulkUpdate = async () => {
       if (selectedRows.length > 0) {
          try {
-            console.log("selectedRows+enal+role", selectedRows, selectedEnabled, selecteRole);
+            // console.log("selectedRows+enal+role", selectedRows, selectedEnabled, selecteRole);
             const res = await changeUserStatusAdmin(
                token,
                selectedRows,
@@ -101,7 +101,7 @@ function TableUersAdmin(props) {
             toast({
                variant: "destructive",
                title: "Error!",
-               description: "Failed to update user status"
+               description: `${err.response.data.message}`|| "Failed to update user status"
             });
             throw err;
          }

@@ -38,15 +38,15 @@ function CarouselAuto({ children, maxlg_h = "24", w = "90dvw" }) {
             },
             640: {
                slidesPerView: 4,
-               spaceBetween: 10
+               spaceBetween: 5
             },
             768: {
                slidesPerView: 5,
-               spaceBetween: 10
+               spaceBetween: 5
             },
             1024: {
-               slidesPerView: 5,
-               spaceBetween: 10
+               slidesPerView: 4,
+               spaceBetween: 8
             }
          }}
          className={`mySwiper h-auto max-lg:h-${maxlg_h} w-[${w}] object-cover rounded-lg`}

@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom"; //Outlet คือ component ที�
 import SidebarAdmin from "../components/adminComponent/SidebarAdmin";
 import HeaderAdmin from "../components/adminComponent/HeaderAdmin";
 import { Button } from "@/components/ui/button";
-import { Menu, ArrowLeftToLine, PanelLeftOpen, PanelLeftClose } from "lucide-react";
+import { PanelLeftOpen, PanelLeftClose } from "lucide-react";
 
 const LayoutAdmin = () => {
    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);

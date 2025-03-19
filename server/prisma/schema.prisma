@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -20,13 +21,11 @@ model User {
   updatedAt      DateTime     @updatedAt
   carts          Cart[]
   orders         Order[]
-  favorites      Favorite[] // เพิ่ม relation กับ Favorite
-  productRatings Rating[] // เพิ่ม relation กับ Rating
+  favorites      Favorite[]
+  productRatings Rating[]
   userCoupons    UserCoupon[]
   picturePub     String?
-  updatedBy      String? //เก็บ email admin ที่เปลี่ยน status user คนอื่น
-  // updatedBy      User?        @relation(fields: [updatedById], references: [id])
-  // updatedById    Int?
+  updatedBy      String?
 }
 
 model Product {
@@ -43,19 +42,15 @@ model Product {
   category    Category?        @relation(fields: [categoryId], references: [id])
   cartItems   ProductOnCart[]
   orderItems  ProductOnOrder[]
-  promotion   Float? // เก็บค่า % ส่วนลดทั่วไป
-  discounts   Discount[] // เพิ่ม relation กับ Discount สำหรับ high-season
-  favorites   Favorite[] // เพิ่ม relation กับ Favorite
-  ratings     Rating[] // เพิ่ม relation กับ Rating
-  avgRating   Float? // เพิ่ม col เก็บค่าเฉลี่ย rating
-  brandId     Int?             @default(1) // เพิ่ม col สำหรับเก็บ foreign key ของแบรนด์
-  brand       Brand?           @relation(fields: [brandId], references: [id]) // เพิ่ม relation กับ Brand
+  promotion   Float?
+  discounts   Discount[]
+  favorites   Favorite[]
+  ratings     Rating[]
+  avgRating   Float?
+  brandId     Int?             @default(1)
+  brand       Brand?           @relation(fields: [brandId], references: [id])
   createdBy   String?
   updatedBy   String?
-  // createdBy   User?    @relation(fields: [createdById], references: [id]) // use to access whole table User | includes: {createdBy:true} 
-  // createdById Int?     //foreign key | use with where clause | where: {createdById: 123}
-  // updatedBy   User?    @relation(fields: [updatedById], references: [id])
-  // updatedById Int?
 }
 
 model Order {
@@ -67,15 +62,13 @@ model Order {
   orderedById  Int
   orderedBy    User             @relation(fields: [orderedById], references: [id])
   products     ProductOnOrder[]
-  ratings      Rating[] // เพิ่ม relation กับ Rating เพื่อตรวจสอบว่าสั่งซื้อแล้วหรือยัง
+  ratings      Rating[]
   paymentId    String           @default("")
   amount       Float            @default(0)
   status       String           @default("")
   currency     String           @default("thb")
   refundAmount Float?           @default(0)
-  updatedBy    String? //เก็บ email admin ที่เปลี่ยน status
-  // updatedBy    User?    @relation(fields: [updatedById], references: [id])
-  // updatedById  Int?
+  updatedBy    String?
 }
 
 model ProductOnOrder {
@@ -86,7 +79,7 @@ model ProductOnOrder {
   price      Float
   order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  discount   Float? // เพิ่มฟิลด์เก็บส่วนลดที่ได้ ณ เวลาที่สั่งซื้อ
+  discount   Float?
   isRefunded Boolean? @default(false)
 }
 
@@ -97,8 +90,6 @@ model Category {
   updatedAt DateTime  @updatedAt
   products  Product[]
   createdBy String?
-  // createdBy   User?    @relation(fields: [createdById], references: [id])
-  // createdById Int?     //foreign key
 }
 
 model Cart {
@@ -109,23 +100,18 @@ model Cart {
   orderedById Int
   orderedBy   User            @relation(fields: [orderedById], references: [id])
   products    ProductOnCart[]
-  // consider adding these fields
-  // lastSynced  DateTime        @updatedAt // Track last sync time
-  // status      String          @default("active") // Track cart status
 }
 
 model ProductOnCart {
   id          Int     @id @default(autoincrement())
-  /// คือเปลี่ยนตาม id (is independent) ใน table 'Cart'
   cartId      Int
   productId   Int
   count       Int
   price       Float
   cart        Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
   product     Product @relation(fields: [productId], references: [id])
-  //adding these to support discounts
-  buyPriceNum Float // Store discounted price at time of adding
-  discount    Float? // Store applied discount
+  buyPriceNum Float
+  discount    Float?
 }
 
 model Image {
@@ -138,11 +124,8 @@ model Image {
   updatedAt  DateTime @updatedAt
   productId  Int?
   product    Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  // brand      Brand?   @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  // brandId    Int? // เพิ่ม field สำหรับเก็บ foreign key ของแบรนด์
 }
 
-//  Favorite feature
 model Favorite {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -152,29 +135,11 @@ model Favorite {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, productId]) // ป้องกันการเพิ่ม favorite ซ้ำ →  compound unique constraint
-  /**
-   * where: {
-   * userId_productId: {  // This is the compound key
-   * userId: id,
-   * productId: parseInt(productId)
-   * }
-   */
-  /**
-   * /**
-   * /**
-   * /**
-   * // User 1 cannot have Product 1 twice in his cart/favorites
-   * {userId: 1, productId: 1} ✅ // Allowed
-   * {userId: 1, productId: 1} ❌ // Rejected - duplicate
-   * {userId: 1, productId: 2} ✅ // Allowed - different product
-   * {userId: 2, productId: 1} ✅ // Allowed - different user
-   */
+  @@unique([userId, productId])
   @@index([userId])
   @@index([productId])
 }
 
-//  Rating feature
 model Rating {
   id        Int      @id @default(autoincrement())
   rating    Int // เก็บคะแนน 1-5
@@ -188,77 +153,58 @@ model Rating {
   updatedAt DateTime @updatedAt
   comment   String?
 
-  @@unique([userId, productId, orderId, comment]) // ป้องกันการให้ rating ซ้ำในแต่ละ order record
+  @@unique([userId, productId, orderId, comment])
 }
 
-// สำหรับ Seasonal Discount
 model Discount {
   id          Int      @id @default(autoincrement())
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId   Int
-  amount      Float // เก็บค่า%ส่วนลด
-  startDate   DateTime // วันที่เริ่มต้นส่วนลด
-  endDate     DateTime // วันที่สิ้นสุดส่วนลด
-  description String? // คำอธิบาย เช่น "High Season Sale"
+  amount      Float
+  startDate   DateTime
+  endDate     DateTime
+  description String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  createdBy   String // เก็บ email ของ admin ที่สร้าง discount
-  // createdBy   User?    @relation(fields: [createdById], references: [id])
-  // createdById Int?     //foreign key
+  createdBy   String
 
-  /**
-   * // Querying promotions between dates becomes faster
-   * const promotions = await prisma.promotion.findMany({
-   * where: {
-   * startDate: {
-   * gte: new Date('2024-01-01'),
-   * lte: new Date('2024-12-31')
-   * }
-   * }
-   * });
-   */
-  @@index([startDate, endDate]) // เพิ่ม index เพื่อการค้นหาที่เร็วขึ้น, but not create index record
+  @@index([startDate, endDate])
 }
 
 model Coupon {
   id          Int          @id @default(autoincrement())
   code        String       @unique
-  type        String       @default("FREE_SHIPPING") // For future coupon types
-  amount      Int // Number of available coupons
+  type        String       @default("FREE_SHIPPING")
+  amount      Int
   startDate   DateTime
   endDate     DateTime
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  createdBy   String // Admin email
+  createdBy   String
   userCoupons UserCoupon[]
-  // createdBy   User?    @relation(fields: [createdById], references: [id])
-  // createdById Int?     //foreign key
 }
 
-// For tracking which users have claimed which coupons
 model UserCoupon {
   id        Int       @id @default(autoincrement())
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   coupon    Coupon    @relation(fields: [couponId], references: [id], onDelete: Cascade)
   couponId  Int
-  usedAt    DateTime? // null means claimed but not used yet
+  usedAt    DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@unique([userId, couponId]) // Prevent user from claiming same coupon twice
+  @@unique([userId, couponId])
 }
 
 model Brand {
   id          Int       @id @default(autoincrement())
-  title       String    @unique // ชื่อ brandต้องไม่ซ้ำกัน
+  title       String    @unique
   description String?
-  // image      Image
   products    Product[]
   img_url     String?
-  // asset_id    String?
   public_id   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
    LayoutDashboard,
    ChartPie,
+   UserCog,
    ChartNoAxesGantt,
    ChartBarStacked,
    PackagePlus,
@@ -14,7 +15,7 @@ import {
    ArchiveRestore,
    Grid2x2Plus,
    ClipboardCopy,
-   BadgeCheck 
+   BadgeCheck
 } from "lucide-react";
 import useEcomStore from "@/store/ecom-store";
 const navItems = [
@@ -27,7 +28,7 @@ const navItems = [
    {
       title: "Manage users",
       url: "/admin",
-      icon: ChartPie,
+      icon: UserCog,
       end: true
    },
    // {
@@ -38,7 +39,7 @@ const navItems = [
    {
       title: "Brand",
       url: "brand",
-      icon: BadgeCheck 
+      icon: BadgeCheck
    },
    {
       title: "Category",
@@ -71,7 +72,7 @@ const SidebarAdmin = ({ isCollapsed }) => {
    const handleLogout = (e) => {
       e.preventDefault();
       handleDirectLogout();
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
    };
    const sidebarWidth = isCollapsed ? "w-16" : "w-56";
    //Added fixed top-0 left-0 to the sidebar's root div to make unscrollable along with Category.jsx content

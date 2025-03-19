@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, Store, ShoppingCart, UserPlus, LogIn, Slack } from "lucide-react";
+import { Slack } from "lucide-react";
 const apiUrl = import.meta.env.VITE_API_URL;
-import useEcomStore from "../../store/ecom-store";
 import { useNavigate } from "react-router-dom"; //ใช้เปลี่ยนหน้า (redirect)
 
 const Register = () => {
@@ -20,14 +19,14 @@ const Register = () => {
       confirmPassword: ""
    });
    const handleOnchange = (event) => {
-      console.log(event.target.name, event.target.value);
+      // console.log(event.target.name, event.target.value);
       setForm({
          ...form,
          [event.target.name]: event.target.value
       });
    };
    const handleSubmit = async (event) => {
-      event.preventDefault(); 
+      event.preventDefault();
       if (form.password !== form.confirmPassword) {
          toast({
             variant: "destructive",

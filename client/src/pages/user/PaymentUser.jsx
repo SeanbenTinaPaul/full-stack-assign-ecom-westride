@@ -76,7 +76,7 @@ const Payment = () => {
          </div>
 
          {/* Main Content */}
-         {console.log("isSaveAddress", isSaveAddress)}
+         {/* {console.log("isSaveAddress", isSaveAddress)} */}
          <div className='flex flex-wrap gap-4 pt-4 w-[70dvw] mx-auto items-center justify-center'>
             <CardPurchase
                setIsSaveAddress={setIsSaveAddress}

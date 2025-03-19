@@ -1,7 +1,7 @@
 //parent → ShopUser.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { formatNumber } from "@/utilities/formatNumber";
 //component ui
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
