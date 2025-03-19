@@ -29,13 +29,29 @@ const limiter = rateLimit({
    }
 });
 
+const authRouter = require("./routes/auth");
+const productRouter = require("./routes/products");
+const categoryRouter = require("./routes/category");
+const brandRouter = require("./routes/brand");
+const userRouter = require("./routes/user");
+const adminRouter = require("./routes/admin");
+const paymentStripeRouter = require("./routes/paymentStripe");
+
+app.use("/api", limiter, authRouter);
+app.use("/api", limiter, productRouter);
+app.use("/api", limiter, categoryRouter);
+app.use("/api", limiter, brandRouter);
+app.use("/api", limiter, userRouter);
+app.use("/api", limiter, adminRouter);
+app.use("/api", limiter, paymentStripeRouter);
+
 //Routers
 //เอา app.use('/api',...) เข้าไป map ทุกๆไฟล์ในโฟลเดอร์ routes
 // r === 'auth.js', 'product.js',...
-readdirSync("./routes").map((r) => {
-   const router = require(`./routes/${r}`);
-   return app.use("/api", limiter, router);
-});
+// readdirSync("./routes").map((r) => {
+//    const router = require(`./routes/${r}`);
+//    return app.use("/api", limiter, router);
+// });
 /* 
 เขียนแบบกระจายออก (manual routing) → app.use('/api',..) mount '/api' เสร็จก็หายไป
 
