@@ -2,18 +2,21 @@
     "version": 2,
     "name": "tinnapat_server",
     "builds": [
-        {
-            "src": "server.js",
-            "use": "@vercel/node"
-        }
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
     ],
     "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*"
-            }
+      {
+        "src": "/(.*)",
+        "dest": "server.js",
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
         }
-    ]
-}
+      }
+    ],
+    "env": {
+      "NODE_ENV": "development"
+    }
+  }
