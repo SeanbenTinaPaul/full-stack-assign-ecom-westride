@@ -68,6 +68,30 @@ function ViewProdUser(props) {
    const [rateAndComment, setRateAndComment] = useState([]);
    const [prodOnOrder, setProdOnOrder] = useState([]);
 
+   const renderCarousel = useCallback(() => {
+      if (!imagArr || imagArr.length === 0) return null;
+
+      return (
+         <CarouselThumnailProd
+            setThumbsSwiper={setThumbsSwiper}
+            thumbsSwiper={thumbsSwiper}
+         >
+            {imagArr.map((image) => (
+               <SwiperSlide
+                  key={image.id}
+                  className='swiper-slide'
+               >
+                  <img
+                     src={image?.url}
+                     alt='No image'
+                     className='object-cover bg-gradient-to-tr from-slate-100 to-slate-200 '
+                  />
+               </SwiperSlide>
+            ))}
+         </CarouselThumnailProd>
+      );
+   }, [imagArr, setThumbsSwiper, thumbsSwiper]);
+
    // quantity change locally without affecting cart
    const handleQuantityChange = (change) => {
       const newCount = quantity + change;
@@ -198,9 +222,24 @@ function ViewProdUser(props) {
       return { buyPrice: buyPrice, buyPriceNum: buyPriceNum, preferDiscount: preferDiscount };
    }, [productData?.price, productData?.promotion, getDiscountAmount]);
 
+   // Add cleanup effect
+   useEffect(() => {
+      return () => {
+         // Cleanup on component unmount
+         if (thumbsSwiper && thumbsSwiper.destroy) {
+            thumbsSwiper.destroy();
+         }
+      };
+   }, [thumbsSwiper]);
    const handleGoBack = async () => {
       try {
          setIsLoading(true);
+         // Cleanup thumbsSwiper before navigation
+         if (thumbsSwiper && thumbsSwiper.destroy) {
+            thumbsSwiper.destroy();
+            setThumbsSwiper(null);
+         }
+
          // Fetch shop products before navigation
          await getProduct(100, 1);
          navigate(-1, { replace: true });
@@ -391,23 +430,7 @@ function ViewProdUser(props) {
          <main className='inline-flex p-6 w-[80dvw] h-[510px] min-h-[510px] min-w-[800px] bg-card shadow-md rounded-xl'>
             {/* Image*/}
             <article className='w-1/2 h-full '>
-               <CarouselThumnailProd
-                  setThumbsSwiper={setThumbsSwiper}
-                  thumbsSwiper={thumbsSwiper}
-               >
-                  {imagArr?.map((image) => (
-                     <SwiperSlide
-                        key={image.id}
-                        className='swiper-slide'
-                     >
-                        <img
-                           src={image?.url}
-                           alt='No image'
-                           className='object-cover bg-gradient-to-tr from-slate-100 to-slate-200 '
-                        />
-                     </SwiperSlide>
-                  ))}
-               </CarouselThumnailProd>
+               {imagArr && imagArr.length > 0 && renderCarousel()}
             </article>
             {/* All right */}
             <article className='w-1/2 flex flex-col'>
@@ -427,18 +450,20 @@ function ViewProdUser(props) {
                            {productData.avgRating?.toFixed(1)}
                         </span>
                      </div>
-                     <Button
-                        variant='ghost'
-                        size='icon'
-                        onClick={handleFavorite}
-                        className={`hover:bg-white/80`}
-                     >
-                        <Heart
-                           className={`w-8 h-8  ${
-                              isFavorite ? "text-red-500 fill-current" : "text-gray-500"
-                           }`}
-                        />
-                     </Button>
+                     {user && token && (
+                        <Button
+                           variant='ghost'
+                           size='icon'
+                           onClick={handleFavorite}
+                           className={`hover:bg-white/80`}
+                        >
+                           <Heart
+                              className={`w-8 h-8  ${
+                                 isFavorite ? "text-red-500 fill-current" : "text-gray-500"
+                              }`}
+                           />
+                        </Button>
+                     )}
                   </section>
                   <section>
                      <header className='h-24 px-4 py-2  '>
