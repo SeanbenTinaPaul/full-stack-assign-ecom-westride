@@ -388,7 +388,7 @@ function ViewProdUser(props) {
          </div>
          {/* {console.log("prodObj", prodObj)} */}
          {/* {console.log("productData", productData)} */}
-         <main className='inline-flex p-6 w-[80dvw] h-[70dvh] min-w-[800px] bg-card shadow-md rounded-xl'>
+         <main className='inline-flex p-6 w-[80dvw] h-[510px] min-h-[510px] min-w-[800px] bg-card shadow-md rounded-xl'>
             {/* Image*/}
             <article className='w-1/2 h-full '>
                <CarouselThumnailProd
